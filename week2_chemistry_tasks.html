@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Химия 8 класс — Неделя 2</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #f5f4f0;
+    --surface: #ffffff;
+    --surface2: #f0efe9;
+    --border: rgba(0,0,0,0.10);
+    --border2: rgba(0,0,0,0.18);
+    --text: #1a1a18;
+    --text2: #6b6b67;
+    --text3: #999993;
+    --radius: 14px;
+    --radius-sm: 8px;
+    --shadow: 0 2px 12px rgba(0,0,0,0.07), 0 0 0 0.5px rgba(0,0,0,0.06);
+  }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 24px 16px 48px;
+  }
+
+  .page { max-width: 560px; margin: 0 auto; }
+
+  /* ── Header ── */
+  .header { margin-bottom: 20px; }
+  .header h1 { font-size: 18px; font-weight: 600; letter-spacing: -0.3px; }
+  .header p  { font-size: 13px; color: var(--text2); margin-top: 3px; }
+
+  /* ── Tab bar ── */
+  .tabbar {
+    display: flex; gap: 4px; background: var(--surface2);
+    border-radius: var(--radius-sm); padding: 4px;
+    margin-bottom: 20px; overflow-x: auto;
+  }
+  .tab-btn {
+    flex: 1; min-width: 100px; font-size: 12px; font-weight: 500;
+    padding: 7px 10px; border: none; border-radius: 6px;
+    background: transparent; color: var(--text2); cursor: pointer;
+    transition: all 0.15s; white-space: nowrap;
+  }
+  .tab-btn.active {
+    background: var(--surface); color: var(--text);
+    box-shadow: 0 1px 4px rgba(0,0,0,0.10);
+  }
+
+  /* ── Section ── */
+  .section { display: none; }
+  .section.show { display: block; }
+
+  /* ── Para heading ── */
+  .para-heading {
+    display: flex; align-items: center; gap: 8px;
+    margin: 20px 0 10px;
+  }
+  .para-badge {
+    font-size: 11px; font-weight: 700; padding: 3px 10px;
+    border-radius: 100px; flex-shrink: 0;
+  }
+  .para-title { font-size: 13px; font-weight: 600; color: var(--text); }
+
+  /* ── Task cards ── */
+  .task-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 8px; }
+
+  .task-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px 16px;
+    box-shadow: var(--shadow);
+    border-left: 3px solid transparent;
+  }
+
+  .task-num {
+    font-size: 10px; font-weight: 700; letter-spacing: 0.07em;
+    text-transform: uppercase; margin-bottom: 6px;
+  }
+  .task-text { font-size: 14px; line-height: 1.65; color: var(--text); }
+  .task-hint {
+    font-size: 12px; color: var(--text2); line-height: 1.5;
+    margin-top: 8px; padding: 8px 10px;
+    background: var(--surface2); border-radius: 6px;
+    display: flex; gap: 6px;
+  }
+  .task-hint::before { content: "💡"; flex-shrink: 0; }
+
+  .show-ans-btn {
+    display: inline-flex; align-items: center; gap: 5px;
+    margin-top: 10px; font-size: 12px; font-weight: 500;
+    padding: 5px 12px; border: 1px solid var(--border2);
+    border-radius: 100px; background: transparent; color: var(--text2);
+    cursor: pointer; transition: background 0.15s, color 0.15s;
+  }
+  .show-ans-btn:hover { background: var(--surface2); color: var(--text); }
+
+  .task-answer {
+    display: none; margin-top: 10px;
+    font-size: 13px; line-height: 1.6;
+    padding: 10px 12px;
+    background: #F0FDF4; border-radius: 8px;
+    border: 1px solid #86EFAC; color: #1A6B3A;
+  }
+
+  /* ── Quiz ── */
+  .quiz-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 14px; flex-wrap: wrap; gap: 8px;
+  }
+  .quiz-title { font-size: 15px; font-weight: 600; }
+  .score-box {
+    display: flex; align-items: center; gap: 10px;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius-sm); padding: 8px 14px;
+    box-shadow: var(--shadow);
+  }
+  .score-lbl { font-size: 12px; color: var(--text2); }
+  .score-n { font-size: 18px; font-weight: 600; color: var(--text); }
+  .reset-btn {
+    font-size: 12px; padding: 5px 12px;
+    border: 1px solid var(--border2); border-radius: 100px;
+    background: transparent; color: var(--text2); cursor: pointer;
+    transition: background 0.15s;
+  }
+  .reset-btn:hover { background: var(--surface2); }
+
+  .q-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 16px;
+    margin-bottom: 10px; box-shadow: var(--shadow);
+  }
+  .q-num { font-size: 10px; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; color: var(--text3); margin-bottom: 6px; }
+  .q-text { font-size: 14px; line-height: 1.65; color: var(--text); margin-bottom: 12px; }
+
+  .opts { display: flex; flex-direction: column; gap: 6px; }
+  .opt {
+    font-size: 13px; padding: 9px 13px;
+    border: 1px solid var(--border2); border-radius: var(--radius-sm);
+    cursor: pointer; background: transparent; color: var(--text);
+    text-align: left; transition: background 0.12s, border-color 0.12s;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .opt::before {
+    content: ""; display: inline-block; width: 16px; height: 16px;
+    border: 1.5px solid var(--border2); border-radius: 50%; flex-shrink: 0;
+    transition: background 0.12s, border-color 0.12s;
+  }
+  .opt:hover:not(.done-opt) { background: var(--surface2); border-color: var(--border2); }
+  .opt.correct { background: #F0FDF4; color: #1A6B3A; border-color: #86EFAC; }
+  .opt.correct::before { background: #1A6B3A; border-color: #1A6B3A; }
+  .opt.wrong   { background: #FEF2F2; color: #A32D2D; border-color: #F0ABAB; }
+  .opt.wrong::before { background: #A32D2D; border-color: #A32D2D; }
+
+  .q-explain {
+    display: none; margin-top: 10px;
+    font-size: 12px; color: var(--text2); line-height: 1.6;
+    padding: 8px 10px; background: var(--surface2);
+    border-radius: 6px;
+  }
+
+  /* ── Section intro badge ── */
+  .section-intro {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 13px; color: var(--text2);
+    margin-bottom: 14px; padding: 10px 14px;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+  }
+
+
+  /* ── Back link ── */
+  .back-link {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 12px; color: var(--text2);
+    text-decoration: none; margin-bottom: 16px;
+    padding: 5px 0;
+    transition: color 0.15s;
+  }
+  .back-link:hover { color: var(--text); }
+  .back-link svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+
+  svg.icon { width: 14px; height: 14px; vertical-align: -2px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <a href="index.html" class="back-link">
+    <svg viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></svg>
+    Главное меню
+  </a>
+
+  <div class="header">
+    <h1>🧪 Химия 8 класс — Неделя 2</h1>
+    <p>§5–8 · Атомно-молекулярное учение, таблица Менделеева, формулы, валентность · стр. 30–45</p>
+  </div>
+
+  <div class="tabbar" id="tabbar">
+    <button class="tab-btn active" onclick="showTab('tasks',0)">📋 Задания</button>
+    <button class="tab-btn" onclick="showTab('quiz5',1)">Тест: §5–6</button>
+    <button class="tab-btn" onclick="showTab('quiz7',2)">Тест: §7</button>
+    <button class="tab-btn" onclick="showTab('quiz8',3)">Тест: §8</button>
+  </div>
+
+  <!-- ══ TASKS ══ -->
+  <div id="tasks" class="section show">
+    <div class="section-intro">
+      <svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
+      Нажмите «Ответ», чтобы проверить себя. Сначала попробуйте решить сами!
+    </div>
+
+    <div class="para-heading">
+      <span class="para-badge" style="background:#EEEDFE;color:#26215C;">§5</span>
+      <span class="para-title">Атомно-молекулярное учение</span>
+    </div>
+    <div class="task-list">
+
+      <div class="task-card" style="border-left-color:#7F77DD;">
+        <p class="task-num" style="color:#7F77DD;">Задание 1</p>
+        <p class="task-text">Распределите вещества на два столбика: простые и сложные.<br>Кислород O₂, вода H₂O, азот N₂, серная кислота H₂SO₄, железо Fe, поваренная соль NaCl, сера S, аммиак NH₃.</p>
+        <button class="show-ans-btn" onclick="toggleAns(this)">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          Ответ
+        </button>
+        <p class="task-answer">Простые: O₂, N₂, Fe, S.<br>Сложные: H₂O, H₂SO₄, NaCl, NH₃.</p>
+      </div>
+
+      <div class="task-card" style="border-left-color:#7F77DD;">
+        <p class="task-num" style="color:#7F77DD;">Задание 2</p>
+        <p class="task-text">Объясните своими словами: чем отличается атом от молекулы? Чем отличается молекула простого вещества от молекулы сложного?</p>
+        <div class="task-hint">Вспомните рис. 28 из учебника: атом водорода, молекула водорода, молекула воды.</div>
+        <button class="show-ans-btn" onclick="toggleAns(this)">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          Ответ
+        </button>
+        <p class="task-answer">Атом — наименьшая частица химического элемента. Молекула — наименьшая частица вещества. Молекула простого вещества состоит из атомов одного элемента (H₂, O₂), молекула сложного — из атомов разных элементов (H₂O, NH₃).</p>
+      </div>
+
+      <div class="task-card" style="border-left-color:#7F77DD;">
+        <p class="task-num" style="color:#7F77DD;">Задание 3</p>
+        <p class="task-text">Углерод существует в трёх формах: алмаз, графит и фуллерен. Относятся ли они к одному химическому элементу? Являются ли они одним веществом?</p>
+        <button class="show-ans-btn" onclick="toggleAns(this)">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          Ответ
+        </button>
+        <p class="task-answer">Да, один и тот же химический элемент — углерод C. Но разные вещества — это явление называется аллотропией.</p>
+      </div>
+
+    </div>
+
+    <div class="para-heading">
+      <span class="para-badge" style="background:#E1F5EE;color:#064D38;">§6</span>
+      <span class="para-title">Таблица Менделеева</span>
+    </div>
+    <div class="task-list">
+
+      <div class="task-card" style="border-left-color:#1D9E75;">
+        <p class="task-num" style="color:#1D9E75;">Задание 4</p>
+        <p class="task-text">Используя таблицу Менделеева, запишите символы и атомные массы следующих элементов: натрий, магний, алюминий, кремний, фосфор, сера, хлор, аргон.</p>
+        <button class="show-ans-btn" onclick="toggleAns(this)">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          Ответ
+        </button>
+        <p class="task-answer">Na (23), Mg (24), Al (27), Si (28), P (31), S (32), Cl (35,5), Ar (40).</p>
+      </div>
+
+      <div class="task-card" style="border-left-color:#1D9E75;">
+        <p class="task-num" style="color:#1D9E75;">Задание 5</p>
+        <p class="task-text">Найдите в таблице Менделеева элементы 2-го периода. Сколько их? Запишите их символы и названия.</p>
+        <button class="show-ans-btn" onclick="toggleAns(this)">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          Ответ
+        </button>
+        <p class="task-answer">8 элементов: Li (литий), Be (бериллий), B (бор), C (углерод), N (азот), O (кислород), F (фтор), Ne (неон).</p>
+      </div>
+
+      <div class="task-card" style="border-left-color:#1D9E75;">
+        <p class="task-num" style="color:#1D9E75;">Задание 6 — расчётная</p>
+        <p class="task-text">Вычислите относительную атомную массу кальция Ca. Сколько раз атом кальция тяжелее атома углерода C?</p>
+        <div class="task-hint">Ar(Ca) = 40, Ar(C) = 12. Разделите одно на другое.</div>
+        <button class="show-ans-btn" onclick="toggleAns(this)">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          Ответ
+        </button>
+        <p class="task-answer">Ar(Ca) = 40. Атом кальция тяжелее атома углерода в 40 ÷ 12 ≈ 3,33 раза.</p>
+      </div>
+
+    </div>
+
+    <div class="para-heading">
+      <span class="para-badge" style="background:#FEF2EC;color:#712B13;">§7</span>
+      <span class="para-title">Химические формулы</span>
+    </div>
+    <div class="task-list">
+
+      <div class="task-card" style="border-left-color:#D85A30;">
+        <p class="task-num" style="color:#D85A30;">Задание 7</p>
+        <p class="task-text">Прочитайте формулы вслух и запишите, что они обозначают: H₂O, CO₂, NaCl, H₂SO₄, Ca(OH)₂, Al₂O₃.</p>
+        <button class="show-ans-btn" onclick="toggleAns(this)">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          Ответ
+        </button>
+        <p class="task-answer">H₂O — 2 атома H и 1 атом O. CO₂ — 1 атом C и 2 атома O. NaCl — 1 Na и 1 Cl. H₂SO₄ — 2H, 1S, 4O. Ca(OH)₂ — 1Ca, 2O, 2H. Al₂O₃ — 2Al, 3O.</p>
+      </div>
+
+      <div class="task-card" style="border-left-color:#D85A30;">
+        <p class="task-num" style="color:#D85A30;">Задание 8 — расчётная</p>
+        <p class="task-text">Вычислите относительную молекулярную массу: а) H₂O; б) CO₂; в) H₂SO₄; г) Ca(OH)₂; д) Al₂O₃.</p>
+        <div class="task-hint">Mr = сумма Ar всех атомов. Ar: H=1, O=16, C=12, S=32, Ca=40, Al=27.</div>
+        <button class="show-ans-btn" onclick="toggleAns(this)">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          Ответ
+        </button>
+        <p class="task-answer">а) 2·1+16 = 18. б) 12+2·16 = 44. в) 2·1+32+4·16 = 98. г) 40+2·(16+1) = 74. д) 2·27+3·16 = 102.</p>
+      </div>
+
+      <div class="task-card" style="border-left-color:#D85A30;">
+        <p class="task-num" style="color:#D85A30;">Задание 9 — расчётная</p>
+        <p class="task-text">Вычислите массовую долю кислорода в воде H₂O. Выразите ответ в процентах.</p>
+        <div class="task-hint">ω(O) = Ar(O) · n / Mr(H₂O) · 100%</div>
+        <button class="show-ans-btn" onclick="toggleAns(this)">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          Ответ
+        </button>
+        <p class="task-answer">Mr(H₂O) = 18. ω(O) = 16/18 · 100% ≈ 88,9%.</p>
+      </div>
+
+    </div>
+
+    <div class="para-heading">
+      <span class="para-badge" style="background:#FEF7EC;color:#412402;">§8</span>
+      <span class="para-title">Валентность</span>
+    </div>
+    <div class="task-list">
+
+      <div class="task-card" style="border-left-color:#EF9F27;">
+        <p class="task-num" style="color:#EF9F27;">Задание 10</p>
+        <p class="task-text">Определите валентность каждого элемента по формулам: N₂O₃, SO₃, PCl₅, Fe₂O₃, MnO₂.</p>
+        <div class="task-hint">Валентность кислорода = II, хлора в этих случаях = I. Используйте алгоритм из табл. 5 учебника.</div>
+        <button class="show-ans-btn" onclick="toggleAns(this)">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          Ответ
+        </button>
+        <p class="task-answer">N₂O₃: V(N) = III. SO₃: V(S) = VI. PCl₅: V(P) = V. Fe₂O₃: V(Fe) = III. MnO₂: V(Mn) = IV.</p>
+      </div>
+
+      <div class="task-card" style="border-left-color:#EF9F27;">
+        <p class="task-num" style="color:#EF9F27;">Задание 11</p>
+        <p class="task-text">Составьте формулы соединений по валентности: а) сера(IV) с кислородом; б) азот(III) с водородом; в) кальций(II) с хлором(I); г) алюминий(III) с кислородом.</p>
+        <div class="task-hint">Используйте алгоритм из табл. 4 учебника: записать элементы, поставить валентности, найти НОК, вычислить индексы.</div>
+        <button class="show-ans-btn" onclick="toggleAns(this)">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          Ответ
+        </button>
+        <p class="task-answer">а) SO₂. б) NH₃. в) CaCl₂. г) Al₂O₃.</p>
+      </div>
+
+      <div class="task-card" style="border-left-color:#EF9F27;">
+        <p class="task-num" style="color:#EF9F27;">Задание 12 — творческое</p>
+        <p class="task-text">Назовите вещества: PCl₃, SO₂, CS₂, Cu₂O, KCl, SO₃. Запишите их названия по правилу из учебника.</p>
+        <button class="show-ans-btn" onclick="toggleAns(this)">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          Ответ
+        </button>
+        <p class="task-answer">PCl₃ — хлорид фосфора(III). SO₂ — оксид серы(IV). CS₂ — сульфид углерода. Cu₂O — оксид меди(I). KCl — хлорид калия. SO₃ — оксид серы(VI).</p>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══ QUIZ 5–6 ══ -->
+  <div id="quiz5" class="section">
+    <div class="quiz-header">
+      <span class="quiz-title">Тест: §5–6 · Атомно-молекулярное учение и таблица Менделеева</span>
+    </div>
+    <div class="score-box" style="margin-bottom:16px;">
+      <span class="score-lbl">Правильных ответов:</span>
+      <span class="score-n" id="sc5">0 / 5</span>
+      <button class="reset-btn" onclick="resetQuiz('q5','sc5')">
+        <svg class="icon" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+        Сбросить
+      </button>
+    </div>
+    <div class="quiz-block" id="q5">
+
+      <div class="q-card" data-correct="1">
+        <p class="q-num">Вопрос 1</p>
+        <p class="q-text">Вещество NH₃ является:</p>
+        <div class="opts">
+          <button class="opt" onclick="answer(this)">простым</button>
+          <button class="opt" onclick="answer(this)">сложным</button>
+          <button class="opt" onclick="answer(this)">смесью</button>
+          <button class="opt" onclick="answer(this)">атомом</button>
+        </div>
+        <p class="q-explain">NH₃ (аммиак) образован атомами двух разных элементов — N и H, значит это сложное вещество.</p>
+      </div>
+
+      <div class="q-card" data-correct="1">
+        <p class="q-num">Вопрос 2</p>
+        <p class="q-text">Какое утверждение об атомах верно?</p>
+        <div class="opts">
+          <button class="opt" onclick="answer(this)">Все атомы одинаковы</button>
+          <button class="opt" onclick="answer(this)">Атомы одного вида называются химическим элементом</button>
+          <button class="opt" onclick="answer(this)">Атом можно увидеть невооружённым глазом</button>
+          <button class="opt" onclick="answer(this)">Атом — это молекула</button>
+        </div>
+        <p class="q-explain">Определённый вид атомов называют химическим элементом. Атомы различаются массой, строением, свойствами.</p>
+      </div>
+
+      <div class="q-card" data-correct="0">
+        <p class="q-num">Вопрос 3</p>
+        <p class="q-text">Символ элемента натрия:</p>
+        <div class="opts">
+          <button class="opt" onclick="answer(this)">Na</button>
+          <button class="opt" onclick="answer(this)">N</button>
+          <button class="opt" onclick="answer(this)">Ni</button>
+          <button class="opt" onclick="answer(this)">Ne</button>
+        </div>
+        <p class="q-explain">Na — от латинского Natrium. N — азот (Nitrogenium), Ni — никель, Ne — неон.</p>
+      </div>
+
+      <div class="q-card" data-correct="3">
+        <p class="q-num">Вопрос 4</p>
+        <p class="q-text">В 3-м периоде таблицы Менделеева находится:</p>
+        <div class="opts">
+          <button class="opt" onclick="answer(this)">Ca (кальций)</button>
+          <button class="opt" onclick="answer(this)">C (углерод)</button>
+          <button class="opt" onclick="answer(this)">K (калий)</button>
+          <button class="opt" onclick="answer(this)">Al (алюминий)</button>
+        </div>
+        <p class="q-explain">Алюминий Al стоит в 3-м периоде (Na, Mg, Al, Si, P, S, Cl, Ar). Ca и K — в 4-м периоде, C — во 2-м.</p>
+      </div>
+
+      <div class="q-card" data-correct="1">
+        <p class="q-num">Вопрос 5</p>
+        <p class="q-text">Относительная атомная масса кислорода равна:</p>
+        <div class="opts">
+          <button class="opt" onclick="answer(this)">8</button>
+          <button class="opt" onclick="answer(this)">16</button>
+          <button class="opt" onclick="answer(this)">32</button>
+          <button class="opt" onclick="answer(this)">14</button>
+        </div>
+        <p class="q-explain">Ar(O) = 16. 32 — это молярная масса молекулы O₂, 14 — масса азота N.</p>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══ QUIZ 7 ══ -->
+  <div id="quiz7" class="section">
+    <div class="quiz-header">
+      <span class="quiz-title">Тест: §7 · Химические формулы</span>
+    </div>
+    <div class="score-box" style="margin-bottom:16px;">
+      <span class="score-lbl">Правильных ответов:</span>
+      <span class="score-n" id="sc7">0 / 5</span>
+      <button class="reset-btn" onclick="resetQuiz('q7','sc7')">
+        <svg class="icon" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+        Сбросить
+      </button>
+    </div>
+    <div class="quiz-block" id="q7">
+
+      <div class="q-card" data-correct="2">
+        <p class="q-num">Вопрос 1</p>
+        <p class="q-text">Относительная молекулярная масса CO₂ равна:</p>
+        <div class="opts">
+          <button class="opt" onclick="answer(this)">28</button>
+          <button class="opt" onclick="answer(this)">32</button>
+          <button class="opt" onclick="answer(this)">44</button>
+          <button class="opt" onclick="answer(this)">22</button>
+        </div>
+        <p class="q-explain">Mr(CO₂) = Ar(C) + 2·Ar(O) = 12 + 2·16 = 44.</p>
+      </div>
+
+      <div class="q-card" data-correct="0">
+        <p class="q-num">Вопрос 2</p>
+        <p class="q-text">Формула Ca(OH)₂ содержит атомов всего:</p>
+        <div class="opts">
+          <button class="opt" onclick="answer(this)">5 атомов</button>
+          <button class="opt" onclick="answer(this)">3 атома</button>
+          <button class="opt" onclick="answer(this)">4 атома</button>
+          <button class="opt" onclick="answer(this)">6 атомов</button>
+        </div>
+        <p class="q-explain">Ca(OH)₂: 1 Ca + 2 O + 2 H = 5 атомов.</p>
+      </div>
+
+      <div class="q-card" data-correct="3">
+        <p class="q-num">Вопрос 3</p>
+        <p class="q-text">Массовая доля водорода в H₂O составляет:</p>
+        <div class="opts">
+          <button class="opt" onclick="answer(this)">50%</button>
+          <button class="opt" onclick="answer(this)">11%</button>
+          <button class="opt" onclick="answer(this)">22%</button>
+          <button class="opt" onclick="answer(this)">≈ 11,1%</button>
+        </div>
+        <p class="q-explain">ω(H) = 2·1 / 18 · 100% = 2/18 · 100% ≈ 11,1%.</p>
+      </div>
+
+      <div class="q-card" data-correct="1">
+        <p class="q-num">Вопрос 4</p>
+        <p class="q-text">Запись «5CO₂» означает:</p>
+        <div class="opts">
+          <button class="opt" onclick="answer(this)">формулу вещества с индексом 5</button>
+          <button class="opt" onclick="answer(this)">5 молекул углекислого газа</button>
+          <button class="opt" onclick="answer(this)">5 атомов углерода и 2 атома кислорода</button>
+          <button class="opt" onclick="answer(this)">молекулу с 5 атомами</button>
+        </div>
+        <p class="q-explain">Цифра перед формулой — коэффициент, указывает количество молекул.</p>
+      </div>
+
+      <div class="q-card" data-correct="2">
+        <p class="q-num">Вопрос 5</p>
+        <p class="q-text">Mr(H₂SO₄) = ? (Ar: H=1, S=32, O=16)</p>
+        <div class="opts">
+          <button class="opt" onclick="answer(this)">80</button>
+          <button class="opt" onclick="answer(this)">66</button>
+          <button class="opt" onclick="answer(this)">98</button>
+          <button class="opt" onclick="answer(this)">96</button>
+        </div>
+        <p class="q-explain">2·1 + 32 + 4·16 = 2 + 32 + 64 = 98.</p>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══ QUIZ 8 ══ -->
+  <div id="quiz8" class="section">
+    <div class="quiz-header">
+      <span class="quiz-title">Тест: §8 · Валентность</span>
+    </div>
+    <div class="score-box" style="margin-bottom:16px;">
+      <span class="score-lbl">Правильных ответов:</span>
+      <span class="score-n" id="sc8">0 / 5</span>
+      <button class="reset-btn" onclick="resetQuiz('q8','sc8')">
+        <svg class="icon" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+        Сбросить
+      </button>
+    </div>
+    <div class="quiz-block" id="q8">
+
+      <div class="q-card" data-correct="1">
+        <p class="q-num">Вопрос 1</p>
+        <p class="q-text">Валентность кислорода в большинстве соединений:</p>
+        <div class="opts">
+          <button class="opt" onclick="answer(this)">I</button>
+          <button class="opt" onclick="answer(this)">II</button>
+          <button class="opt" onclick="answer(this)">III</button>
+          <button class="opt" onclick="answer(this)">IV</button>
+        </div>
+        <p class="q-explain">Кислород проявляет постоянную валентность II — это важно запомнить, она используется для определения валентности других элементов.</p>
+      </div>
+
+      <div class="q-card" data-correct="2">
+        <p class="q-num">Вопрос 2</p>
+        <p class="q-text">Определите валентность серы в SO₃:</p>
+        <div class="opts">
+          <button class="opt" onclick="answer(this)">II</button>
+          <button class="opt" onclick="answer(this)">IV</button>
+          <button class="opt" onclick="answer(this)">VI</button>
+          <button class="opt" onclick="answer(this)">III</button>
+        </div>
+        <p class="q-explain">В SO₃: 3 атома O с валентностью II, всего 3·2=6 связей. Они все на 1 атом S, значит V(S) = 6 = VI.</p>
+      </div>
+
+      <div class="q-card" data-correct="0">
+        <p class="q-num">Вопрос 3</p>
+        <p class="q-text">Формула оксида алюминия (V(Al)=III, V(O)=II):</p>
+        <div class="opts">
+          <button class="opt" onclick="answer(this)">Al₂O₃</button>
+          <button class="opt" onclick="answer(this)">AlO</button>
+          <button class="opt" onclick="answer(this)">AlO₃</button>
+          <button class="opt" onclick="answer(this)">Al₃O₂</button>
+        </div>
+        <p class="q-explain">НОК(3,2)=6. Индекс Al = 6÷3 = 2, индекс O = 6÷2 = 3. Формула: Al₂O₃.</p>
+      </div>
+
+      <div class="q-card" data-correct="3">
+        <p class="q-num">Вопрос 4</p>
+        <p class="q-text">Название вещества Cu₂O:</p>
+        <div class="opts">
+          <button class="opt" onclick="answer(this)">оксид меди(II)</button>
+          <button class="opt" onclick="answer(this)">оксид меди</button>
+          <button class="opt" onclick="answer(this)">диоксид меди</button>
+          <button class="opt" onclick="answer(this)">оксид меди(I)</button>
+        </div>
+        <p class="q-explain">Cu₂O: V(O)=II, 2 атома Cu несут суммарно 2 связи, значит на каждый Cu приходится 1 — V(Cu)=I. Название: оксид меди(I).</p>
+      </div>
+
+      <div class="q-card" data-correct="1">
+        <p class="q-num">Вопрос 5</p>
+        <p class="q-text">Валентность азота в NH₃ равна:</p>
+        <div class="opts">
+          <button class="opt" onclick="answer(this)">I</button>
+          <button class="opt" onclick="answer(this)">III</button>
+          <button class="opt" onclick="answer(this)">II</button>
+          <button class="opt" onclick="answer(this)">V</button>
+        </div>
+        <p class="q-explain">В NH₃ один атом N соединён с 3 атомами H (каждый с валентностью I). Значит V(N) = 3 = III.</p>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+<script>
+function showTab(id, idx) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('show'));
+  document.getElementById(id).classList.add('show');
+  document.querySelectorAll('.tab-btn').forEach((b, i) => b.classList.toggle('active', i === idx));
+}
+
+function toggleAns(btn) {
+  const ans = btn.nextElementSibling;
+  const shown = ans.style.display === 'block';
+  ans.style.display = shown ? 'none' : 'block';
+  btn.innerHTML = shown
+    ? '<svg class="icon" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg> Ответ'
+    : '<svg class="icon" viewBox="0 0 24 24"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg> Скрыть';
+}
+
+const scores = { q5: 0, q7: 0, q8: 0 };
+
+function answer(btn) {
+  const card = btn.closest('.q-card');
+  if (card.classList.contains('done')) return;
+  card.classList.add('done');
+  const opts = card.querySelectorAll('.opt');
+  const correct = parseInt(card.dataset.correct);
+  const chosen = Array.from(opts).indexOf(btn);
+  opts[correct].classList.add('correct');
+  if (chosen !== correct) btn.classList.add('wrong');
+  opts.forEach(o => o.classList.add('done-opt'));
+  card.querySelector('.q-explain').style.display = 'block';
+  if (chosen === correct) {
+    const qid = card.closest('.quiz-block').id;
+    scores[qid]++;
+    const scMap = { q5: 'sc5', q7: 'sc7', q8: 'sc8' };
+    document.getElementById(scMap[qid]).textContent = scores[qid] + ' / 5';
+  }
+}
+
+function resetQuiz(qid, scId) {
+  scores[qid] = 0;
+  document.getElementById(scId).textContent = '0 / 5';
+  document.getElementById(qid).querySelectorAll('.q-card').forEach(card => {
+    card.classList.remove('done');
+    card.querySelectorAll('.opt').forEach(o => { o.classList.remove('correct', 'wrong', 'done-opt'); });
+    card.querySelector('.q-explain').style.display = 'none';
+  });
+}
+</script>
+</body>
+</html>

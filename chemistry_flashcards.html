@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Химические элементы — карточки</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #f5f4f0;
+    --surface: #ffffff;
+    --surface2: #f0efe9;
+    --border: rgba(0,0,0,0.10);
+    --border2: rgba(0,0,0,0.18);
+    --text: #1a1a18;
+    --text2: #6b6b67;
+    --text3: #999993;
+    --radius: 14px;
+    --radius-sm: 8px;
+    --shadow: 0 2px 12px rgba(0,0,0,0.08), 0 0 0 0.5px rgba(0,0,0,0.06);
+    --shadow-card: 0 8px 32px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.06);
+  }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 24px 16px 48px;
+  }
+
+  .page { max-width: 520px; margin: 0 auto; }
+
+  /* ── Header ── */
+  .header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 20px;
+  }
+  .header-left h1 {
+    font-size: 18px; font-weight: 600; color: var(--text); letter-spacing: -0.3px;
+  }
+  .header-left p {
+    font-size: 13px; color: var(--text2); margin-top: 2px;
+  }
+  .shuffle-btn {
+    display: flex; align-items: center; gap: 6px;
+    font-size: 13px; font-weight: 500; padding: 7px 14px;
+    border: 1px solid var(--border2); border-radius: var(--radius-sm);
+    background: var(--surface); color: var(--text2);
+    cursor: pointer; transition: background 0.15s, color 0.15s;
+  }
+  .shuffle-btn:hover { background: var(--surface2); color: var(--text); }
+
+  /* ── Mode tabs ── */
+  .mode-row {
+    display: flex; gap: 4px; background: var(--surface2);
+    border-radius: var(--radius-sm); padding: 4px;
+    margin-bottom: 16px;
+  }
+  .mode-btn {
+    flex: 1; font-size: 12px; font-weight: 500; padding: 7px 8px;
+    border: none; border-radius: 6px; background: transparent;
+    color: var(--text2); cursor: pointer; transition: all 0.15s;
+    white-space: nowrap;
+  }
+  .mode-btn.active {
+    background: var(--surface);
+    color: var(--text);
+    box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+  }
+
+  /* ── Group filters ── */
+  .filter-row { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 16px; }
+  .filter-tag {
+    font-size: 11px; font-weight: 500; padding: 4px 10px;
+    border-radius: 100px; cursor: pointer;
+    border: 1.5px solid transparent;
+    transition: opacity 0.15s, transform 0.1s;
+  }
+  .filter-tag:active { transform: scale(0.96); }
+  .filter-tag.off { opacity: 0.35; }
+
+  /* ── Stats ── */
+  .stats-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 14px; }
+  .stat-box {
+    background: var(--surface); border-radius: var(--radius-sm);
+    border: 1px solid var(--border); padding: 10px 8px;
+    text-align: center;
+  }
+  .stat-n { font-size: 22px; font-weight: 600; }
+  .stat-l { font-size: 11px; color: var(--text3); margin-top: 2px; }
+
+  /* ── Progress ── */
+  .progress-wrap { margin-bottom: 20px; }
+  .progress-track {
+    height: 5px; background: var(--border); border-radius: 3px; overflow: hidden;
+  }
+  .progress-fill { height: 100%; border-radius: 3px; transition: width 0.4s ease; width: 0%; }
+  .progress-label { font-size: 11px; color: var(--text3); margin-top: 5px; text-align: right; }
+
+  /* ── Flashcard (flip) ── */
+  .card-scene { perspective: 900px; margin-bottom: 16px; }
+  .card-flipper {
+    position: relative; width: 100%; min-height: 240px;
+    transform-style: preserve-3d;
+    transition: transform 0.45s cubic-bezier(0.4,0,0.2,1);
+    cursor: pointer;
+  }
+  .card-flipper.flipped { transform: rotateY(180deg); }
+
+  .card-face {
+    position: absolute; top: 0; left: 0; right: 0;
+    min-height: 240px;
+    backface-visibility: hidden; -webkit-backface-visibility: hidden;
+    border-radius: var(--radius);
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    text-align: center; padding: 2rem 1.5rem;
+    box-shadow: var(--shadow-card);
+  }
+  .card-front { background: var(--surface); border: 1px solid var(--border); }
+  .card-back { transform: rotateY(180deg); border: 1px solid var(--border); }
+
+  .card-hint {
+    font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase;
+    color: var(--text3); margin-bottom: 1rem;
+  }
+  .card-symbol-big {
+    font-size: 72px; font-weight: 700; line-height: 1;
+    letter-spacing: -2px;
+  }
+  .card-num-small { font-size: 13px; color: var(--text2); margin-top: 6px; }
+  .card-name-big { font-size: 30px; font-weight: 600; }
+
+  /* back face content */
+  .back-symbol { font-size: 52px; font-weight: 700; line-height: 1; }
+  .back-name { font-size: 20px; font-weight: 600; margin-top: 10px; }
+  .back-detail { font-size: 13px; color: var(--text2); margin-top: 8px; line-height: 1.7; }
+  .back-badge {
+    display: inline-block; margin-top: 12px;
+    font-size: 11px; font-weight: 600; padding: 4px 12px;
+    border-radius: 100px;
+  }
+
+  /* ── Answer buttons ── */
+  .reveal-row { display: flex; gap: 10px; justify-content: center; margin-bottom: 14px; }
+  .answer-btn {
+    flex: 1; max-width: 180px;
+    display: flex; align-items: center; justify-content: center; gap: 6px;
+    padding: 10px 16px; font-size: 13px; font-weight: 500;
+    border: 1.5px solid var(--border2); border-radius: var(--radius-sm);
+    cursor: pointer; background: var(--surface);
+    color: var(--text2); transition: all 0.15s;
+  }
+  .answer-btn:active { transform: scale(0.97); }
+  .answer-btn.wrong {
+    background: #FEF2F2; color: #A32D2D; border-color: #F0ABAB;
+  }
+  .answer-btn.wrong:hover { background: #FEE2E2; }
+  .answer-btn.correct {
+    background: #F0FDF4; color: #1A6B3A; border-color: #86EFAC;
+  }
+  .answer-btn.correct:hover { background: #DCFCE7; }
+
+  /* ── Nav ── */
+  .nav-row {
+    display: flex; align-items: center; justify-content: space-between; gap: 8px;
+    margin-bottom: 20px;
+  }
+  .nav-btn {
+    display: flex; align-items: center; gap: 6px;
+    padding: 9px 18px; font-size: 13px; font-weight: 500;
+    border: 1px solid var(--border2); border-radius: var(--radius-sm);
+    cursor: pointer; background: var(--surface); color: var(--text);
+    transition: background 0.15s;
+  }
+  .nav-btn:hover { background: var(--surface2); }
+  .nav-btn:disabled { opacity: 0.3; cursor: default; }
+  .card-counter { font-size: 13px; color: var(--text2); }
+
+  /* ── Group legend ── */
+  .legend {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 16px;
+  }
+  .legend-title { font-size: 12px; font-weight: 600; color: var(--text2); margin-bottom: 10px; letter-spacing: 0.04em; text-transform: uppercase; }
+  .legend-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+  .legend-item { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--text2); }
+  .legend-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+
+  /* SVG icon mini */
+
+  /* ── Back link ── */
+  .back-link {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 12px; color: var(--text3);
+    text-decoration: none; margin-bottom: 16px;
+    padding: 5px 0;
+    transition: color 0.15s;
+  }
+  .back-link:hover { color: var(--text2); }
+  .back-link svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+
+  svg.icon { width: 15px; height: 15px; vertical-align: -2px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <a href="index.html" class="back-link">
+    <svg viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></svg>
+    Главное меню
+  </a>
+
+  <div class="header">
+    <div class="header-left">
+      <h1>⚗️ Химические элементы</h1>
+      <p>Первые 20 элементов таблицы Менделеева</p>
+    </div>
+    <button class="shuffle-btn" id="shuffleBtn">
+      <svg class="icon" viewBox="0 0 24 24"><path d="M16 3h5v5M4 20 21 3M21 16v5h-5M15 15l6 6M4 4l5 5"/></svg>
+      Перемешать
+    </button>
+  </div>
+
+  <div class="mode-row">
+    <button class="mode-btn active" id="modeSymbol">Символ → Название</button>
+    <button class="mode-btn" id="modeName">Название → Символ</button>
+    <button class="mode-btn" id="modeNumber">Номер → Элемент</button>
+  </div>
+
+  <div class="filter-row" id="filterRow"></div>
+
+  <div class="stats-row">
+    <div class="stat-box">
+      <div class="stat-n" id="statTotal">20</div>
+      <div class="stat-l">всего</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-n" id="statCorrect" style="color:#1A6B3A">0</div>
+      <div class="stat-l">знаю ✓</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-n" id="statWrong" style="color:#A32D2D">0</div>
+      <div class="stat-l">учу ✗</div>
+    </div>
+  </div>
+
+  <div class="progress-wrap">
+    <div class="progress-track">
+      <div class="progress-fill" id="progressFill"></div>
+    </div>
+    <div class="progress-label" id="progressLabel">0%</div>
+  </div>
+
+  <div class="card-scene">
+    <div class="card-flipper" id="cardFlipper">
+      <div class="card-face card-front" id="cardFrontFace">
+        <div class="card-hint" id="cardHint">нажмите, чтобы перевернуть</div>
+        <div id="cardFrontContent"></div>
+      </div>
+      <div class="card-face card-back" id="cardBackFace">
+        <div id="cardBackContent"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="reveal-row" id="revealRow" style="display:none;">
+    <button class="answer-btn wrong" id="btnWrong">
+      <svg class="icon" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg>
+      Не знал
+    </button>
+    <button class="answer-btn correct" id="btnCorrect">
+      <svg class="icon" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+      Знал
+    </button>
+  </div>
+
+  <div class="nav-row">
+    <button class="nav-btn" id="prevBtn" disabled>
+      <svg class="icon" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></svg>
+      Назад
+    </button>
+    <span class="card-counter" id="cardCounter">1 / 20</span>
+    <button class="nav-btn" id="nextBtn">
+      Вперёд
+      <svg class="icon" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg>
+    </button>
+  </div>
+
+  <div class="legend">
+    <div class="legend-title">Группы элементов</div>
+    <div class="legend-grid" id="legendGrid"></div>
+  </div>
+
+</div>
+
+<script>
+const elements = [
+  {num:1,  sym:"H",  name:"Водород",   mass:"1,008",  group:"Неметалл"},
+  {num:2,  sym:"He", name:"Гелий",     mass:"4,003",  group:"Благородный газ"},
+  {num:3,  sym:"Li", name:"Литий",     mass:"6,941",  group:"Щелочной металл"},
+  {num:4,  sym:"Be", name:"Бериллий",  mass:"9,012",  group:"Щёлочноземельный"},
+  {num:5,  sym:"B",  name:"Бор",       mass:"10,811", group:"Металлоид"},
+  {num:6,  sym:"C",  name:"Углерод",   mass:"12,011", group:"Неметалл"},
+  {num:7,  sym:"N",  name:"Азот",      mass:"14,007", group:"Неметалл"},
+  {num:8,  sym:"O",  name:"Кислород",  mass:"15,999", group:"Неметалл"},
+  {num:9,  sym:"F",  name:"Фтор",      mass:"18,998", group:"Галоген"},
+  {num:10, sym:"Ne", name:"Неон",      mass:"20,180", group:"Благородный газ"},
+  {num:11, sym:"Na", name:"Натрий",    mass:"22,990", group:"Щелочной металл"},
+  {num:12, sym:"Mg", name:"Магний",    mass:"24,305", group:"Щёлочноземельный"},
+  {num:13, sym:"Al", name:"Алюминий",  mass:"26,982", group:"Металл"},
+  {num:14, sym:"Si", name:"Кремний",   mass:"28,086", group:"Металлоид"},
+  {num:15, sym:"P",  name:"Фосфор",    mass:"30,974", group:"Неметалл"},
+  {num:16, sym:"S",  name:"Сера",      mass:"32,065", group:"Неметалл"},
+  {num:17, sym:"Cl", name:"Хлор",      mass:"35,453", group:"Галоген"},
+  {num:18, sym:"Ar", name:"Аргон",     mass:"39,948", group:"Благородный газ"},
+  {num:19, sym:"K",  name:"Калий",     mass:"39,098", group:"Щелочной металл"},
+  {num:20, sym:"Ca", name:"Кальций",   mass:"40,078", group:"Щёлочноземельный"}
+];
+
+/* Each group: [cardBg, cardBorder, symbolColor, badgeBg, badgeText, dotColor, progressColor] */
+const groupStyles = {
+  "Неметалл":         { bg:"#E8F9F2", border:"#7DD4B0", sym:"#0B6B52", bbg:"#B5EACD", btxt:"#064D38", dot:"#1D9E75", prog:"#1D9E75" },
+  "Благородный газ":  { bg:"#EEEDFE", border:"#AFA9EC", sym:"#3C3489", bbg:"#CECBF6", btxt:"#26215C", dot:"#7F77DD", prog:"#7F77DD" },
+  "Щелочной металл":  { bg:"#FEF2EC", border:"#F5A882", sym:"#993C1D", bbg:"#F5C4B3", btxt:"#712B13", dot:"#D85A30", prog:"#D85A30" },
+  "Щёлочноземельный": { bg:"#FEF7EC", border:"#FAC775", sym:"#633806", bbg:"#FAC775", btxt:"#412402", dot:"#EF9F27", prog:"#EF9F27" },
+  "Галоген":          { bg:"#FEF0F5", border:"#ED93B1", sym:"#72243E", bbg:"#F4C0D1", btxt:"#4B1528", dot:"#D4537E", prog:"#D4537E" },
+  "Металлоид":        { bg:"#EBF4FE", border:"#85B7EB", sym:"#0C447C", bbg:"#B5D4F4", btxt:"#042C53", dot:"#378ADD", prog:"#378ADD" },
+  "Металл":           { bg:"#EEF7E2", border:"#97C459", sym:"#27500A", bbg:"#C0DD97", btxt:"#173404", dot:"#639922", prog:"#639922" }
+};
+
+const defaultStyle = { bg:"#F5F4F0", border:"#D3D1C7", sym:"#444441", bbg:"#D3D1C7", btxt:"#2C2C2A", dot:"#888780", prog:"#888780" };
+
+const allGroups = [...new Set(elements.map(e => e.group))];
+let activeGroups = new Set(allGroups);
+let deck = [...elements];
+let idx = 0, flipped = false, correct = 0, wrong = 0;
+let mode = "symbol";
+let answered = new Set();
+
+/* ── Build filter tags ── */
+const filterRow = document.getElementById("filterRow");
+allGroups.forEach(g => {
+  const st = groupStyles[g] || defaultStyle;
+  const t = document.createElement("button");
+  t.className = "filter-tag";
+  t.textContent = g;
+  t.style.background = st.bbg;
+  t.style.color = st.btxt;
+  t.style.borderColor = st.border;
+  t.onclick = () => {
+    if (activeGroups.has(g)) {
+      if (activeGroups.size > 1) { activeGroups.delete(g); t.classList.add("off"); }
+    } else { activeGroups.add(g); t.classList.remove("off"); }
+    rebuildDeck();
+  };
+  filterRow.appendChild(t);
+});
+
+/* ── Legend ── */
+const legendGrid = document.getElementById("legendGrid");
+allGroups.forEach(g => {
+  const st = groupStyles[g] || defaultStyle;
+  legendGrid.innerHTML += `<div class="legend-item"><span class="legend-dot" style="background:${st.dot}"></span>${g}</div>`;
+});
+
+/* ── Deck helpers ── */
+function rebuildDeck() {
+  deck = elements.filter(e => activeGroups.has(e.group));
+  idx = 0; correct = 0; wrong = 0; answered.clear();
+  document.getElementById("statTotal").textContent = deck.length;
+  updateStats(); render();
+}
+function shuffle(a) { for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; }
+
+document.getElementById("shuffleBtn").onclick = () => { shuffle(deck); idx=0; flipped=false; correct=0; wrong=0; answered.clear(); updateStats(); render(); };
+document.getElementById("modeSymbol").onclick = () => setMode("symbol");
+document.getElementById("modeName").onclick  = () => setMode("name");
+document.getElementById("modeNumber").onclick = () => setMode("number");
+
+function setMode(m) {
+  mode = m; idx=0; flipped=false; correct=0; wrong=0; answered.clear();
+  ["modeSymbol","modeName","modeNumber"].forEach(id => document.getElementById(id).classList.remove("active"));
+  document.getElementById(m==="symbol"?"modeSymbol":m==="name"?"modeName":"modeNumber").classList.add("active");
+  updateStats(); render();
+}
+
+function updateStats() {
+  document.getElementById("statCorrect").textContent = correct;
+  document.getElementById("statWrong").textContent = wrong;
+  const pct = deck.length ? Math.round(answered.size / deck.length * 100) : 0;
+  const st = groupStyles[deck[idx]?.group] || defaultStyle;
+  document.getElementById("progressFill").style.width = pct + "%";
+  document.getElementById("progressFill").style.background = st.prog;
+  document.getElementById("progressLabel").textContent = pct + "%";
+}
+
+function render() {
+  if (!deck.length) return;
+  const el = deck[idx];
+  const st = groupStyles[el.group] || defaultStyle;
+  flipped = false;
+
+  /* reset flip */
+  const flipper = document.getElementById("cardFlipper");
+  flipper.classList.remove("flipped");
+
+  /* style front card */
+  const front = document.getElementById("cardFrontFace");
+  front.style.background = st.bg;
+  front.style.borderColor = st.border;
+
+  /* style back card */
+  const back = document.getElementById("cardBackFace");
+  back.style.background = st.bg;
+  back.style.borderColor = st.border;
+
+  document.getElementById("cardHint").textContent = "нажмите, чтобы перевернуть";
+  document.getElementById("revealRow").style.display = "none";
+
+  /* front content */
+  const fc = document.getElementById("cardFrontContent");
+  if (mode === "symbol") {
+    fc.innerHTML = `<div class="card-symbol-big" style="color:${st.sym}">${el.sym}</div><div class="card-num-small">Порядковый номер: ${el.num}</div>`;
+  } else if (mode === "name") {
+    fc.innerHTML = `<div class="card-name-big" style="color:${st.sym}">${el.name}</div><div class="card-num-small">Найди символ и номер</div>`;
+  } else {
+    fc.innerHTML = `<div style="font-size:64px;font-weight:700;color:${st.sym};line-height:1;">${el.num}</div><div class="card-num-small">Порядковый номер — какой элемент?</div>`;
+  }
+
+  /* back content */
+  document.getElementById("cardBackContent").innerHTML = `
+    <div class="back-symbol" style="color:${st.sym}">${el.sym}</div>
+    <div class="back-name">${el.name}</div>
+    <div class="back-detail">Порядковый номер: <strong>${el.num}</strong><br>Атомная масса: <strong>${el.mass}</strong></div>
+    <span class="back-badge" style="background:${st.bbg};color:${st.btxt};">${el.group}</span>
+  `;
+
+  document.getElementById("cardCounter").textContent = `${idx + 1} / ${deck.length}`;
+  document.getElementById("prevBtn").disabled = idx === 0;
+  document.getElementById("nextBtn").disabled = idx === deck.length - 1;
+  updateStats();
+}
+
+/* Flip on click */
+document.getElementById("cardFlipper").onclick = () => {
+  if (flipped) return;
+  flipped = true;
+  document.getElementById("cardFlipper").classList.add("flipped");
+  document.getElementById("cardHint").textContent = "";
+  if (!answered.has(idx)) document.getElementById("revealRow").style.display = "flex";
+};
+
+/* Flip card back, then after animation run callback */
+const FLIP_DURATION = 460; // ms — matches CSS transition 0.45s
+function flipBackThen(callback) {
+  if (!flipped) { callback(); return; }
+  const flipper = document.getElementById("cardFlipper");
+  document.getElementById("revealRow").style.display = "none";
+  flipped = false;
+  flipper.classList.remove("flipped");
+  setTimeout(callback, FLIP_DURATION);
+}
+
+document.getElementById("btnCorrect").onclick = () => {
+  if (!answered.has(idx)) { answered.add(idx); correct++; }
+  updateStats();
+  flipBackThen(() => { if (idx < deck.length - 1) { idx++; render(); } });
+};
+document.getElementById("btnWrong").onclick = () => {
+  if (!answered.has(idx)) { answered.add(idx); wrong++; }
+  updateStats();
+  flipBackThen(() => { if (idx < deck.length - 1) { idx++; render(); } });
+};
+
+document.getElementById("prevBtn").onclick = () => {
+  if (idx > 0) { flipBackThen(() => { idx--; render(); }); }
+};
+document.getElementById("nextBtn").onclick = () => {
+  if (idx < deck.length - 1) { flipBackThen(() => { idx++; render(); }); }
+};
+
+render();
+</script>
+</body>
+</html>
