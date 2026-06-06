@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Валентность — карточки</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #f5f4f0;
+    --surface: #ffffff;
+    --surface2: #f0efe9;
+    --border: rgba(0,0,0,0.10);
+    --border2: rgba(0,0,0,0.18);
+    --text: #1a1a18;
+    --text2: #6b6b67;
+    --text3: #999993;
+    --radius: 14px;
+    --radius-sm: 8px;
+    --shadow: 0 2px 12px rgba(0,0,0,0.08), 0 0 0 0.5px rgba(0,0,0,0.06);
+    --shadow-card: 0 8px 32px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.06);
+  }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 24px 16px 48px;
+  }
+
+  .page { max-width: 520px; margin: 0 auto; }
+
+  /* ── Header ── */
+  .header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 20px;
+  }
+  .header-left h1 { font-size: 18px; font-weight: 600; color: var(--text); letter-spacing: -0.3px; }
+  .header-left p  { font-size: 13px; color: var(--text2); margin-top: 2px; }
+  .shuffle-btn {
+    display: flex; align-items: center; gap: 6px;
+    font-size: 13px; font-weight: 500; padding: 7px 14px;
+    border: 1px solid var(--border2); border-radius: var(--radius-sm);
+    background: var(--surface); color: var(--text2);
+    cursor: pointer; transition: background 0.15s, color 0.15s;
+  }
+  .shuffle-btn:hover { background: var(--surface2); color: var(--text); }
+
+  /* ── Mode tabs ── */
+  .mode-row {
+    display: flex; gap: 4px; background: var(--surface2);
+    border-radius: var(--radius-sm); padding: 4px;
+    margin-bottom: 16px;
+  }
+  .mode-btn {
+    flex: 1; font-size: 12px; font-weight: 500; padding: 7px 6px;
+    border: none; border-radius: 6px; background: transparent;
+    color: var(--text2); cursor: pointer; transition: all 0.15s;
+    white-space: nowrap;
+  }
+  .mode-btn.active {
+    background: var(--surface); color: var(--text);
+    box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+  }
+
+  /* ── Group filters ── */
+  .filter-row { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 16px; }
+  .filter-tag {
+    font-size: 11px; font-weight: 500; padding: 4px 10px;
+    border-radius: 100px; cursor: pointer;
+    border: 1.5px solid transparent;
+    transition: opacity 0.15s, transform 0.1s;
+  }
+  .filter-tag:active { transform: scale(0.96); }
+  .filter-tag.off { opacity: 0.35; }
+
+  /* ── Stats ── */
+  .stats-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 14px; }
+  .stat-box {
+    background: var(--surface); border-radius: var(--radius-sm);
+    border: 1px solid var(--border); padding: 10px 8px;
+    text-align: center;
+  }
+  .stat-n { font-size: 22px; font-weight: 600; }
+  .stat-l { font-size: 11px; color: var(--text3); margin-top: 2px; }
+
+  /* ── Progress ── */
+  .progress-wrap { margin-bottom: 20px; }
+  .progress-track { height: 5px; background: var(--border); border-radius: 3px; overflow: hidden; }
+  .progress-fill { height: 100%; border-radius: 3px; transition: width 0.4s ease; width: 0%; background: #378ADD; }
+  .progress-label { font-size: 11px; color: var(--text3); margin-top: 5px; text-align: right; }
+
+  /* ── Flashcard (flip) ── */
+  .card-scene { perspective: 900px; margin-bottom: 16px; }
+  .card-flipper {
+    position: relative; width: 100%; min-height: 240px;
+    transform-style: preserve-3d;
+    transition: transform 0.42s cubic-bezier(0.4,0,0.2,1);
+    cursor: pointer;
+  }
+  .card-flipper.flipped { transform: rotateY(180deg); }
+
+  .card-face {
+    position: absolute; top: 0; left: 0; right: 0;
+    min-height: 240px;
+    backface-visibility: hidden; -webkit-backface-visibility: hidden;
+    border-radius: var(--radius);
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    text-align: center; padding: 2rem 1.5rem;
+    box-shadow: var(--shadow-card);
+    border: 1px solid var(--border);
+  }
+  .card-back-face { transform: rotateY(180deg); }
+
+  .card-hint {
+    font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase;
+    color: var(--text3); margin-bottom: 1rem;
+  }
+
+  /* front content */
+  .f-formula {
+    font-size: 60px; font-weight: 700; line-height: 1;
+    font-family: "SFMono-Regular", "Consolas", "Liberation Mono", monospace;
+    letter-spacing: -1px;
+  }
+  .f-sub { font-size: 13px; color: var(--text2); margin-top: 8px; }
+  .f-name-big { font-size: 28px; font-weight: 600; }
+
+  /* back content */
+  .b-formula {
+    font-size: 42px; font-weight: 700; line-height: 1;
+    font-family: "SFMono-Regular", "Consolas", "Liberation Mono", monospace;
+  }
+  .b-name { font-size: 18px; font-weight: 600; margin-top: 8px; }
+  .b-vals { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-top: 14px; }
+  .val-chip {
+    font-size: 13px; padding: 5px 13px; border-radius: 100px;
+    display: flex; align-items: center; gap: 5px;
+    border: 1.5px solid transparent;
+  }
+  .val-sym { font-weight: 700; font-family: "SFMono-Regular", "Consolas", monospace; }
+  .val-eq { opacity: 0.5; }
+  .val-num { font-weight: 700; }
+  .b-rule {
+    font-size: 12px; line-height: 1.6;
+    margin-top: 10px; max-width: 270px;
+    padding: 8px 12px; border-radius: 8px;
+    background: rgba(0,0,0,0.05);
+  }
+
+  /* const mode */
+  .const-sym {
+    font-size: 64px; font-weight: 700; line-height: 1;
+    font-family: "SFMono-Regular", "Consolas", "Liberation Mono", monospace;
+  }
+  .const-label { font-size: 13px; margin-top: 8px; opacity: 0.7; }
+  .const-val-badge {
+    font-size: 24px; font-weight: 700; padding: 7px 22px;
+    border-radius: 100px; margin-top: 14px; display: inline-block;
+  }
+  .const-note { font-size: 12px; margin-top: 10px; opacity: 0.75; line-height: 1.5; max-width: 250px; }
+  .const-type-badge {
+    font-size: 11px; font-weight: 600; padding: 3px 12px;
+    border-radius: 100px; margin-top: 10px; display: inline-block;
+  }
+
+  /* ── Answer buttons ── */
+  .reveal-row { display: flex; gap: 10px; justify-content: center; margin-bottom: 14px; }
+  .answer-btn {
+    flex: 1; max-width: 180px;
+    display: flex; align-items: center; justify-content: center; gap: 6px;
+    padding: 10px 16px; font-size: 13px; font-weight: 500;
+    border: 1.5px solid var(--border2); border-radius: var(--radius-sm);
+    cursor: pointer; background: var(--surface); color: var(--text2);
+    transition: all 0.15s;
+  }
+  .answer-btn:active { transform: scale(0.97); }
+  .answer-btn.wrong  { background: #FEF2F2; color: #A32D2D; border-color: #F0ABAB; }
+  .answer-btn.wrong:hover  { background: #FEE2E2; }
+  .answer-btn.correct { background: #F0FDF4; color: #1A6B3A; border-color: #86EFAC; }
+  .answer-btn.correct:hover { background: #DCFCE7; }
+
+  /* ── Nav ── */
+  .nav-row {
+    display: flex; align-items: center; justify-content: space-between; gap: 8px;
+    margin-bottom: 20px;
+  }
+  .nav-btn {
+    display: flex; align-items: center; gap: 6px;
+    padding: 9px 18px; font-size: 13px; font-weight: 500;
+    border: 1px solid var(--border2); border-radius: var(--radius-sm);
+    cursor: pointer; background: var(--surface); color: var(--text);
+    transition: background 0.15s;
+  }
+  .nav-btn:hover { background: var(--surface2); }
+  .nav-btn:disabled { opacity: 0.3; cursor: default; }
+  .card-counter { font-size: 13px; color: var(--text2); }
+
+  /* ── Legend ── */
+  .legend {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 16px;
+  }
+  .legend-title {
+    font-size: 12px; font-weight: 600; color: var(--text2);
+    margin-bottom: 10px; letter-spacing: 0.04em; text-transform: uppercase;
+  }
+  .legend-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+  .legend-item { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--text2); }
+  .legend-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+
+
+  /* ── Back link ── */
+  .back-link {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 12px; color: var(--text2);
+    text-decoration: none; margin-bottom: 16px;
+    padding: 5px 0;
+    transition: color 0.15s;
+  }
+  .back-link:hover { color: var(--text); }
+  .back-link svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+
+  svg.icon {
+    width: 15px; height: 15px; vertical-align: -2px;
+    fill: none; stroke: currentColor; stroke-width: 1.8;
+    stroke-linecap: round; stroke-linejoin: round;
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <a href="index.html" class="back-link">
+    <svg viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></svg>
+    Главное меню
+  </a>
+
+  <div class="header">
+    <div class="header-left">
+      <h1>⚗️ Валентность — карточки</h1>
+      <p>§8 · Определение валентности и составление формул</p>
+    </div>
+    <button class="shuffle-btn" id="shuffleBtn">
+      <svg class="icon" viewBox="0 0 24 24"><path d="M16 3h5v5M4 20 21 3M21 16v5h-5M15 15l6 6M4 4l5 5"/></svg>
+      Перемешать
+    </button>
+  </div>
+
+  <div class="mode-row">
+    <button class="mode-btn active" id="m1" onclick="setMode('formula')">Формула → Валентности</button>
+    <button class="mode-btn" id="m2" onclick="setMode('name')">Название → Формула</button>
+    <button class="mode-btn" id="m3" onclick="setMode('const')">Постоянные</button>
+  </div>
+
+  <div class="filter-row" id="filterRow"></div>
+
+  <div class="stats-row">
+    <div class="stat-box">
+      <div class="stat-n" id="stTotal">0</div>
+      <div class="stat-l">всего</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-n" id="stOk" style="color:#1A6B3A">0</div>
+      <div class="stat-l">знаю ✓</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-n" id="stNo" style="color:#A32D2D">0</div>
+      <div class="stat-l">учу ✗</div>
+    </div>
+  </div>
+
+  <div class="progress-wrap">
+    <div class="progress-track">
+      <div class="progress-fill" id="progFill"></div>
+    </div>
+    <div class="progress-label" id="progLabel">0%</div>
+  </div>
+
+  <div class="card-scene">
+    <div class="card-flipper" id="cardFlipper">
+      <div class="card-face card-front-face" id="fFront">
+        <div class="card-hint" id="fHint">нажмите, чтобы перевернуть</div>
+        <div id="fContent"></div>
+      </div>
+      <div class="card-face card-back-face" id="fBack">
+        <div id="bContent"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="reveal-row" id="revealRow" style="display:none;">
+    <button class="answer-btn wrong" id="btnNo">
+      <svg class="icon" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg>
+      Не знал
+    </button>
+    <button class="answer-btn correct" id="btnOk">
+      <svg class="icon" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+      Знал
+    </button>
+  </div>
+
+  <div class="nav-row">
+    <button class="nav-btn" id="prevBtn" disabled>
+      <svg class="icon" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></svg>
+      Назад
+    </button>
+    <span class="card-counter" id="counter">1 / 0</span>
+    <button class="nav-btn" id="nextBtn">
+      Вперёд
+      <svg class="icon" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg>
+    </button>
+  </div>
+
+  <div class="legend" id="legendBox">
+    <div class="legend-title">Группы соединений</div>
+    <div class="legend-grid" id="legendGrid"></div>
+  </div>
+
+</div>
+
+<script>
+const FLIP_MS = 420;
+
+/* ── colour palette per group ── */
+const groupStyles = {
+  "Оксиды":     { bg:"#EBF4FE", border:"#85B7EB", sym:"#0C447C", bbg:"#B5D4F4", btxt:"#042C53", dot:"#378ADD" },
+  "Галогениды": { bg:"#FEF0F5", border:"#ED93B1", sym:"#72243E", bbg:"#F4C0D1", btxt:"#4B1528", dot:"#D4537E" },
+  "Прочие":     { bg:"#E8F9F2", border:"#7DD4B0", sym:"#0B6B52", bbg:"#B5EACD", btxt:"#064D38", dot:"#1D9E75" }
+};
+const constStyleAlways   = { bg:"#EEEDFE", border:"#AFA9EC", sym:"#26215C", bbg:"#CECBF6", btxt:"#26215C", vbg:"#CECBF6", tbg:"#AFA9EC" };
+const constStyleVariable = { bg:"#FEF7EC", border:"#FAC775", sym:"#412402", bbg:"#FAC775", btxt:"#412402", vbg:"#FAC775", tbg:"#EF9F27" };
+
+const compounds = [
+  {g:"Оксиды",  f:"H₂O",     n:"Вода",                   els:[{s:"H",v:"I"},{s:"O",v:"II"}],    r:"V(O)=II постоянная. V(H)=I постоянная."},
+  {g:"Оксиды",  f:"CO₂",     n:"Углекислый газ",          els:[{s:"C",v:"IV"},{s:"O",v:"II"}],   r:"2 O × II = 4. На 1 C → V(C)=IV."},
+  {g:"Оксиды",  f:"SO₂",     n:"Оксид серы(IV)",          els:[{s:"S",v:"IV"},{s:"O",v:"II"}],   r:"2 O × II = 4. На 1 S → V(S)=IV."},
+  {g:"Оксиды",  f:"SO₃",     n:"Оксид серы(VI)",          els:[{s:"S",v:"VI"},{s:"O",v:"II"}],   r:"3 O × II = 6. На 1 S → V(S)=VI."},
+  {g:"Оксиды",  f:"N₂O₃",    n:"Оксид азота(III)",        els:[{s:"N",v:"III"},{s:"O",v:"II"}],  r:"3 O × II = 6. На 2 N → V(N)=6÷2=III."},
+  {g:"Оксиды",  f:"Fe₂O₃",   n:"Оксид железа(III)",       els:[{s:"Fe",v:"III"},{s:"O",v:"II"}], r:"3 O × II = 6. На 2 Fe → V(Fe)=6÷2=III."},
+  {g:"Оксиды",  f:"MnO₂",    n:"Оксид марганца(IV)",      els:[{s:"Mn",v:"IV"},{s:"O",v:"II"}],  r:"2 O × II = 4. На 1 Mn → V(Mn)=IV."},
+  {g:"Оксиды",  f:"Al₂O₃",   n:"Оксид алюминия",          els:[{s:"Al",v:"III"},{s:"O",v:"II"}], r:"3 O × II = 6. На 2 Al → V(Al)=6÷2=III."},
+  {g:"Оксиды",  f:"Cu₂O",    n:"Оксид меди(I)",           els:[{s:"Cu",v:"I"},{s:"O",v:"II"}],   r:"1 O × II = 2. На 2 Cu → V(Cu)=2÷2=I."},
+  {g:"Оксиды",  f:"CuO",     n:"Оксид меди(II)",          els:[{s:"Cu",v:"II"},{s:"O",v:"II"}],  r:"1 O × II = 2. На 1 Cu → V(Cu)=II."},
+  {g:"Галогениды",f:"NaCl",  n:"Хлорид натрия",           els:[{s:"Na",v:"I"},{s:"Cl",v:"I"}],   r:"V(Cl)=I, V(Na)=I постоянные."},
+  {g:"Галогениды",f:"CaCl₂", n:"Хлорид кальция",          els:[{s:"Ca",v:"II"},{s:"Cl",v:"I"}],  r:"2 Cl × I = 2. На 1 Ca → V(Ca)=II."},
+  {g:"Галогениды",f:"AlCl₃", n:"Хлорид алюминия",         els:[{s:"Al",v:"III"},{s:"Cl",v:"I"}], r:"3 Cl × I = 3. На 1 Al → V(Al)=III."},
+  {g:"Галогениды",f:"PCl₃",  n:"Хлорид фосфора(III)",     els:[{s:"P",v:"III"},{s:"Cl",v:"I"}],  r:"3 Cl × I = 3. На 1 P → V(P)=III."},
+  {g:"Галогениды",f:"PCl₅",  n:"Хлорид фосфора(V)",       els:[{s:"P",v:"V"},{s:"Cl",v:"I"}],    r:"5 Cl × I = 5. На 1 P → V(P)=V."},
+  {g:"Галогениды",f:"FeCl₃", n:"Хлорид железа(III)",      els:[{s:"Fe",v:"III"},{s:"Cl",v:"I"}], r:"3 Cl × I = 3. На 1 Fe → V(Fe)=III."},
+  {g:"Прочие",  f:"NH₃",     n:"Аммиак",                  els:[{s:"N",v:"III"},{s:"H",v:"I"}],   r:"3 H × I = 3. На 1 N → V(N)=III."},
+  {g:"Прочие",  f:"CH₄",     n:"Метан",                   els:[{s:"C",v:"IV"},{s:"H",v:"I"}],    r:"4 H × I = 4. На 1 C → V(C)=IV."},
+  {g:"Прочие",  f:"CS₂",     n:"Сульфид углерода",        els:[{s:"C",v:"IV"},{s:"S",v:"II"}],   r:"2 S × II = 4. На 1 C → V(C)=IV."},
+  {g:"Прочие",  f:"KCl",     n:"Хлорид калия",            els:[{s:"K",v:"I"},{s:"Cl",v:"I"}],    r:"V(K)=I, V(Cl)=I постоянные."},
+  {g:"Прочие",  f:"H₂SO₄",   n:"Серная кислота",          els:[{s:"H",v:"I"},{s:"S",v:"VI"},{s:"O",v:"II"}], r:"2H×I + S×? + 4O×II = 0. S=VI."},
+  {g:"Прочие",  f:"Ca(OH)₂", n:"Гидроксид кальция",       els:[{s:"Ca",v:"II"},{s:"O",v:"II"},{s:"H",v:"I"}],r:"V(Ca)=II постоянная. ОН — группа с валентностью I."},
+];
+
+const constVals = [
+  {sym:"H",  val:"I",        full:"Водород",   always:true,  note:"В большинстве соединений (кроме гидридов металлов)"},
+  {sym:"O",  val:"II",       full:"Кислород",  always:true,  note:"Постоянная в подавляющем большинстве соединений"},
+  {sym:"F",  val:"I",        full:"Фтор",      always:true,  note:"Строго постоянная — самый сильный неметалл"},
+  {sym:"Na", val:"I",        full:"Натрий",    always:true,  note:"Щелочной металл — всегда I"},
+  {sym:"K",  val:"I",        full:"Калий",     always:true,  note:"Щелочной металл — всегда I"},
+  {sym:"Ca", val:"II",       full:"Кальций",   always:true,  note:"Щёлочноземельный металл — всегда II"},
+  {sym:"Mg", val:"II",       full:"Магний",    always:true,  note:"Щёлочноземельный металл — всегда II"},
+  {sym:"Al", val:"III",      full:"Алюминий",  always:true,  note:"Постоянная валентность III"},
+  {sym:"Cl", val:"I",        full:"Хлор",      always:false, note:"Чаще всего I, но бывает III, V, VII"},
+  {sym:"S",  val:"II/IV/VI", full:"Сера",      always:false, note:"Переменная: SO₂(IV), SO₃(VI), H₂S(II)"},
+  {sym:"N",  val:"III/V",    full:"Азот",      always:false, note:"Переменная: NH₃(III), N₂O₅(V)"},
+  {sym:"Fe", val:"II/III",   full:"Железо",    always:false, note:"Переменная: FeO(II), Fe₂O₃(III)"},
+  {sym:"Cu", val:"I/II",     full:"Медь",      always:false, note:"Переменная: Cu₂O(I), CuO(II)"},
+  {sym:"Mn", val:"II/IV/VII",full:"Марганец",  always:false, note:"Переменная: MnO(II), MnO₂(IV)"},
+  {sym:"P",  val:"III/V",    full:"Фосфор",    always:false, note:"Переменная: PCl₃(III), PCl₅(V)"},
+];
+
+const allGroups = [...new Set(compounds.map(c => c.g))];
+let activeGroups = new Set(allGroups);
+let deck = [], idx = 0, flipped = false, nOk = 0, nNo = 0, answered = new Set(), mode = "formula";
+let busy = false;
+
+/* ── Build filter tags ── */
+const filterRow = document.getElementById("filterRow");
+allGroups.forEach(g => {
+  const st = groupStyles[g];
+  const t = document.createElement("button");
+  t.className = "filter-tag";
+  t.textContent = g;
+  t.style.background = st.bbg;
+  t.style.color = st.btxt;
+  t.style.borderColor = st.border;
+  t.onclick = () => {
+    if (activeGroups.has(g)) {
+      if (activeGroups.size > 1) { activeGroups.delete(g); t.classList.add("off"); }
+    } else { activeGroups.add(g); t.classList.remove("off"); }
+    rebuild();
+  };
+  filterRow.appendChild(t);
+});
+
+/* ── Legend ── */
+const legendGrid = document.getElementById("legendGrid");
+allGroups.forEach(g => {
+  const st = groupStyles[g];
+  legendGrid.innerHTML += `<div class="legend-item"><span class="legend-dot" style="background:${st.dot}"></span>${g}</div>`;
+});
+legendGrid.innerHTML += `<div class="legend-item"><span class="legend-dot" style="background:#7F77DD"></span>Постоянная валентность</div>`;
+legendGrid.innerHTML += `<div class="legend-item"><span class="legend-dot" style="background:#EF9F27"></span>Переменная валентность</div>`;
+
+function rebuild() {
+  deck = mode === "const" ? [...constVals] : compounds.filter(c => activeGroups.has(c.g));
+  idx = 0; flipped = false; nOk = 0; nNo = 0; answered.clear(); busy = false;
+  document.getElementById("stTotal").textContent = deck.length;
+  document.getElementById("legendBox").style.display = mode === "const" ? "none" : "block";
+  updateStats(); render();
+}
+
+function shuffle(a) { for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; }
+document.getElementById("shuffleBtn").onclick = () => { shuffle(deck); idx=0; flipped=false; nOk=0; nNo=0; answered.clear(); busy=false; updateStats(); render(); };
+
+function setMode(m) {
+  mode = m;
+  ["m1","m2","m3"].forEach(id => document.getElementById(id).classList.remove("active"));
+  document.getElementById(m==="formula"?"m1":m==="name"?"m2":"m3").classList.add("active");
+  document.getElementById("filterRow").style.display = m === "const" ? "none" : "flex";
+  rebuild();
+}
+
+function updateStats() {
+  document.getElementById("stOk").textContent = nOk;
+  document.getElementById("stNo").textContent = nNo;
+  const pct = deck.length ? Math.round(answered.size / deck.length * 100) : 0;
+  document.getElementById("progFill").style.width = pct + "%";
+  document.getElementById("progLabel").textContent = pct + "%";
+}
+
+function renderContent() {
+  if (!deck.length) return;
+  const el = deck[idx];
+  document.getElementById("fHint").textContent = "нажмите, чтобы перевернуть";
+  document.getElementById("revealRow").style.display = "none";
+
+  const fFront = document.getElementById("fFront");
+  const fBack  = document.getElementById("fBack");
+  const front  = document.getElementById("fContent");
+  const back   = document.getElementById("bContent");
+
+  if (mode === "const") {
+    const st = el.always ? constStyleAlways : constStyleVariable;
+    fFront.style.background = st.bg; fFront.style.borderColor = st.border;
+    fBack.style.background  = st.bg; fBack.style.borderColor  = st.border;
+
+    front.innerHTML = `
+      <div class="const-sym" style="color:${st.sym}">${el.sym}</div>
+      <div class="const-label" style="color:${st.sym}">${el.full} — какая валентность?</div>`;
+
+    back.innerHTML = `
+      <div class="const-sym" style="font-size:48px;color:${st.sym}">${el.sym}</div>
+      <div style="font-size:20px;font-weight:600;color:${st.sym};margin-top:8px;">${el.full}</div>
+      <div class="const-val-badge" style="background:${st.vbg};color:${st.sym}">V = ${el.val}</div>
+      <div class="const-note" style="color:${st.sym}">${el.note}</div>
+      <span class="const-type-badge" style="background:${st.tbg};color:${st.sym}">${el.always ? "постоянная" : "переменная"}</span>`;
+  } else {
+    const st = groupStyles[el.g];
+    fFront.style.background = st.bg; fFront.style.borderColor = st.border;
+    fBack.style.background  = st.bg; fBack.style.borderColor  = st.border;
+
+    const chips = el.els.map(e =>
+      `<div class="val-chip" style="background:${st.bbg};border-color:${st.border};color:${st.sym}">
+        <span class="val-sym">${e.s}</span><span class="val-eq"> = </span><span class="val-num">${e.v}</span>
+      </div>`
+    ).join("");
+
+    if (mode === "formula") {
+      front.innerHTML = `
+        <div class="f-formula" style="color:${st.sym}">${el.f}</div>
+        <div class="f-sub" style="color:${st.sym};opacity:.75;">Определите валентность каждого элемента</div>`;
+    } else {
+      front.innerHTML = `
+        <div class="f-name-big" style="color:${st.sym}">${el.n}</div>
+        <div class="f-sub" style="color:${st.sym};opacity:.75;">Запишите формулу и валентности</div>`;
+    }
+
+    back.innerHTML = `
+      <div class="b-formula" style="color:${st.sym}">${el.f}</div>
+      <div class="b-name" style="color:${st.sym}">${el.n}</div>
+      <div class="b-vals">${chips}</div>
+      <div class="b-rule" style="color:${st.sym};background:${st.bbg};">${el.r}</div>`;
+  }
+
+  document.getElementById("counter").textContent = `${idx + 1} / ${deck.length}`;
+  document.getElementById("prevBtn").disabled = idx === 0;
+  document.getElementById("nextBtn").disabled = idx === deck.length - 1;
+}
+
+function render() {
+  const flipper = document.getElementById("cardFlipper");
+  if (flipped) {
+    flipper.classList.remove("flipped");
+    flipped = false;
+    setTimeout(() => { renderContent(); updateStats(); }, FLIP_MS);
+  } else {
+    renderContent(); updateStats();
+  }
+}
+
+/* ── Flip on click ── */
+document.getElementById("cardFlipper").onclick = () => {
+  if (busy) return;
+  const flipper = document.getElementById("cardFlipper");
+  if (!flipped) {
+    flipped = true;
+    flipper.classList.add("flipped");
+    document.getElementById("fHint").textContent = "";
+    if (!answered.has(idx)) document.getElementById("revealRow").style.display = "flex";
+  }
+};
+
+function flipBackThen(action) {
+  if (busy) return;
+  if (flipped) {
+    busy = true;
+    document.getElementById("cardFlipper").classList.remove("flipped");
+    document.getElementById("revealRow").style.display = "none";
+    flipped = false;
+    setTimeout(() => { busy = false; action(); }, FLIP_MS);
+  } else {
+    action();
+  }
+}
+
+document.getElementById("btnOk").onclick = () => {
+  if (!answered.has(idx)) { answered.add(idx); nOk++; }
+  flipBackThen(() => { if (idx < deck.length - 1) { idx++; renderContent(); } updateStats(); });
+};
+document.getElementById("btnNo").onclick = () => {
+  if (!answered.has(idx)) { answered.add(idx); nNo++; }
+  flipBackThen(() => { if (idx < deck.length - 1) { idx++; renderContent(); } updateStats(); });
+};
+
+document.getElementById("prevBtn").onclick = () => { flipBackThen(() => { if (idx > 0) { idx--; renderContent(); } updateStats(); }); };
+document.getElementById("nextBtn").onclick = () => { flipBackThen(() => { if (idx < deck.length - 1) { idx++; renderContent(); } updateStats(); }); };
+
+rebuild();
+</script>
+</body>
+</html>
