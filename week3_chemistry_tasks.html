@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Химия 8 класс — Неделя 3</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #f5f4f0;
+    --surface: #ffffff;
+    --surface2: #f0efe9;
+    --border: rgba(0,0,0,0.10);
+    --border2: rgba(0,0,0,0.18);
+    --text: #1a1a18;
+    --text2: #6b6b67;
+    --text3: #999993;
+    --radius: 14px;
+    --radius-sm: 8px;
+    --shadow: 0 2px 12px rgba(0,0,0,0.07), 0 0 0 0.5px rgba(0,0,0,0.06);
+  }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 24px 16px 48px;
+  }
+
+  .page { max-width: 560px; margin: 0 auto; }
+
+  .header { margin-bottom: 20px; }
+  .header h1 { font-size: 18px; font-weight: 600; letter-spacing: -0.3px; }
+  .header p  { font-size: 13px; color: var(--text2); margin-top: 3px; }
+
+  .tabbar {
+    display: flex; gap: 4px; background: var(--surface2);
+    border-radius: var(--radius-sm); padding: 4px;
+    margin-bottom: 20px; overflow-x: auto;
+  }
+  .tab-btn {
+    flex: 1; min-width: 100px; font-size: 12px; font-weight: 500;
+    padding: 7px 10px; border: none; border-radius: 6px;
+    background: transparent; color: var(--text2); cursor: pointer;
+    transition: all 0.15s; white-space: nowrap;
+  }
+  .tab-btn.active {
+    background: var(--surface); color: var(--text);
+    box-shadow: 0 1px 4px rgba(0,0,0,0.10);
+  }
+
+  .section { display: none; }
+  .section.show { display: block; }
+
+  .para-heading {
+    display: flex; align-items: center; gap: 8px;
+    margin: 20px 0 10px;
+  }
+  .para-badge {
+    font-size: 11px; font-weight: 700; padding: 3px 10px;
+    border-radius: 100px; flex-shrink: 0;
+  }
+  .para-title { font-size: 13px; font-weight: 600; color: var(--text); }
+
+  .task-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 8px; }
+
+  .task-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px 16px;
+    box-shadow: var(--shadow);
+    border-left: 3px solid transparent;
+  }
+
+  .task-num {
+    font-size: 10px; font-weight: 700; letter-spacing: 0.07em;
+    text-transform: uppercase; margin-bottom: 6px;
+  }
+  .task-text { font-size: 14px; line-height: 1.65; color: var(--text); }
+
+  .formula {
+    font-family: "SFMono-Regular", "Consolas", "Liberation Mono", monospace;
+    font-size: 13px; background: var(--surface2);
+    padding: 1px 5px; border-radius: 4px;
+    color: var(--text);
+  }
+
+  .task-hint {
+    font-size: 12px; color: var(--text2); line-height: 1.5;
+    margin-top: 8px; padding: 8px 10px;
+    background: var(--surface2); border-radius: 6px;
+    display: flex; gap: 6px;
+  }
+  .task-hint::before { content: "💡"; flex-shrink: 0; }
+
+  .show-ans-btn {
+    display: inline-flex; align-items: center; gap: 5px;
+    margin-top: 10px; font-size: 12px; font-weight: 500;
+    padding: 5px 12px; border: 1px solid var(--border2);
+    border-radius: 100px; background: transparent; color: var(--text2);
+    cursor: pointer; transition: background 0.15s, color 0.15s;
+  }
+  .show-ans-btn:hover { background: var(--surface2); color: var(--text); }
+
+  .task-answer {
+    display: none; margin-top: 10px;
+    font-size: 13px; line-height: 1.6;
+    padding: 10px 12px;
+    background: #F0FDF4; border-radius: 8px;
+    border: 1px solid #86EFAC; color: #1A6B3A;
+  }
+
+  .quiz-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 14px; flex-wrap: wrap; gap: 8px;
+  }
+  .quiz-title { font-size: 15px; font-weight: 600; }
+  .score-box {
+    display: flex; align-items: center; gap: 10px;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius-sm); padding: 8px 14px;
+    box-shadow: var(--shadow);
+  }
+  .score-lbl { font-size: 12px; color: var(--text2); }
+  .score-n { font-size: 18px; font-weight: 600; color: var(--text); }
+  .reset-btn {
+    font-size: 12px; padding: 5px 12px;
+    border: 1px solid var(--border2); border-radius: 100px;
+    background: transparent; color: var(--text2); cursor: pointer;
+    transition: background 0.15s;
+  }
+  .reset-btn:hover { background: var(--surface2); }
+
+  .q-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 16px;
+    margin-bottom: 10px; box-shadow: var(--shadow);
+  }
+  .q-num { font-size: 10px; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; color: var(--text3); margin-bottom: 6px; }
+  .q-text { font-size: 14px; line-height: 1.65; color: var(--text); margin-bottom: 12px; }
+
+  .opts { display: flex; flex-direction: column; gap: 6px; }
+  .opt {
+    font-size: 13px; padding: 9px 13px;
+    border: 1px solid var(--border2); border-radius: var(--radius-sm);
+    cursor: pointer; background: transparent; color: var(--text);
+    text-align: left; transition: background 0.12s, border-color 0.12s;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .opt::before {
+    content: ""; display: inline-block; width: 16px; height: 16px;
+    border: 1.5px solid var(--border2); border-radius: 50%; flex-shrink: 0;
+    transition: background 0.12s, border-color 0.12s;
+  }
+  .opt:hover:not(.done-opt) { background: var(--surface2); }
+  .opt.correct { background: #F0FDF4; color: #1A6B3A; border-color: #86EFAC; }
+  .opt.correct::before { background: #1A6B3A; border-color: #1A6B3A; }
+  .opt.wrong   { background: #FEF2F2; color: #A32D2D; border-color: #F0ABAB; }
+  .opt.wrong::before { background: #A32D2D; border-color: #A32D2D; }
+
+  .q-explain {
+    display: none; margin-top: 10px;
+    font-size: 12px; color: var(--text2); line-height: 1.6;
+    padding: 8px 10px; background: var(--surface2);
+    border-radius: 6px;
+  }
+
+  .section-intro {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 13px; color: var(--text2);
+    margin-bottom: 14px; padding: 10px 14px;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+  }
+
+
+  /* ── Back link ── */
+  .back-link {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 12px; color: var(--text2);
+    text-decoration: none; margin-bottom: 16px;
+    padding: 5px 0;
+    transition: color 0.15s;
+  }
+  .back-link:hover { color: var(--text); }
+  .back-link svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+
+  svg.icon { width: 14px; height: 14px; vertical-align: -2px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <a href="index.html" class="back-link">
+    <svg viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></svg>
+    Главное меню
+  </a>
+
+  <div class="header">
+    <h1>🔬 Химия 8 класс — Неделя 3</h1>
+    <p>§9–11 · Химические реакции, уравнения и типы реакций · стр. 46–57</p>
+  </div>
+
+  <div class="tabbar" id="tabbar">
+    <button class="tab-btn active" onclick="showTab('tasks',0)">📋 Задания</button>
+    <button class="tab-btn" onclick="showTab('quiz9',1)">Тест: §9</button>
+    <button class="tab-btn" onclick="showTab('quiz10',2)">Тест: §10</button>
+    <button class="tab-btn" onclick="showTab('quiz11',3)">Тест: §11</button>
+  </div>
+
+  <!-- ══ TASKS ══ -->
+  <div id="tasks" class="section show">
+    <div class="section-intro">
+      <svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
+      Нажмите «Ответ», чтобы проверить себя. Сначала попробуйте решить сами!
+    </div>
+
+    <!-- §9 -->
+    <div class="para-heading">
+      <span class="para-badge" style="background:#E1F5EE;color:#064D38;">§9</span>
+      <span class="para-title">Химические реакции</span>
+    </div>
+    <div class="task-list">
+
+      <div class="task-card" style="border-left-color:#1D9E75;">
+        <p class="task-num" style="color:#1D9E75;">Задание 1</p>
+        <p class="task-text">Распределите явления на два столбика — физические и химические:<br>
+          а) образование сосулек на крыше; б) образование чёрного налёта на серебряном изделии; в) брожение виноградного сока; г) испарение воды; д) гашение соды уксусом; е) таяние льда; ж) горение спирта.</p>
+        <button class="show-ans-btn" onclick="toggleAns(this)">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          Ответ
+        </button>
+        <p class="task-answer">Физические: а, г, е (состав вещества не меняется).<br>Химические: б, в, д, ж (образуются новые вещества с иными свойствами).</p>
+      </div>
+
+      <div class="task-card" style="border-left-color:#1D9E75;">
+        <p class="task-num" style="color:#1D9E75;">Задание 2</p>
+        <p class="task-text">Назовите признаки химических реакций, которые можно наблюдать при следующих процессах:<br>
+          а) горение свечи; б) взаимодействие мела с уксусной кислотой; в) позеленение медной монеты на воздухе; г) растворение медного купороса в воде с добавлением гвоздя.</p>
+        <div class="task-hint">Признаки: выделение газа ↑, выпадение осадка ↓, изменение цвета, выделение/поглощение теплоты и света.</div>
+        <button class="show-ans-btn" onclick="toggleAns(this)">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          Ответ
+        </button>
+        <p class="task-answer">а) выделение теплоты и света.<br>б) выделение газа (CO₂↑) и растворение осадка.<br>в) изменение цвета (зелёный налёт).<br>г) изменение цвета раствора и появление красного налёта меди на гвозде.</p>
+      </div>
+
+      <div class="task-card" style="border-left-color:#1D9E75;">
+        <p class="task-num" style="color:#1D9E75;">Задание 3</p>
+        <p class="task-text">Объясните: почему для тушения пожара перекрывают доступ кислорода? Какое условие протекания реакции горения при этом нарушается?</p>
+        <button class="show-ans-btn" onclick="toggleAns(this)">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          Ответ
+        </button>
+        <p class="task-answer">Реакция горения — взаимодействие горючего вещества с кислородом. Одно из условий — соприкосновение реагентов. При перекрытии доступа кислорода реагенты перестают контактировать, и реакция прекращается.</p>
+      </div>
+
+      <div class="task-card" style="border-left-color:#1D9E75;">
+        <p class="task-num" style="color:#1D9E75;">Задание 4 — экзо/эндо</p>
+        <p class="task-text">Определите, экзотермической или эндотермической является реакция:<br>
+          а) горение природного газа CH₄;<br>
+          б) разложение известняка при нагревании: CaCO₃ → CaO + CO₂↑;<br>
+          в) горение магния: 2Mg + O₂ → 2MgO (яркая вспышка);<br>
+          г) фотосинтез (поглощение солнечного света).</p>
+        <button class="show-ans-btn" onclick="toggleAns(this)">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          Ответ
+        </button>
+        <p class="task-answer">Экзотермические (выделяется теплота): а, в.<br>Эндотермические (поглощается теплота): б, г.</p>
+      </div>
+
+    </div>
+
+    <!-- §10 -->
+    <div class="para-heading">
+      <span class="para-badge" style="background:#FEF2EC;color:#712B13;">§10</span>
+      <span class="para-title">Химические уравнения</span>
+    </div>
+    <div class="task-list">
+
+      <div class="task-card" style="border-left-color:#D85A30;">
+        <p class="task-num" style="color:#D85A30;">Задание 5</p>
+        <p class="task-text">Расставьте коэффициенты:<br>
+          а) <span class="formula">H₂ + O₂ → H₂O</span><br>
+          б) <span class="formula">Al + O₂ → Al₂O₃</span><br>
+          в) <span class="formula">Fe + Cl₂ → FeCl₃</span><br>
+          г) <span class="formula">Na + H₂O → NaOH + H₂↑</span></p>
+        <div class="task-hint">Число атомов каждого элемента слева и справа должно быть одинаковым.</div>
+        <button class="show-ans-btn" onclick="toggleAns(this)">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          Ответ
+        </button>
+        <p class="task-answer">а) 2H₂ + O₂ = 2H₂O<br>б) 4Al + 3O₂ = 2Al₂O₃<br>в) 2Fe + 3Cl₂ = 2FeCl₃<br>г) 2Na + 2H₂O = 2NaOH + H₂↑</p>
+      </div>
+
+      <div class="task-card" style="border-left-color:#D85A30;">
+        <p class="task-num" style="color:#D85A30;">Задание 6</p>
+        <p class="task-text">Расставьте коэффициенты:<br>
+          а) <span class="formula">Al + S → Al₂S₃</span><br>
+          б) <span class="formula">K + H₂O → KOH + H₂↑</span><br>
+          в) <span class="formula">Fe₂O₃ + H₂ → Fe + H₂O</span><br>
+          г) <span class="formula">Al(OH)₃ + HCl → AlCl₃ + H₂O</span></p>
+        <button class="show-ans-btn" onclick="toggleAns(this)">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          Ответ
+        </button>
+        <p class="task-answer">а) 2Al + 3S = Al₂S₃<br>б) 2K + 2H₂O = 2KOH + H₂↑<br>в) Fe₂O₃ + 3H₂ = 2Fe + 3H₂O<br>г) Al(OH)₃ + 3HCl = AlCl₃ + 3H₂O</p>
+      </div>
+
+      <div class="task-card" style="border-left-color:#D85A30;">
+        <p class="task-num" style="color:#D85A30;">Задание 7 — по описанию</p>
+        <p class="task-text">Составьте уравнения реакций по описанию:<br>
+          а) при взаимодействии оксида железа(III) Fe₂O₃ с водородом образуется железо и вода;<br>
+          б) кальций реагирует с водой с образованием гидроксида кальция Ca(OH)₂ и водорода;<br>
+          в) при нагревании карбоната кальция CaCO₃ образуются оксид кальция CaO и углекислый газ.</p>
+        <button class="show-ans-btn" onclick="toggleAns(this)">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          Ответ
+        </button>
+        <p class="task-answer">а) Fe₂O₃ + 3H₂ = 2Fe + 3H₂O<br>б) Ca + 2H₂O = Ca(OH)₂ + H₂↑<br>в) CaCO₃ →(t) CaO + CO₂↑</p>
+      </div>
+
+      <div class="task-card" style="border-left-color:#D85A30;">
+        <p class="task-num" style="color:#D85A30;">Задание 8 — найди ошибку</p>
+        <p class="task-text">В каких уравнениях ошибка в коэффициентах? Исправьте:<br>
+          а) <span class="formula">2Na + Cl₂ = NaCl</span><br>
+          б) <span class="formula">2H₂ + O₂ = 2H₂O</span><br>
+          в) <span class="formula">N₂ + H₂ = NH₃</span><br>
+          г) <span class="formula">CaCO₃ = CaO + CO₂</span></p>
+        <button class="show-ans-btn" onclick="toggleAns(this)">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          Ответ
+        </button>
+        <p class="task-answer">Ошибки в а) и в).<br>а) Правильно: 2Na + Cl₂ = 2NaCl.<br>в) Правильно: N₂ + 3H₂ = 2NH₃.<br>б) и г) — верны.</p>
+      </div>
+
+    </div>
+
+    <!-- §11 -->
+    <div class="para-heading">
+      <span class="para-badge" style="background:#EEEDFE;color:#26215C;">§11</span>
+      <span class="para-title">Типы химических реакций</span>
+    </div>
+    <div class="task-list">
+
+      <div class="task-card" style="border-left-color:#7F77DD;">
+        <p class="task-num" style="color:#7F77DD;">Задание 9</p>
+        <p class="task-text">Определите тип реакции и расставьте коэффициенты:<br>
+          а) <span class="formula">CuO + H₂SO₄ → CuSO₄ + H₂O</span><br>
+          б) <span class="formula">NH₄HCO₃ → NH₃↑ + CO₂↑ + H₂O</span><br>
+          в) <span class="formula">SO₃ + H₂O → H₂SO₄</span><br>
+          г) <span class="formula">Zn + CuSO₄ → ZnSO₄ + Cu↓</span></p>
+        <button class="show-ans-btn" onclick="toggleAns(this)">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          Ответ
+        </button>
+        <p class="task-answer">а) CuO + H₂SO₄ = CuSO₄ + H₂O — обмен.<br>б) NH₄HCO₃ = NH₃↑ + CO₂↑ + H₂O — разложение.<br>в) SO₃ + H₂O = H₂SO₄ — соединение.<br>г) Zn + CuSO₄ = ZnSO₄ + Cu↓ — замещение.</p>
+      </div>
+
+      <div class="task-card" style="border-left-color:#7F77DD;">
+        <p class="task-num" style="color:#7F77DD;">Задание 10</p>
+        <p class="task-text">Расставьте коэффициенты и определите тип реакции:<br>
+          а) <span class="formula">Mg + HCl → MgCl₂ + H₂↑</span><br>
+          б) <span class="formula">Fe(OH)₃ → Fe₂O₃ + H₂O</span><br>
+          в) <span class="formula">BaCl₂ + Na₂SO₄ → BaSO₄↓ + NaCl</span><br>
+          г) <span class="formula">N₂ + H₂ → NH₃</span></p>
+        <button class="show-ans-btn" onclick="toggleAns(this)">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          Ответ
+        </button>
+        <p class="task-answer">а) Mg + 2HCl = MgCl₂ + H₂↑ — замещение.<br>б) 2Fe(OH)₃ = Fe₂O₃ + 3H₂O — разложение.<br>в) BaCl₂ + Na₂SO₄ = BaSO₄↓ + 2NaCl — обмен.<br>г) N₂ + 3H₂ = 2NH₃ — соединение.</p>
+      </div>
+
+      <div class="task-card" style="border-left-color:#7F77DD;">
+        <p class="task-num" style="color:#7F77DD;">Задание 11 — творческое</p>
+        <p class="task-text">Придумайте по одному примеру каждого типа реакции из повседневной жизни или природы. Кратко опишите наблюдаемый признак реакции.</p>
+        <div class="task-hint">Фотосинтез, ржавление железа, горение газа, нейтрализация кислоты содой — к каким типам они относятся?</div>
+        <button class="show-ans-btn" onclick="toggleAns(this)">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          Ответ
+        </button>
+        <p class="task-answer">Соединение: горение магния — яркая вспышка (2Mg + O₂ = 2MgO).<br>Разложение: разложение H₂O₂ — выделение пузырьков O₂↑.<br>Замещение: железный гвоздь в CuSO₄ — красный налёт меди.<br>Обмен: гашение соды уксусом — выделение CO₂↑.</p>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══ QUIZ §9 ══ -->
+  <div id="quiz9" class="section">
+    <div class="quiz-header">
+      <span class="quiz-title">Тест: §9 · Химические реакции</span>
+    </div>
+    <div class="score-box" style="margin-bottom:16px;">
+      <span class="score-lbl">Правильных ответов:</span>
+      <span class="score-n" id="sc9">0 / 5</span>
+      <button class="reset-btn" onclick="resetQuiz('q9','sc9')">
+        <svg class="icon" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+        Сбросить
+      </button>
+    </div>
+    <div class="quiz-block" id="q9">
+
+      <div class="q-card" data-correct="1">
+        <p class="q-num">Вопрос 1</p>
+        <p class="q-text">Химическая реакция — это явление, при котором:</p>
+        <div class="opts">
+          <button class="opt" onclick="answer(this)">изменяется форма вещества</button>
+          <button class="opt" onclick="answer(this)">одни вещества превращаются в другие с новыми свойствами</button>
+          <button class="opt" onclick="answer(this)">вещество меняет агрегатное состояние</button>
+          <button class="opt" onclick="answer(this)">вещество растворяется в воде</button>
+        </div>
+        <p class="q-explain">Химическая реакция — превращение одних веществ (реагентов) в другие (продукты) с новыми свойствами. Изменение формы или агрегатного состояния — физические явления.</p>
+      </div>
+
+      <div class="q-card" data-correct="2">
+        <p class="q-num">Вопрос 2</p>
+        <p class="q-text">Какое из перечисленных явлений — химическое?</p>
+        <div class="opts">
+          <button class="opt" onclick="answer(this)">плавление воска свечи</button>
+          <button class="opt" onclick="answer(this)">испарение спирта</button>
+          <button class="opt" onclick="answer(this)">горение фитиля свечи</button>
+          <button class="opt" onclick="answer(this)">дробление сахара в ступке</button>
+        </div>
+        <p class="q-explain">Горение фитиля — химическое явление: образуются новые вещества (CO₂, H₂O). Плавление воска, испарение спирта, дробление сахара — физические явления.</p>
+      </div>
+
+      <div class="q-card" data-correct="0">
+        <p class="q-num">Вопрос 3</p>
+        <p class="q-text">Признак химической реакции — выпадение осадка. Какой осадок выпадает при взаимодействии хлорида натрия NaCl с нитратом серебра AgNO₃?</p>
+        <div class="opts">
+          <button class="opt" onclick="answer(this)">белый осадок AgCl</button>
+          <button class="opt" onclick="answer(this)">жёлтый осадок AgI</button>
+          <button class="opt" onclick="answer(this)">синий осадок Cu(OH)₂</button>
+          <button class="opt" onclick="answer(this)">красный осадок Cu</button>
+        </div>
+        <p class="q-explain">NaCl + AgNO₃ → AgCl↓ + NaNO₃. Хлорид серебра AgCl — белый нерастворимый осадок, один из признаков реакции.</p>
+      </div>
+
+      <div class="q-card" data-correct="3">
+        <p class="q-num">Вопрос 4</p>
+        <p class="q-text">Реакция горения относится к:</p>
+        <div class="opts">
+          <button class="opt" onclick="answer(this)">эндотермическим реакциям</button>
+          <button class="opt" onclick="answer(this)">реакциям без теплового эффекта</button>
+          <button class="opt" onclick="answer(this)">реакциям поглощения света</button>
+          <button class="opt" onclick="answer(this)">экзотермическим реакциям</button>
+        </div>
+        <p class="q-explain">Реакции горения — экзотермические: они протекают с выделением теплоты и часто света. Эндотермические — наоборот, требуют постоянного подвода теплоты.</p>
+      </div>
+
+      <div class="q-card" data-correct="1">
+        <p class="q-num">Вопрос 5</p>
+        <p class="q-text">Условие, необходимое для начала большинства химических реакций:</p>
+        <div class="opts">
+          <button class="opt" onclick="answer(this)">присутствие воды</button>
+          <button class="opt" onclick="answer(this)">соприкосновение реагирующих веществ</button>
+          <button class="opt" onclick="answer(this)">нагревание до 1000 °C</button>
+          <button class="opt" onclick="answer(this)">наличие катализатора</button>
+        </div>
+        <p class="q-explain">Основное условие — соприкосновение веществ. Именно на этом принципе основан аппарат Киппа: убрав контакт кислоты с цинком, реакцию можно остановить.</p>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══ QUIZ §10 ══ -->
+  <div id="quiz10" class="section">
+    <div class="quiz-header">
+      <span class="quiz-title">Тест: §10 · Химические уравнения</span>
+    </div>
+    <div class="score-box" style="margin-bottom:16px;">
+      <span class="score-lbl">Правильных ответов:</span>
+      <span class="score-n" id="sc10">0 / 5</span>
+      <button class="reset-btn" onclick="resetQuiz('q10','sc10')">
+        <svg class="icon" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+        Сбросить
+      </button>
+    </div>
+    <div class="quiz-block" id="q10">
+
+      <div class="q-card" data-correct="2">
+        <p class="q-num">Вопрос 1</p>
+        <p class="q-text">Закон сохранения масс означает, что:</p>
+        <div class="opts">
+          <button class="opt" onclick="answer(this)">число молекул не меняется в ходе реакции</button>
+          <button class="opt" onclick="answer(this)">масса продуктов всегда больше массы реагентов</button>
+          <button class="opt" onclick="answer(this)">масса реагентов равна массе продуктов реакции</button>
+          <button class="opt" onclick="answer(this)">объём газов сохраняется</button>
+        </div>
+        <p class="q-explain">Закон Ломоносова–Лавуазье: масса веществ, вступивших в реакцию, равна массе образовавшихся продуктов. Именно поэтому в уравнениях расставляют коэффициенты.</p>
+      </div>
+
+      <div class="q-card" data-correct="0">
+        <p class="q-num">Вопрос 2</p>
+        <p class="q-text">Чем отличается схема реакции от уравнения реакции?</p>
+        <div class="opts">
+          <button class="opt" onclick="answer(this)">в схеме стоит стрелка →, в уравнении — знак равенства =, коэффициенты расставлены</button>
+          <button class="opt" onclick="answer(this)">в схеме написаны только продукты</button>
+          <button class="opt" onclick="answer(this)">схема записывается словами, уравнение — символами</button>
+          <button class="opt" onclick="answer(this)">в уравнении не нужны формулы веществ</button>
+        </div>
+        <p class="q-explain">Схема реакции показывает направление превращения (→), но не отражает закон сохранения масс. Уравнение со знаком = и расставленными коэффициентами — отражает.</p>
+      </div>
+
+      <div class="q-card" data-correct="3">
+        <p class="q-num">Вопрос 3</p>
+        <p class="q-text">Расставьте коэффициенты: Al + O₂ → Al₂O₃. Сумма всех коэффициентов:</p>
+        <div class="opts">
+          <button class="opt" onclick="answer(this)">5</button>
+          <button class="opt" onclick="answer(this)">6</button>
+          <button class="opt" onclick="answer(this)">8</button>
+          <button class="opt" onclick="answer(this)">9</button>
+        </div>
+        <p class="q-explain">4Al + 3O₂ = 2Al₂O₃. Сумма коэффициентов: 4 + 3 + 2 = 9.</p>
+      </div>
+
+      <div class="q-card" data-correct="1">
+        <p class="q-num">Вопрос 4</p>
+        <p class="q-text">Коэффициент в химическом уравнении — это цифра, которая стоит:</p>
+        <div class="opts">
+          <button class="opt" onclick="answer(this)">внизу справа от символа элемента (индекс)</button>
+          <button class="opt" onclick="answer(this)">перед формулой вещества и указывает число молекул</button>
+          <button class="opt" onclick="answer(this)">над символом элемента</button>
+          <button class="opt" onclick="answer(this)">после формулы вещества</button>
+        </div>
+        <p class="q-explain">Коэффициент ставится перед формулой и показывает число молекул (или моль) данного вещества. Индекс — цифра внутри формулы, показывает число атомов в молекуле.</p>
+      </div>
+
+      <div class="q-card" data-correct="2">
+        <p class="q-num">Вопрос 5</p>
+        <p class="q-text">Какое уравнение расставлено верно?</p>
+        <div class="opts">
+          <button class="opt" onclick="answer(this)">H₂ + Cl₂ = HCl</button>
+          <button class="opt" onclick="answer(this)">Na + O₂ = Na₂O</button>
+          <button class="opt" onclick="answer(this)">2H₂ + O₂ = 2H₂O</button>
+          <button class="opt" onclick="answer(this)">Fe + S = Fe₂S₃</button>
+        </div>
+        <p class="q-explain">2H₂ + O₂ = 2H₂O — верно: слева 4H и 2O, справа тоже 4H и 2O. В а) нужно: H₂ + Cl₂ = 2HCl. В б) — 4Na + O₂ = 2Na₂O. В г) — Fe + S = FeS.</p>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══ QUIZ §11 ══ -->
+  <div id="quiz11" class="section">
+    <div class="quiz-header">
+      <span class="quiz-title">Тест: §11 · Типы химических реакций</span>
+    </div>
+    <div class="score-box" style="margin-bottom:16px;">
+      <span class="score-lbl">Правильных ответов:</span>
+      <span class="score-n" id="sc11">0 / 5</span>
+      <button class="reset-btn" onclick="resetQuiz('q11','sc11')">
+        <svg class="icon" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+        Сбросить
+      </button>
+    </div>
+    <div class="quiz-block" id="q11">
+
+      <div class="q-card" data-correct="0">
+        <p class="q-num">Вопрос 1</p>
+        <p class="q-text">Реакция соединения — это:</p>
+        <div class="opts">
+          <button class="opt" onclick="answer(this)">из нескольких веществ образуется одно сложное</button>
+          <button class="opt" onclick="answer(this)">из одного вещества образуется несколько</button>
+          <button class="opt" onclick="answer(this)">простое вещество замещает элемент в сложном</button>
+          <button class="opt" onclick="answer(this)">два сложных вещества обмениваются частями</button>
+        </div>
+        <p class="q-explain">Соединение: A + B → AB. Пример: 4P + 5O₂ = 2P₂O₅ — из фосфора и кислорода образуется одно вещество.</p>
+      </div>
+
+      <div class="q-card" data-correct="3">
+        <p class="q-num">Вопрос 2</p>
+        <p class="q-text">Реакция CuSO₄ + Fe = FeSO₄ + Cu относится к типу:</p>
+        <div class="opts">
+          <button class="opt" onclick="answer(this)">соединение</button>
+          <button class="opt" onclick="answer(this)">разложение</button>
+          <button class="opt" onclick="answer(this)">обмен</button>
+          <button class="opt" onclick="answer(this)">замещение</button>
+        </div>
+        <p class="q-explain">Простое вещество Fe замещает медь Cu в сложном веществе CuSO₄ — реакция замещения. Признак: в реакции участвуют одно простое и одно сложное вещество.</p>
+      </div>
+
+      <div class="q-card" data-correct="1">
+        <p class="q-num">Вопрос 3</p>
+        <p class="q-text">К реакциям разложения относится:</p>
+        <div class="opts">
+          <button class="opt" onclick="answer(this)">N₂ + 3H₂ = 2NH₃</button>
+          <button class="opt" onclick="answer(this)">2H₂O₂ = 2H₂O + O₂↑</button>
+          <button class="opt" onclick="answer(this)">Zn + H₂SO₄ = ZnSO₄ + H₂↑</button>
+          <button class="opt" onclick="answer(this)">2NaOH + H₂SO₄ = Na₂SO₄ + 2H₂O</button>
+        </div>
+        <p class="q-explain">2H₂O₂ = 2H₂O + O₂↑ — разложение: из одного вещества образуются несколько. В а) — соединение, в) — замещение, г) — обмен.</p>
+      </div>
+
+      <div class="q-card" data-correct="2">
+        <p class="q-num">Вопрос 4</p>
+        <p class="q-text">Катализатор в ходе реакции:</p>
+        <div class="opts">
+          <button class="opt" onclick="answer(this)">является одним из реагентов и расходуется</button>
+          <button class="opt" onclick="answer(this)">замедляет реакцию</button>
+          <button class="opt" onclick="answer(this)">ускоряет реакцию, сам не расходуясь</button>
+          <button class="opt" onclick="answer(this)">входит в состав продуктов реакции</button>
+        </div>
+        <p class="q-explain">Катализатор ускоряет реакцию, но сам в ней не расходуется. Пример: MnO₂ при разложении H₂O₂ — после реакции оксид марганца остаётся в неизменном количестве.</p>
+      </div>
+
+      <div class="q-card" data-correct="0">
+        <p class="q-num">Вопрос 5</p>
+        <p class="q-text">Реакция обмена — это реакция, при которой:</p>
+        <div class="opts">
+          <button class="opt" onclick="answer(this)">два сложных вещества обмениваются своими составными частями</button>
+          <button class="opt" onclick="answer(this)">простое вещество замещает элемент в сложном</button>
+          <button class="opt" onclick="answer(this)">из нескольких веществ образуется одно</button>
+          <button class="opt" onclick="answer(this)">из одного вещества образуется несколько</button>
+        </div>
+        <p class="q-explain">Обмен: AB + CD → AD + CB. Два сложных вещества «меняются» частями. Пример: 2NaOH + H₂SO₄ = Na₂SO₄ + 2H₂O.</p>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+<script>
+function showTab(id, idx) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('show'));
+  document.getElementById(id).classList.add('show');
+  document.querySelectorAll('.tab-btn').forEach((b, i) => b.classList.toggle('active', i === idx));
+}
+
+function toggleAns(btn) {
+  const ans = btn.nextElementSibling;
+  const shown = ans.style.display === 'block';
+  ans.style.display = shown ? 'none' : 'block';
+  btn.innerHTML = shown
+    ? '<svg class="icon" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg> Ответ'
+    : '<svg class="icon" viewBox="0 0 24 24"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg> Скрыть';
+}
+
+const scores = { q9: 0, q10: 0, q11: 0 };
+
+function answer(btn) {
+  const card = btn.closest('.q-card');
+  if (card.classList.contains('done')) return;
+  card.classList.add('done');
+  const opts = card.querySelectorAll('.opt');
+  const correct = parseInt(card.dataset.correct);
+  const chosen = Array.from(opts).indexOf(btn);
+  opts[correct].classList.add('correct');
+  if (chosen !== correct) btn.classList.add('wrong');
+  opts.forEach(o => o.classList.add('done-opt'));
+  card.querySelector('.q-explain').style.display = 'block';
+  if (chosen === correct) {
+    const qid = card.closest('.quiz-block').id;
+    scores[qid]++;
+    const scMap = { q9: 'sc9', q10: 'sc10', q11: 'sc11' };
+    document.getElementById(scMap[qid]).textContent = scores[qid] + ' / 5';
+  }
+}
+
+function resetQuiz(qid, scId) {
+  scores[qid] = 0;
+  document.getElementById(scId).textContent = '0 / 5';
+  document.getElementById(qid).querySelectorAll('.q-card').forEach(card => {
+    card.classList.remove('done');
+    card.querySelectorAll('.opt').forEach(o => { o.classList.remove('correct', 'wrong', 'done-opt'); });
+    card.querySelector('.q-explain').style.display = 'none';
+  });
+}
+</script>
+</body>
+</html>
