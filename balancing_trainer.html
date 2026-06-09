@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Химия 8 класс — Расстановка коэффициентов</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #f5f4f0;
+    --surface: #ffffff;
+    --surface2: #f0efe9;
+    --border: rgba(0,0,0,0.10);
+    --border2: rgba(0,0,0,0.18);
+    --text: #1a1a18;
+    --text2: #6b6b67;
+    --text3: #999993;
+    --radius: 14px;
+    --radius-sm: 8px;
+    --shadow: 0 2px 12px rgba(0,0,0,0.07), 0 0 0 0.5px rgba(0,0,0,0.06);
+
+    /* Цвета как в презентации */
+    --col-synthesis:    #0d9488; /* бирюзовый */
+    --col-synthesis-bg: #e6f7f6;
+    --col-decomp:       #ea7c1e; /* оранжевый */
+    --col-decomp-bg:    #fef0e0;
+    --col-subst:        #e83e8c; /* розовый */
+    --col-subst-bg:     #fde8f3;
+    --col-exchange:     #7c3aed; /* фиолетовый */
+    --col-exchange-bg:  #f1edfd;
+  }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 24px 16px 60px;
+  }
+
+  .page { max-width: 640px; margin: 0 auto; }
+
+  .back-link {
+    display: inline-flex; align-items: center; gap: 5px;
+    font-size: 13px; color: var(--text2); text-decoration: none;
+    margin-bottom: 16px;
+  }
+  .back-link:hover { color: var(--text); }
+
+  .header { margin-bottom: 20px; }
+  .header h1 { font-size: 20px; font-weight: 700; letter-spacing: -0.4px; }
+  .header p  { font-size: 13px; color: var(--text2); margin-top: 4px; }
+
+  .tabbar {
+    display: flex; gap: 4px; background: var(--surface2);
+    border-radius: var(--radius-sm); padding: 4px;
+    margin-bottom: 22px; overflow-x: auto;
+  }
+  .tab-btn {
+    flex: 1; min-width: 90px; font-size: 12px; font-weight: 500;
+    padding: 7px 8px; border: none; border-radius: 6px;
+    background: transparent; color: var(--text2); cursor: pointer;
+    transition: all .15s; white-space: nowrap; text-align: center;
+  }
+  .tab-btn.active {
+    background: var(--surface); color: var(--text);
+    box-shadow: 0 1px 4px rgba(0,0,0,0.10);
+  }
+
+  .section { display: none; }
+  .section.show { display: block; }
+
+  .section-intro {
+    font-size: 13px; color: var(--text2);
+    margin-bottom: 18px; line-height: 1.6;
+    background: var(--surface); border-radius: var(--radius-sm);
+    padding: 12px 14px; border: 1px solid var(--border);
+  }
+  .section-intro .dot {
+    display: inline-block; width: 9px; height: 9px;
+    border-radius: 50%; margin-right: 5px; vertical-align: middle;
+  }
+  .section-intro b { color: var(--text); }
+  .scheme-box {
+    display: inline-block;
+    margin-top: 6px;
+    font-family: monospace; font-size: 13px;
+    background: var(--surface2); border-radius: 6px;
+    padding: 4px 10px; color: var(--text);
+    letter-spacing: 0.02em;
+  }
+
+  .progress-wrap { margin-bottom: 18px; }
+  .progress-label {
+    font-size: 12px; color: var(--text2); margin-bottom: 5px;
+    display: flex; justify-content: space-between;
+  }
+  .progress-bar {
+    height: 6px; background: var(--surface2);
+    border-radius: 100px; overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%; background: #1a1a18; border-radius: 100px;
+    transition: width .35s ease;
+  }
+
+  .eq-list { display: flex; flex-direction: column; gap: 14px; }
+
+  .eq-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px 18px;
+    box-shadow: var(--shadow);
+    border-left: 4px solid transparent;
+  }
+  .eq-card[data-type="synthesis"]  { border-left-color: var(--col-synthesis); }
+  .eq-card[data-type="decomp"]     { border-left-color: var(--col-decomp); }
+  .eq-card[data-type="subst"]      { border-left-color: var(--col-subst); }
+  .eq-card[data-type="exchange"]   { border-left-color: var(--col-exchange); }
+
+  .eq-meta {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 10px; gap: 8px; flex-wrap: wrap;
+  }
+  .eq-name { font-size: 12px; font-weight: 600; color: var(--text2); }
+  .eq-num  { font-size: 11px; color: var(--text3); }
+
+  .eq-row {
+    display: flex; align-items: center; flex-wrap: wrap; gap: 6px 4px;
+    margin-bottom: 14px;
+  }
+
+  .compound-wrap {
+    display: flex; align-items: center; gap: 4px;
+  }
+  .coeff-input {
+    width: 44px; height: 38px;
+    border: 1.5px solid var(--border2);
+    border-radius: 8px;
+    font-size: 17px; font-weight: 700;
+    text-align: center;
+    background: var(--surface2);
+    color: var(--text);
+    outline: none;
+    transition: border-color .15s, background .15s;
+    -moz-appearance: textfield;
+  }
+  .coeff-input::-webkit-outer-spin-button,
+  .coeff-input::-webkit-inner-spin-button { -webkit-appearance: none; }
+  .coeff-input:focus { border-color: #888; background: #fff; }
+  .coeff-input.correct { border-color: #16a34a; background: #f0fdf4; color: #16a34a; }
+  .coeff-input.wrong   { border-color: #dc2626; background: #fef2f2; color: #dc2626;
+    animation: shake .3s ease; }
+  .coeff-input.hint    { border-color: #d97706; background: #fffbeb; color: #b45309; }
+
+  @keyframes shake {
+    0%,100%{transform:translateX(0)}
+    25%{transform:translateX(-4px)}
+    75%{transform:translateX(4px)}
+  }
+
+  .formula {
+    font-size: 17px; font-weight: 600; line-height: 1;
+    letter-spacing: -0.2px;
+  }
+  .formula sub { font-size: 10px; font-weight: 500; }
+
+  .arrow { font-size: 20px; color: var(--text3); padding: 0 3px; flex-shrink: 0; }
+  .plus  { font-size: 18px; color: var(--text3); padding: 0 1px; flex-shrink: 0; }
+
+  /* hint panel */
+  .atom-hint {
+    display: none; margin-bottom: 12px;
+    background: #fffdf5;
+    border: 1px solid #f5e4b0;
+    border-radius: var(--radius-sm);
+    padding: 12px 14px; font-size: 12px; color: var(--text2);
+    line-height: 1.6;
+  }
+  .atom-hint.show { display: block; }
+  .atom-hint .hint-section { margin-bottom: 8px; }
+  .atom-hint .hint-scheme {
+    font-family: monospace; font-size: 12px;
+    background: rgba(0,0,0,.04); border-radius: 5px;
+    padding: 3px 8px; display: inline-block;
+    color: var(--text); margin: 4px 0;
+  }
+  .atom-hint table { border-collapse: collapse; width: 100%; margin-top: 6px; }
+  .atom-hint th, .atom-hint td {
+    padding: 3px 8px; text-align: center; border: 1px solid rgba(0,0,0,.09);
+    font-size: 12px;
+  }
+  .atom-hint th { font-weight: 600; background: rgba(0,0,0,.04); }
+  .atom-hint td.mismatch { color: #dc2626; font-weight: 600; }
+  .atom-hint td.match    { color: #16a34a; font-weight: 600; }
+  .hint-note {
+    margin-top: 8px; padding: 6px 10px;
+    background: #fff7ed; border-radius: 6px;
+    border-left: 3px solid #d97706;
+    font-size: 12px; color: #92400e;
+  }
+
+  .feedback {
+    display: none; margin-top: 10px;
+    border-radius: var(--radius-sm);
+    padding: 9px 13px; font-size: 13px; font-weight: 500;
+  }
+  .feedback.show { display: block; }
+  .feedback.ok  { background: #f0fdf4; color: #15803d; border: 1px solid #bbf7d0; }
+  .feedback.err { background: #fef2f2; color: #b91c1c; border: 1px solid #fecaca; }
+
+  .btn-row { display: flex; gap: 8px; flex-wrap: wrap; }
+  .btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 13px; font-weight: 600;
+    padding: 8px 16px; border-radius: var(--radius-sm);
+    border: none; cursor: pointer; transition: opacity .15s, transform .1s;
+  }
+  .btn:active { transform: scale(.97); }
+  .btn:disabled { opacity: .45; cursor: default; }
+  .btn-check { background: #1a1a18; color: #fff; }
+  .btn-hint  { background: var(--surface2); color: var(--text2); border: 1px solid var(--border2); }
+  .btn-reset { background: var(--surface2); color: var(--text2); border: 1px solid var(--border2); }
+  .btn:not(:disabled):hover { opacity: .82; }
+
+  .congrats {
+    display: none; text-align: center;
+    background: var(--surface); border-radius: var(--radius);
+    padding: 32px 24px; margin-top: 16px; box-shadow: var(--shadow);
+  }
+  .congrats.show { display: block; }
+  .congrats-emoji { font-size: 42px; margin-bottom: 10px; }
+  .congrats h2 { font-size: 18px; font-weight: 700; margin-bottom: 6px; }
+  .congrats p  { font-size: 13px; color: var(--text2); }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <a class="back-link" href="index.html">← Главное меню</a>
+
+  <div class="header">
+    <h1>⚖️ Расстановка коэффициентов</h1>
+    <p>Введи коэффициенты так, чтобы число атомов совпадало в обеих частях уравнения</p>
+  </div>
+
+  <div class="tabbar">
+    <button class="tab-btn active" onclick="switchTab('synthesis')">Соединение</button>
+    <button class="tab-btn" onclick="switchTab('decomp')">Разложение</button>
+    <button class="tab-btn" onclick="switchTab('subst')">Замещение</button>
+    <button class="tab-btn" onclick="switchTab('exchange')">Обмен</button>
+  </div>
+
+  <!-- SYNTHESIS -->
+  <div class="section show" id="sec-synthesis">
+    <div class="section-intro">
+      <span class="dot" style="background:var(--col-synthesis)"></span>
+      <b>Реакция соединения</b> — два или более вещества объединяются в одно.<br>
+      <span class="scheme-box">A + B → AB</span>
+    </div>
+    <div class="progress-wrap">
+      <div class="progress-label"><span>Прогресс</span><span id="prog-synthesis-txt">0 / 5</span></div>
+      <div class="progress-bar"><div class="progress-fill" id="prog-synthesis-fill" style="width:0%"></div></div>
+    </div>
+    <div class="eq-list" id="list-synthesis"></div>
+    <div class="congrats" id="congrats-synthesis">
+      <div class="congrats-emoji">🎉</div>
+      <h2>Отлично!</h2>
+      <p>Все реакции соединения сбалансированы верно.</p>
+    </div>
+  </div>
+
+  <!-- DECOMP -->
+  <div class="section" id="sec-decomp">
+    <div class="section-intro">
+      <span class="dot" style="background:var(--col-decomp)"></span>
+      <b>Реакция разложения</b> — одно вещество распадается на два или более.<br>
+      <span class="scheme-box">AB → A + B</span>
+    </div>
+    <div class="progress-wrap">
+      <div class="progress-label"><span>Прогресс</span><span id="prog-decomp-txt">0 / 5</span></div>
+      <div class="progress-bar"><div class="progress-fill" id="prog-decomp-fill" style="width:0%"></div></div>
+    </div>
+    <div class="eq-list" id="list-decomp"></div>
+    <div class="congrats" id="congrats-decomp">
+      <div class="congrats-emoji">🎉</div>
+      <h2>Отлично!</h2>
+      <p>Все реакции разложения сбалансированы верно.</p>
+    </div>
+  </div>
+
+  <!-- SUBST -->
+  <div class="section" id="sec-subst">
+    <div class="section-intro">
+      <span class="dot" style="background:var(--col-subst)"></span>
+      <b>Реакция замещения</b> — простое вещество вытесняет элемент из сложного.<br>
+      <span class="scheme-box">A + BC → AC + B</span>
+    </div>
+    <div class="progress-wrap">
+      <div class="progress-label"><span>Прогресс</span><span id="prog-subst-txt">0 / 5</span></div>
+      <div class="progress-bar"><div class="progress-fill" id="prog-subst-fill" style="width:0%"></div></div>
+    </div>
+    <div class="eq-list" id="list-subst"></div>
+    <div class="congrats" id="congrats-subst">
+      <div class="congrats-emoji">🎉</div>
+      <h2>Отлично!</h2>
+      <p>Все реакции замещения сбалансированы верно.</p>
+    </div>
+  </div>
+
+  <!-- EXCHANGE -->
+  <div class="section" id="sec-exchange">
+    <div class="section-intro">
+      <span class="dot" style="background:var(--col-exchange)"></span>
+      <b>Реакция обмена</b> — два сложных вещества обмениваются составными частями.<br>
+      <span class="scheme-box">AB + CD → AD + CB</span>
+    </div>
+    <div class="progress-wrap">
+      <div class="progress-label"><span>Прогресс</span><span id="prog-exchange-txt">0 / 5</span></div>
+      <div class="progress-bar"><div class="progress-fill" id="prog-exchange-fill" style="width:0%"></div></div>
+    </div>
+    <div class="eq-list" id="list-exchange"></div>
+    <div class="congrats" id="congrats-exchange">
+      <div class="congrats-emoji">🎉</div>
+      <h2>Отлично!</h2>
+      <p>Все реакции обмена сбалансированы верно.</p>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// scheme text shown in hint per type
+const TYPE_SCHEME = {
+  synthesis: 'A + B → AB',
+  decomp:    'AB → A + B',
+  subst:     'A + BC → AC + B',
+  exchange:  'AB + CD → AD + CB'
+};
+
+const REACTIONS = {
+
+  synthesis: [
+    {
+      name: "Горение водорода",
+      reagents: [
+        { f:"H<sub>2</sub>",  atoms:{H:2} },
+        { f:"O<sub>2</sub>",  atoms:{O:2} }
+      ],
+      products: [
+        { f:"H<sub>2</sub>O", atoms:{H:2,O:1} }
+      ],
+      coeffs: [2,1,2]
+    },
+    {
+      name: "Образование оксида железа (III)",
+      reagents: [
+        { f:"Fe",             atoms:{Fe:1} },
+        { f:"O<sub>2</sub>",  atoms:{O:2} }
+      ],
+      products: [
+        { f:"Fe<sub>2</sub>O<sub>3</sub>", atoms:{Fe:2,O:3} }
+      ],
+      coeffs: [4,3,2]
+    },
+    {
+      name: "Образование аммиака",
+      reagents: [
+        { f:"N<sub>2</sub>",  atoms:{N:2} },
+        { f:"H<sub>2</sub>",  atoms:{H:2} }
+      ],
+      products: [
+        { f:"NH<sub>3</sub>", atoms:{N:1,H:3} }
+      ],
+      coeffs: [1,3,2]
+    },
+    {
+      name: "Образование хлорида натрия",
+      reagents: [
+        { f:"Na",             atoms:{Na:1} },
+        { f:"Cl<sub>2</sub>", atoms:{Cl:2} }
+      ],
+      products: [
+        { f:"NaCl",           atoms:{Na:1,Cl:1} }
+      ],
+      coeffs: [2,1,2]
+    },
+    {
+      name: "Образование серной кислоты",
+      reagents: [
+        { f:"SO<sub>3</sub>", atoms:{S:1,O:3} },
+        { f:"H<sub>2</sub>O", atoms:{H:2,O:1} }
+      ],
+      products: [
+        { f:"H<sub>2</sub>SO<sub>4</sub>", atoms:{H:2,S:1,O:4} }
+      ],
+      coeffs: [1,1,1]
+    }
+  ],
+
+  decomp: [
+    {
+      name: "Разложение воды (электролиз)",
+      reagents: [
+        { f:"H<sub>2</sub>O", atoms:{H:2,O:1} }
+      ],
+      products: [
+        { f:"H<sub>2</sub>",  atoms:{H:2} },
+        { f:"O<sub>2</sub>",  atoms:{O:2} }
+      ],
+      coeffs: [2,2,1]
+    },
+    {
+      name: "Разложение оксида ртути (II)",
+      reagents: [
+        { f:"HgO",            atoms:{Hg:1,O:1} }
+      ],
+      products: [
+        { f:"Hg",             atoms:{Hg:1} },
+        { f:"O<sub>2</sub>",  atoms:{O:2} }
+      ],
+      coeffs: [2,2,1]
+    },
+    {
+      name: "Разложение карбоната кальция",
+      reagents: [
+        { f:"CaCO<sub>3</sub>", atoms:{Ca:1,C:1,O:3} }
+      ],
+      products: [
+        { f:"CaO",              atoms:{Ca:1,O:1} },
+        { f:"CO<sub>2</sub>",   atoms:{C:1,O:2} }
+      ],
+      coeffs: [1,1,1]
+    },
+    {
+      name: "Разложение гидроксида железа (III)",
+      reagents: [
+        { f:"Fe(OH)<sub>3</sub>", atoms:{Fe:1,O:3,H:3} }
+      ],
+      products: [
+        { f:"Fe<sub>2</sub>O<sub>3</sub>", atoms:{Fe:2,O:3} },
+        { f:"H<sub>2</sub>O",             atoms:{H:2,O:1} }
+      ],
+      coeffs: [2,1,3]
+    },
+    {
+      name: "Разложение пероксида водорода",
+      reagents: [
+        { f:"H<sub>2</sub>O<sub>2</sub>", atoms:{H:2,O:2} }
+      ],
+      products: [
+        { f:"H<sub>2</sub>O", atoms:{H:2,O:1} },
+        { f:"O<sub>2</sub>",  atoms:{O:2} }
+      ],
+      coeffs: [2,2,1]
+    }
+  ],
+
+  subst: [
+    {
+      name: "Цинк + соляная кислота",
+      reagents: [
+        { f:"Zn",             atoms:{Zn:1} },
+        { f:"HCl",            atoms:{H:1,Cl:1} }
+      ],
+      products: [
+        { f:"ZnCl<sub>2</sub>", atoms:{Zn:1,Cl:2} },
+        { f:"H<sub>2</sub>",    atoms:{H:2} }
+      ],
+      coeffs: [1,2,1,1]
+    },
+    {
+      name: "Железо + серная кислота",
+      reagents: [
+        { f:"Fe",                          atoms:{Fe:1} },
+        { f:"H<sub>2</sub>SO<sub>4</sub>", atoms:{H:2,S:1,O:4} }
+      ],
+      products: [
+        { f:"FeSO<sub>4</sub>", atoms:{Fe:1,S:1,O:4} },
+        { f:"H<sub>2</sub>",    atoms:{H:2} }
+      ],
+      coeffs: [1,1,1,1]
+    },
+    {
+      name: "Алюминий + соляная кислота",
+      reagents: [
+        { f:"Al",  atoms:{Al:1} },
+        { f:"HCl", atoms:{H:1,Cl:1} }
+      ],
+      products: [
+        { f:"AlCl<sub>3</sub>", atoms:{Al:1,Cl:3} },
+        { f:"H<sub>2</sub>",    atoms:{H:2} }
+      ],
+      coeffs: [2,6,2,3]
+    },
+    {
+      name: "Цинк + нитрат меди (II)",
+      reagents: [
+        { f:"Zn",                                    atoms:{Zn:1} },
+        { f:"Cu(NO<sub>3</sub>)<sub>2</sub>",         atoms:{Cu:1,N:2,O:6} }
+      ],
+      products: [
+        { f:"Zn(NO<sub>3</sub>)<sub>2</sub>",         atoms:{Zn:1,N:2,O:6} },
+        { f:"Cu",                                    atoms:{Cu:1} }
+      ],
+      coeffs: [1,1,1,1]
+    },
+    {
+      name: "Натрий + вода",
+      reagents: [
+        { f:"Na",             atoms:{Na:1} },
+        { f:"H<sub>2</sub>O", atoms:{H:2,O:1} }
+      ],
+      products: [
+        { f:"NaOH",          atoms:{Na:1,O:1,H:1} },
+        { f:"H<sub>2</sub>", atoms:{H:2} }
+      ],
+      coeffs: [2,2,2,1]
+    }
+  ],
+
+  exchange: [
+    {
+      name: "Нейтрализация (HCl + NaOH)",
+      reagents: [
+        { f:"HCl",  atoms:{H:1,Cl:1} },
+        { f:"NaOH", atoms:{Na:1,O:1,H:1} }
+      ],
+      products: [
+        { f:"NaCl",           atoms:{Na:1,Cl:1} },
+        { f:"H<sub>2</sub>O", atoms:{H:2,O:1} }
+      ],
+      coeffs: [1,1,1,1]
+    },
+    {
+      name: "Серная кислота + гидроксид натрия",
+      reagents: [
+        { f:"H<sub>2</sub>SO<sub>4</sub>", atoms:{H:2,S:1,O:4} },
+        { f:"NaOH",                        atoms:{Na:1,O:1,H:1} }
+      ],
+      products: [
+        { f:"Na<sub>2</sub>SO<sub>4</sub>", atoms:{Na:2,S:1,O:4} },
+        { f:"H<sub>2</sub>O",               atoms:{H:2,O:1} }
+      ],
+      coeffs: [1,2,1,2]
+    },
+    {
+      name: "Оксид меди + серная кислота",
+      reagents: [
+        { f:"CuO",                         atoms:{Cu:1,O:1} },
+        { f:"H<sub>2</sub>SO<sub>4</sub>", atoms:{H:2,S:1,O:4} }
+      ],
+      products: [
+        { f:"CuSO<sub>4</sub>", atoms:{Cu:1,S:1,O:4} },
+        { f:"H<sub>2</sub>O",   atoms:{H:2,O:1} }
+      ],
+      coeffs: [1,1,1,1]
+    },
+    {
+      name: "Хлорид бария + серная кислота",
+      reagents: [
+        { f:"BaCl<sub>2</sub>",            atoms:{Ba:1,Cl:2} },
+        { f:"H<sub>2</sub>SO<sub>4</sub>", atoms:{H:2,S:1,O:4} }
+      ],
+      products: [
+        { f:"BaSO<sub>4</sub>", atoms:{Ba:1,S:1,O:4} },
+        { f:"HCl",              atoms:{H:1,Cl:1} }
+      ],
+      coeffs: [1,1,1,2]
+    },
+    {
+      name: "Хлорид натрия + нитрат серебра",
+      reagents: [
+        { f:"NaCl",                        atoms:{Na:1,Cl:1} },
+        { f:"AgNO<sub>3</sub>",            atoms:{Ag:1,N:1,O:3} }
+      ],
+      products: [
+        { f:"AgCl",                        atoms:{Ag:1,Cl:1} },
+        { f:"NaNO<sub>3</sub>",            atoms:{Na:1,N:1,O:3} }
+      ],
+      coeffs: [1,1,1,1]
+    }
+  ]
+};
+
+// ── TAB SWITCH ──
+function switchTab(type) {
+  const types = ['synthesis','decomp','subst','exchange'];
+  document.querySelectorAll('.tab-btn').forEach((b,i) =>
+    b.classList.toggle('active', types[i] === type)
+  );
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('show'));
+  document.getElementById('sec-'+type).classList.add('show');
+}
+
+// ── BUILD CARD ──
+function buildCard(type, reaction, idx) {
+  const all = [...reaction.reagents, ...reaction.products];
+  const nR  = reaction.reagents.length;
+
+  const card = document.createElement('div');
+  card.className = 'eq-card';
+  card.dataset.type = type;
+  card.dataset.idx  = idx;
+
+  // meta
+  const meta = document.createElement('div');
+  meta.className = 'eq-meta';
+  meta.innerHTML = `<span class="eq-name">${reaction.name}</span><span class="eq-num">#${idx+1}</span>`;
+  card.appendChild(meta);
+
+  // equation row
+  const row = document.createElement('div');
+  row.className = 'eq-row';
+
+  all.forEach((comp, ci) => {
+    if (ci === nR) {
+      const arrow = document.createElement('span');
+      arrow.className = 'arrow'; arrow.textContent = '→';
+      row.appendChild(arrow);
+    } else if (ci > 0) {
+      const plus = document.createElement('span');
+      plus.className = 'plus'; plus.textContent = '+';
+      row.appendChild(plus);
+    }
+
+    const wrap = document.createElement('div');
+    wrap.className = 'compound-wrap';
+
+    const inp = document.createElement('input');
+    inp.type = 'number'; inp.min = '1';
+    inp.className = 'coeff-input';
+    inp.dataset.ci = ci;
+    inp.placeholder = '?';
+    inp.addEventListener('input', () => inp.classList.remove('correct','wrong','hint'));
+    inp.addEventListener('keydown', e => { if(e.key==='Enter') checkCard(card, type, idx); });
+
+    const formula = document.createElement('span');
+    formula.className = 'formula';
+    formula.innerHTML = comp.f;
+
+    wrap.appendChild(inp);
+    wrap.appendChild(formula);
+    row.appendChild(wrap);
+  });
+  card.appendChild(row);
+
+  // hint panel
+  const atomHint = document.createElement('div');
+  atomHint.className = 'atom-hint';
+  atomHint.id = `atom-hint-${type}-${idx}`;
+  card.appendChild(atomHint);
+
+  // feedback
+  const fb = document.createElement('div');
+  fb.className = 'feedback';
+  fb.id = `fb-${type}-${idx}`;
+  card.appendChild(fb);
+
+  // buttons
+  const btnRow = document.createElement('div');
+  btnRow.className = 'btn-row';
+
+  const btnCheck = document.createElement('button');
+  btnCheck.className = 'btn btn-check';
+  btnCheck.innerHTML = '✓ Проверить';
+  btnCheck.onclick = () => checkCard(card, type, idx);
+
+  const btnHint = document.createElement('button');
+  btnHint.className = 'btn btn-hint';
+  btnHint.innerHTML = '💡 Подсказка';
+  btnHint.onclick = () => showHint(card, type, idx);
+
+  const btnReset = document.createElement('button');
+  btnReset.className = 'btn btn-reset';
+  btnReset.innerHTML = '↺ Сброс';
+  btnReset.onclick = () => resetCard(card, type, idx);
+
+  btnRow.append(btnCheck, btnHint, btnReset);
+  card.appendChild(btnRow);
+  return card;
+}
+
+// ── CHECK ──
+const solved = { synthesis: new Set(), decomp: new Set(), subst: new Set(), exchange: new Set() };
+
+function checkCard(card, type, idx) {
+  const reaction = REACTIONS[type][idx];
+  const inputs   = card.querySelectorAll('.coeff-input');
+  let allOk = true;
+
+  inputs.forEach((inp, ci) => {
+    const val = parseInt(inp.value, 10);
+    if (isNaN(val) || val !== reaction.coeffs[ci]) {
+      inp.classList.remove('correct','hint');
+      inp.classList.add('wrong');
+      allOk = false;
+    } else {
+      inp.classList.remove('wrong','hint');
+      inp.classList.add('correct');
+    }
+  });
+
+  const fb = document.getElementById(`fb-${type}-${idx}`);
+  if (allOk) {
+    fb.className = 'feedback show ok';
+    fb.textContent = '✅ Верно! Уравнение сбалансировано.';
+    inputs.forEach(i => i.disabled = true);
+    card.querySelectorAll('.btn-check, .btn-hint').forEach(b => b.disabled = true);
+    solved[type].add(idx);
+    updateProgress(type);
+  } else {
+    fb.className = 'feedback show err';
+    fb.textContent = '❌ Не все коэффициенты верны. Попробуй ещё раз!';
+  }
+}
+
+// ── HINT ──
+function showHint(card, type, idx) {
+  const reaction = REACTIONS[type][idx];
+  const inputs   = card.querySelectorAll('.coeff-input');
+  const all      = [...reaction.reagents, ...reaction.products];
+  const nR       = reaction.reagents.length;
+  const coeffs   = reaction.coeffs;
+
+  const userCoeffs = Array.from(inputs).map(i => parseInt(i.value,10) || 1);
+
+  const elements = new Set();
+  all.forEach(c => Object.keys(c.atoms).forEach(e => elements.add(e)));
+
+  const leftSums = {}, rightSums = {};
+  elements.forEach(e => { leftSums[e] = 0; rightSums[e] = 0; });
+  all.forEach((comp, ci) => {
+    const coef = userCoeffs[ci];
+    const side = ci < nR ? 'left' : 'right';
+    Object.entries(comp.atoms).forEach(([el, cnt]) => {
+      if (side === 'left') leftSums[el] += coef * cnt;
+      else                 rightSums[el] += coef * cnt;
+    });
+  });
+
+  // scheme block
+  const scheme = TYPE_SCHEME[type];
+
+  let html = `
+    <div class="hint-section">
+      <b>Схема реакции:</b><br>
+      <span class="hint-scheme">${scheme}</span>
+    </div>
+    <div class="hint-note">
+      ⚠️ <b>Важно:</b> единицу (1) тоже нужно вводить в поле! 
+      В готовом уравнении единицы не пишутся, но при расстановке 
+      коэффициентов каждый компонент имеет коэффициент — 
+      минимум <b>1</b>.
+    </div>
+    <div class="hint-section" style="margin-top:10px">
+      <b>Подсчёт атомов (с введёнными коэффициентами):</b>
+      <table>
+        <tr><th>Элемент</th><th>Левая часть</th><th>Правая часть</th><th>Баланс</th></tr>`;
+
+  elements.forEach(e => {
+    const l = leftSums[e], r = rightSums[e];
+    const cls = l===r ? 'match' : 'mismatch';
+    const icon = l===r ? '✓' : '✗';
+    html += `<tr><td>${e}</td><td>${l}</td><td>${r}</td><td class="${cls}">${icon}</td></tr>`;
+  });
+  html += `</table></div>`;
+
+  // tip: first wrong coefficient
+  let tipped = false;
+  userCoeffs.forEach((uc, ci) => {
+    if (!tipped && uc !== coeffs[ci]) {
+      const which = ci < nR ? `реагент ${ci+1}` : `продукт ${ci-nR+1}`;
+      html += `<div class="hint-note" style="margin-top:8px">
+        💡 Попробуй: коэффициент для <b>${which}</b> 
+        (${all[ci].f.replace(/<[^>]+>/g,'')}) = <b>${coeffs[ci]}</b>
+      </div>`;
+      inputs[ci].classList.add('hint');
+      tipped = true;
+    }
+  });
+
+  const atomHint = document.getElementById(`atom-hint-${type}-${idx}`);
+  atomHint.innerHTML = html;
+  atomHint.classList.add('show');
+}
+
+// ── RESET ──
+function resetCard(card, type, idx) {
+  card.querySelectorAll('.coeff-input').forEach(i => {
+    i.value = ''; i.className = 'coeff-input'; i.disabled = false;
+  });
+  document.getElementById(`fb-${type}-${idx}`).className = 'feedback';
+  const ah = document.getElementById(`atom-hint-${type}-${idx}`);
+  ah.className = 'atom-hint'; ah.innerHTML = '';
+  card.querySelectorAll('.btn').forEach(b => b.disabled = false);
+  solved[type].delete(idx);
+  updateProgress(type);
+}
+
+// ── PROGRESS ──
+function updateProgress(type) {
+  const total = REACTIONS[type].length;
+  const done  = solved[type].size;
+  document.getElementById(`prog-${type}-txt`).textContent = `${done} / ${total}`;
+  document.getElementById(`prog-${type}-fill`).style.width = `${(done/total)*100}%`;
+  document.getElementById(`congrats-${type}`).classList.toggle('show', done === total);
+}
+
+// ── INIT ──
+['synthesis','decomp','subst','exchange'].forEach(type => {
+  const list = document.getElementById(`list-${type}`);
+  REACTIONS[type].forEach((reaction, idx) => list.appendChild(buildCard(type, reaction, idx)));
+  updateProgress(type);
+});
+</script>
+</body>
+</html>
