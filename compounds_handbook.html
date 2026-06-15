@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Справочник соединений — 3D модели</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #f5f4f0;
+    --surface: #ffffff;
+    --surface2: #f0efe9;
+    --border: rgba(0,0,0,0.10);
+    --border2: rgba(0,0,0,0.18);
+    --text: #1a1a18;
+    --text2: #6b6b67;
+    --text3: #999993;
+    --radius: 14px;
+    --radius-sm: 8px;
+    --shadow: 0 2px 12px rgba(0,0,0,0.08), 0 0 0 0.5px rgba(0,0,0,0.06);
+    --shadow-card: 0 8px 32px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.06);
+  }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 24px 16px 56px;
+  }
+
+  .page { max-width: 820px; margin: 0 auto; }
+
+  /* ── Back link ── */
+  .back-link {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 13px; color: var(--text2);
+    text-decoration: none; margin-bottom: 24px;
+    transition: color 0.15s;
+  }
+  .back-link:hover { color: var(--text); }
+  .back-link svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+
+  /* ── Header ── */
+  .header {
+    display: flex; align-items: flex-start; justify-content: space-between;
+    margin-bottom: 20px; gap: 12px;
+  }
+  .header-left h1 { font-size: 20px; font-weight: 600; letter-spacing: -0.3px; }
+  .header-left p { font-size: 13px; color: var(--text2); margin-top: 4px; }
+
+  /* ── Filter row ── */
+  .filter-row {
+    display: flex; gap: 6px; flex-wrap: wrap;
+    margin-bottom: 10px; align-items: center;
+  }
+  .filter-label { font-size: 12px; color: var(--text3); }
+  .filter-btn {
+    padding: 4px 12px; border-radius: 14px; font-size: 12px;
+    border: 1px solid var(--border2);
+    background: var(--surface); color: var(--text2);
+    cursor: pointer; transition: all .15s;
+  }
+  .filter-btn.on { color: #fff; border-color: transparent; }
+
+  /* ── Compound toolbar ── */
+  .toolbar { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 14px; }
+  .compound-btn {
+    padding: 5px 13px; border-radius: 18px;
+    border: 1px solid var(--border2);
+    background: var(--surface); color: var(--text);
+    font-size: 13px; cursor: pointer; transition: all .15s;
+  }
+  .compound-btn:hover { background: var(--surface2); }
+  .compound-btn.active { color: #fff; border-color: transparent; }
+
+  /* ── Canvas ── */
+  .canvas-wrap {
+    position: relative; width: 100%; height: 380px;
+    border-radius: var(--radius);
+    overflow: hidden; cursor: grab;
+    user-select: none; background: #0f172a;
+    box-shadow: var(--shadow-card);
+  }
+  .canvas-wrap:active { cursor: grabbing; }
+  canvas { display: block; width: 100%; height: 100%; }
+
+  /* ── Controls ── */
+  .controls-row {
+    display: flex; gap: 8px; align-items: center;
+    margin-top: 10px; flex-wrap: wrap;
+  }
+  .ctrl-btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 6px 14px; border-radius: var(--radius-sm);
+    border: 1px solid var(--border2);
+    background: var(--surface); color: var(--text2);
+    font-size: 13px; cursor: pointer; transition: all .15s;
+  }
+  .ctrl-btn:hover { background: var(--surface2); color: var(--text); }
+  .ctrl-btn svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+  .hint-txt { font-size: 12px; color: var(--text3); margin-left: auto; }
+
+  /* ── Info panel ── */
+  .info-panel {
+    margin-top: 16px; padding: 18px 20px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--surface);
+    box-shadow: var(--shadow);
+  }
+  .info-top { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+  .info-formula { font-size: 28px; font-weight: 600; letter-spacing: -0.5px; }
+  .info-badge {
+    font-size: 11px; font-weight: 600; letter-spacing: 0.06em;
+    padding: 3px 10px; border-radius: 100px;
+    text-transform: uppercase;
+  }
+  .info-name { font-size: 14px; color: var(--text2); margin-top: 4px; }
+  .info-desc { font-size: 13px; color: var(--text2); margin-top: 8px; line-height: 1.6; }
+  .elements-grid { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 14px; }
+  .el-card {
+    padding: 10px 14px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border);
+    background: var(--surface2);
+    min-width: 90px;
+  }
+  .el-sym { font-size: 20px; font-weight: 600; }
+  .el-detail { font-size: 11px; color: var(--text2); margin-top: 3px; line-height: 1.65; }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <a href="index.html" class="back-link">
+    <svg viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></svg>
+    Главное меню
+  </a>
+
+  <div class="header">
+    <div class="header-left">
+      <h1>🔮 Справочник соединений — 3D</h1>
+      <p>Интерактивные модели молекул · вращение · масштаб · валентность</p>
+    </div>
+  </div>
+
+  <div class="filter-row" id="filterRow">
+    <span class="filter-label">Группа:</span>
+  </div>
+
+  <div class="toolbar" id="toolbar"></div>
+
+  <div class="canvas-wrap" id="canvasWrap">
+    <canvas id="mol3d"></canvas>
+  </div>
+
+  <div class="controls-row">
+    <button class="ctrl-btn" id="btnReset">
+      <svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+      Сбросить вид
+    </button>
+    <button class="ctrl-btn" id="btnAuto">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M10 8l6 4-6 4V8z"/></svg>
+      Авто-вращение: вкл
+    </button>
+    <span class="hint-txt">Мышь: перетащить — вращать · колёсико — масштаб</span>
+  </div>
+
+  <div class="info-panel" id="infoPanel"></div>
+
+</div>
+
+<script>
+const EL = {
+  H:  {name:'Водород',    mass:1.008,   color:'#93c5fd', tc:'#1e3a5f'},
+  O:  {name:'Кислород',   mass:16.00,   color:'#f87171', tc:'#fff'},
+  C:  {name:'Углерод',    mass:12.011,  color:'#6b7280', tc:'#fff'},
+  N:  {name:'Азот',       mass:14.007,  color:'#a78bfa', tc:'#fff'},
+  S:  {name:'Сера',       mass:32.06,   color:'#fbbf24', tc:'#1a0a00'},
+  Cl: {name:'Хлор',       mass:35.45,   color:'#6ee7b7', tc:'#022c22'},
+  Na: {name:'Натрий',     mass:22.990,  color:'#f9a8d4', tc:'#4a0720'},
+  Ca: {name:'Кальций',    mass:40.078,  color:'#34d399', tc:'#022c22'},
+  Fe: {name:'Железо',     mass:55.845,  color:'#b0a9a0', tc:'#1c1917'},
+  Al: {name:'Алюминий',   mass:26.982,  color:'#7dd3fc', tc:'#0c2a4a'},
+  Mn: {name:'Марганец',   mass:54.938,  color:'#fb7185', tc:'#fff'},
+  Cu: {name:'Медь',       mass:63.546,  color:'#fb923c', tc:'#431407'},
+  P:  {name:'Фосфор',     mass:30.974,  color:'#fda4af', tc:'#4c0519'},
+  K:  {name:'Калий',      mass:39.098,  color:'#c4b5fd', tc:'#2e1065'},
+  Mg: {name:'Магний',     mass:24.305,  color:'#6ee7b7', tc:'#022c22'},
+};
+
+const GC = {
+  'Оксиды':     {bg:'#dcfce7', text:'#14532d', btn:'#16a34a'},
+  'Галогениды': {bg:'#fce7f3', text:'#831843', btn:'#db2777'},
+  'Прочие':     {bg:'#ede9fe', text:'#3730a3', btn:'#7c3aed'},
+  'Кислоты':    {bg:'#ffedd5', text:'#7c2d12', btn:'#ea580c'},
+  'Основания':  {bg:'#dbeafe', text:'#1e3a8a', btn:'#2563eb'},
+  'Соли':       {bg:'#fef9c3', text:'#713f12', btn:'#ca8a04'},
+  'Органика':   {bg:'#dcfce7', text:'#14532d', btn:'#15803d'},
+};
+
+const COMPOUNDS = [
+  {id:'H2O',   f:'H₂O',      name:'Вода',                group:'Оксиды',    M:18.015,  desc:'Важнейшее соединение на Земле. Универсальный растворитель. Угол H-O-H составляет около 104,5°.',
+   atoms:[{s:'O',v:2,x:0,y:0,z:0},{s:'H',v:1,x:-1.2,y:-0.9,z:0},{s:'H',v:1,x:1.2,y:-0.9,z:0}], bonds:[[0,1,1],[0,2,1]]},
+  {id:'CO2',   f:'CO₂',      name:'Углекислый газ',       group:'Оксиды',    M:44.009,  desc:'Линейная молекула. Продукт горения и дыхания. Участвует в фотосинтезе растений.',
+   atoms:[{s:'C',v:4,x:0,y:0,z:0},{s:'O',v:2,x:-1.6,y:0,z:0},{s:'O',v:2,x:1.6,y:0,z:0}], bonds:[[0,1,2],[0,2,2]]},
+  {id:'SO2',   f:'SO₂',      name:'Оксид серы(IV)',        group:'Оксиды',    M:64.064,  desc:'Бесцветный газ с резким запахом. Образуется при горении серы. Вызывает кислотные дожди.',
+   atoms:[{s:'S',v:4,x:0,y:0,z:0},{s:'O',v:2,x:-1.3,y:-1.0,z:0},{s:'O',v:2,x:1.3,y:-1.0,z:0}], bonds:[[0,1,2],[0,2,2]]},
+  {id:'SO3',   f:'SO₃',      name:'Оксид серы(VI)',        group:'Оксиды',    M:80.063,  desc:'Бесцветная жидкость. Реагирует с водой с образованием серной кислоты.',
+   atoms:[{s:'S',v:6,x:0,y:0,z:0},{s:'O',v:2,x:0,y:1.5,z:0},{s:'O',v:2,x:-1.3,y:-0.75,z:0},{s:'O',v:2,x:1.3,y:-0.75,z:0}], bonds:[[0,1,2],[0,2,2],[0,3,2]]},
+  {id:'N2O3',  f:'N₂O₃',     name:'Оксид азота(III)',      group:'Оксиды',    M:76.012,  desc:'Неустойчивое синее вещество. Кислотный оксид, соответствующий азотистой кислоте HNO₂.',
+   atoms:[{s:'N',v:3,x:-1.2,y:0,z:0},{s:'N',v:3,x:1.2,y:0,z:0},{s:'O',v:2,x:-2.4,y:0.9,z:0},{s:'O',v:2,x:0,y:0.9,z:0},{s:'O',v:2,x:2.4,y:0.9,z:0}], bonds:[[0,1,1],[0,2,1],[0,3,1],[1,3,1],[1,4,1]]},
+  {id:'MnO2',  f:'MnO₂',     name:'Оксид марганца(IV)',    group:'Оксиды',    M:86.937,  desc:'Чёрный порошок. Катализатор разложения перекиси водорода. Входит в состав батареек.',
+   atoms:[{s:'Mn',v:4,x:0,y:0,z:0},{s:'O',v:2,x:-1.5,y:0,z:0},{s:'O',v:2,x:1.5,y:0,z:0}], bonds:[[0,1,2],[0,2,2]]},
+  {id:'Fe2O3', f:'Fe₂O₃',    name:'Оксид железа(III)',     group:'Оксиды',    M:159.69,  desc:'Красно-коричневый порошок — ржавчина. Встречается в природе как минерал гематит.',
+   atoms:[{s:'Fe',v:3,x:-1.7,y:0,z:0},{s:'Fe',v:3,x:1.7,y:0,z:0},{s:'O',v:2,x:0,y:1.4,z:0},{s:'O',v:2,x:-1.0,y:-1.2,z:0},{s:'O',v:2,x:1.0,y:-1.2,z:0}], bonds:[[0,2,1],[0,3,1],[0,4,1],[1,2,1],[1,3,1],[1,4,1]]},
+  {id:'Al2O3', f:'Al₂O₃',    name:'Оксид алюминия',        group:'Оксиды',    M:101.96,  desc:'Белый порошок. Основа корунда, сапфира и рубина. Огнеупорный материал.',
+   atoms:[{s:'Al',v:3,x:-1.7,y:0.5,z:0},{s:'Al',v:3,x:1.7,y:0.5,z:0},{s:'O',v:2,x:0,y:1.5,z:0},{s:'O',v:2,x:-1.0,y:-1.2,z:0},{s:'O',v:2,x:1.0,y:-1.2,z:0}], bonds:[[0,2,1],[0,3,1],[1,2,1],[1,4,1],[0,4,1],[1,3,1]]},
+  {id:'Cu2O',  f:'Cu₂O',     name:'Оксид меди(I)',         group:'Оксиды',    M:143.09,  desc:'Красный порошок. Применяется как пигмент и полупроводник. Образуется при нагреве CuO.',
+   atoms:[{s:'Cu',v:1,x:-1.5,y:0,z:0},{s:'Cu',v:1,x:1.5,y:0,z:0},{s:'O',v:2,x:0,y:0,z:0}], bonds:[[0,2,1],[1,2,1]]},
+  {id:'NaCl',  f:'NaCl',     name:'Хлорид натрия',         group:'Галогениды',M:58.44,   desc:'Поваренная соль. Незаменима для жизни. Ионное соединение — в кристалле нет отдельных молекул.',
+   atoms:[{s:'Na',v:1,x:-1.2,y:0,z:0},{s:'Cl',v:1,x:1.2,y:0,z:0}], bonds:[[0,1,1]]},
+  {id:'KCl',   f:'KCl',      name:'Хлорид калия',          group:'Галогениды',M:74.55,   desc:'Белые кристаллы. Используется как калийное удобрение и заменитель поваренной соли.',
+   atoms:[{s:'K',v:1,x:-1.3,y:0,z:0},{s:'Cl',v:1,x:1.3,y:0,z:0}], bonds:[[0,1,1]]},
+  {id:'CaCl2', f:'CaCl₂',    name:'Хлорид кальция',        group:'Галогениды',M:110.98,  desc:'Белое кристаллическое вещество. Осушитель и антигололёдное средство.',
+   atoms:[{s:'Ca',v:2,x:0,y:0,z:0},{s:'Cl',v:1,x:-1.8,y:0,z:0},{s:'Cl',v:1,x:1.8,y:0,z:0}], bonds:[[0,1,1],[0,2,1]]},
+  {id:'AlCl3', f:'AlCl₃',    name:'Хлорид алюминия',       group:'Галогениды',M:133.34,  desc:'Белый порошок. Важный катализатор в органической химии (реакции Фриделя-Крафтса).',
+   atoms:[{s:'Al',v:3,x:0,y:0,z:0},{s:'Cl',v:1,x:-1.8,y:0,z:0},{s:'Cl',v:1,x:0.9,y:1.56,z:0},{s:'Cl',v:1,x:0.9,y:-1.56,z:0}], bonds:[[0,1,1],[0,2,1],[0,3,1]]},
+  {id:'PCl3',  f:'PCl₃',     name:'Хлорид фосфора(III)',   group:'Галогениды',M:137.33,  desc:'Бесцветная жидкость с резким запахом. Важный реагент в химическом синтезе.',
+   atoms:[{s:'P',v:3,x:0,y:0,z:0},{s:'Cl',v:1,x:-1.6,y:-0.9,z:0.5},{s:'Cl',v:1,x:1.6,y:-0.9,z:0.5},{s:'Cl',v:1,x:0,y:-0.9,z:-1.4}], bonds:[[0,1,1],[0,2,1],[0,3,1]]},
+  {id:'PCl5',  f:'PCl₅',     name:'Хлорид фосфора(V)',     group:'Галогениды',M:208.24,  desc:'Белое кристаллическое вещество. Сильный хлорирующий агент. Бипирамидальная форма.',
+   atoms:[{s:'P',v:5,x:0,y:0,z:0},{s:'Cl',v:1,x:1.8,y:0,z:0},{s:'Cl',v:1,x:-1.8,y:0,z:0},{s:'Cl',v:1,x:0,y:1.8,z:0},{s:'Cl',v:1,x:0,y:-1.8,z:0},{s:'Cl',v:1,x:0,y:0,z:1.8}], bonds:[[0,1,1],[0,2,1],[0,3,1],[0,4,1],[0,5,1]]},
+  {id:'FeCl3', f:'FeCl₃',    name:'Хлорид железа(III)',    group:'Галогениды',M:162.20,  desc:'Тёмно-коричневые кристаллы. Применяется в травлении печатных плат и как коагулянт.',
+   atoms:[{s:'Fe',v:3,x:0,y:0,z:0},{s:'Cl',v:1,x:-1.8,y:0,z:0},{s:'Cl',v:1,x:0.9,y:1.56,z:0},{s:'Cl',v:1,x:0.9,y:-1.56,z:0}], bonds:[[0,1,1],[0,2,1],[0,3,1]]},
+  {id:'NH3',   f:'NH₃',      name:'Аммиак',                group:'Прочие',    M:17.031,  desc:'Бесцветный газ с резким запахом. Пирамидальная форма. Используется в производстве удобрений.',
+   atoms:[{s:'N',v:3,x:0,y:0,z:0},{s:'H',v:1,x:-1.1,y:-0.8,z:0.7},{s:'H',v:1,x:1.1,y:-0.8,z:0.7},{s:'H',v:1,x:0,y:-0.8,z:-1.2}], bonds:[[0,1,1],[0,2,1],[0,3,1]]},
+  {id:'CS2',   f:'CS₂',      name:'Сульфид углерода',      group:'Прочие',    M:76.139,  desc:'Бесцветная летучая жидкость. Хороший растворитель каучука, жиров и смол.',
+   atoms:[{s:'C',v:4,x:0,y:0,z:0},{s:'S',v:2,x:-1.6,y:0,z:0},{s:'S',v:2,x:1.6,y:0,z:0}], bonds:[[0,1,2],[0,2,2]]},
+  {id:'CH4',   f:'CH₄',      name:'Метан',                 group:'Органика',  M:16.043,  desc:'Основной компонент природного газа. Простейший углеводород. Тетраэдрическая форма.',
+   atoms:[{s:'C',v:4,x:0,y:0,z:0},{s:'H',v:1,x:1.1,y:1.1,z:1.1},{s:'H',v:1,x:-1.1,y:-1.1,z:1.1},{s:'H',v:1,x:-1.1,y:1.1,z:-1.1},{s:'H',v:1,x:1.1,y:-1.1,z:-1.1}], bonds:[[0,1,1],[0,2,1],[0,3,1],[0,4,1]]},
+  {id:'C2H5OH',f:'C₂H₅OH',  name:'Этанол',                group:'Органика',  M:46.068,  desc:'Этиловый спирт. Содержится в алкогольных напитках. Важный промышленный растворитель.',
+   atoms:[{s:'C',v:4,x:-1.2,y:0,z:0},{s:'C',v:4,x:1.2,y:0,z:0},{s:'O',v:2,x:2.6,y:0,z:0},{s:'H',v:1,x:-1.2,y:1.2,z:0.7},{s:'H',v:1,x:-1.2,y:1.2,z:-0.7},{s:'H',v:1,x:-1.2,y:-1.3,z:0},{s:'H',v:1,x:1.2,y:-0.7,z:1.0},{s:'H',v:1,x:1.2,y:-0.7,z:-1.0},{s:'H',v:1,x:3.7,y:0,z:0}], bonds:[[0,1,1],[1,2,1],[0,3,1],[0,4,1],[0,5,1],[1,6,1],[1,7,1],[2,8,1]]},
+  {id:'H2SO4', f:'H₂SO₄',   name:'Серная кислота',        group:'Кислоты',   M:98.079,  desc:'Одна из важнейших кислот химической промышленности. Бесцветная маслянистая жидкость.',
+   atoms:[{s:'S',v:6,x:0,y:0,z:0},{s:'O',v:2,x:-1.3,y:1.0,z:0},{s:'O',v:2,x:1.3,y:1.0,z:0},{s:'O',v:2,x:-1.3,y:-1.0,z:0},{s:'O',v:2,x:1.3,y:-1.0,z:0},{s:'H',v:1,x:-2.4,y:-1.0,z:0},{s:'H',v:1,x:2.4,y:-1.0,z:0}], bonds:[[0,1,2],[0,2,2],[0,3,1],[0,4,1],[3,5,1],[4,6,1]]},
+  {id:'HCl',   f:'HCl',      name:'Соляная кислота',       group:'Кислоты',   M:36.461,  desc:'Водный раствор хлороводорода. Входит в состав желудочного сока. Сильная кислота.',
+   atoms:[{s:'H',v:1,x:-1.0,y:0,z:0},{s:'Cl',v:1,x:1.0,y:0,z:0}], bonds:[[0,1,1]]},
+  {id:'NaOH',  f:'NaOH',     name:'Гидроксид натрия',      group:'Основания', M:39.997,  desc:'Едкий натр. Щёлочь, применяется в мыловарении и химической промышленности.',
+   atoms:[{s:'Na',v:1,x:-1.5,y:0,z:0},{s:'O',v:2,x:0.3,y:0,z:0},{s:'H',v:1,x:1.5,y:0,z:0}], bonds:[[0,1,1],[1,2,1]]},
+  {id:'CaOH2', f:'Ca(OH)₂',  name:'Гидроксид кальция',     group:'Основания', M:74.093,  desc:'Гашёная известь. Применяется в строительстве и для нейтрализации кислот.',
+   atoms:[{s:'Ca',v:2,x:0,y:0,z:0},{s:'O',v:2,x:-1.5,y:0.8,z:0},{s:'O',v:2,x:1.5,y:0.8,z:0},{s:'H',v:1,x:-2.5,y:0.8,z:0},{s:'H',v:1,x:2.5,y:0.8,z:0}], bonds:[[0,1,1],[0,2,1],[1,3,1],[2,4,1]]},
+  {id:'CaCO3', f:'CaCO₃',    name:'Карбонат кальция',      group:'Соли',      M:100.09,  desc:'Мел, мрамор, известняк. Широко распространён в природе. Растворяется в кислотах.',
+   atoms:[{s:'Ca',v:2,x:-2.2,y:0,z:0},{s:'C',v:4,x:0.8,y:0,z:0},{s:'O',v:2,x:0.8,y:1.5,z:0},{s:'O',v:2,x:2.1,y:-0.7,z:0},{s:'O',v:2,x:-0.6,y:-0.9,z:0}], bonds:[[0,3,1],[0,4,1],[1,2,2],[1,3,1],[1,4,1]]},
+];
+
+const allGroups = [...new Set(COMPOUNDS.map(c => c.group))];
+let activeGroup = 'Все', current = COMPOUNDS[0];
+let rotX = 0.3, rotY = 0.5, scale = 1.0;
+let dragging = false, lastX = 0, lastY = 0, autoRot = true;
+
+const canvas = document.getElementById('mol3d');
+const ctx = canvas.getContext('2d');
+const wrap = document.getElementById('canvasWrap');
+
+function resize() {
+  const r = wrap.getBoundingClientRect();
+  canvas.width = r.width * devicePixelRatio;
+  canvas.height = r.height * devicePixelRatio;
+  draw();
+}
+
+function proj(x, y, z) {
+  const cX = Math.cos(rotX), sX = Math.sin(rotX), cY = Math.cos(rotY), sY = Math.sin(rotY);
+  let nx = x*cY + z*sY, ny = y, nz = -x*sY + z*cY;
+  let ny2 = ny*cX - nz*sX, nz2 = ny*sX + nz*cX;
+  const fov = 5.5, pz = nz2 + fov;
+  return { sx:(nx/pz)*fov, sy:(ny2/pz)*fov, depth:nz2 };
+}
+
+function hexRgb(h) {
+  return { r:parseInt(h.slice(1,3),16), g:parseInt(h.slice(3,5),16), b:parseInt(h.slice(5,7),16) };
+}
+
+function draw() {
+  const W = canvas.width, H = canvas.height, cx = W/2, cy = H/2;
+  ctx.clearRect(0,0,W,H);
+  ctx.fillStyle = '#0f172a';
+  ctx.fillRect(0,0,W,H);
+
+  /* subtle grid */
+  ctx.strokeStyle = 'rgba(255,255,255,0.04)';
+  ctx.lineWidth = 1;
+  const gs = 60 * devicePixelRatio;
+  for(let x = cx % gs; x < W; x += gs) { ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,H); ctx.stroke(); }
+  for(let y = cy % gs; y < H; y += gs) { ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(W,y); ctx.stroke(); }
+
+  const unit = Math.min(W,H) * 0.13 * scale;
+  const comp = current;
+  const p2 = comp.atoms.map((a,i) => ({...proj(a.x,a.y,a.z), sym:a.s, val:a.v, idx:i}));
+  const sorted = [...p2].sort((a,b) => a.depth - b.depth);
+
+  /* bonds */
+  comp.bonds.forEach(([i,j,order]) => {
+    const a = p2[i], b = p2[j];
+    const ax = cx+a.sx*unit, ay = cy+a.sy*unit;
+    const bx = cx+b.sx*unit, by = cy+b.sy*unit;
+    const ca = EL[comp.atoms[i].s]?.color||'#aaa';
+    const cb = EL[comp.atoms[j].s]?.color||'#aaa';
+    const grad = ctx.createLinearGradient(ax,ay,bx,by);
+    grad.addColorStop(0,ca); grad.addColorStop(1,cb);
+    if (order === 2) {
+      const dx=bx-ax, dy=by-ay, len=Math.sqrt(dx*dx+dy*dy)||1;
+      const ox=(-dy/len)*5, oy=(dx/len)*5;
+      for (const o of [-1,1]) {
+        ctx.beginPath(); ctx.moveTo(ax+ox*o,ay+oy*o); ctx.lineTo(bx+ox*o,by+oy*o);
+        ctx.strokeStyle=grad; ctx.lineWidth=2.5; ctx.stroke();
+      }
+    } else {
+      ctx.beginPath(); ctx.moveTo(ax,ay); ctx.lineTo(bx,by);
+      ctx.strokeStyle=grad; ctx.lineWidth=4.5; ctx.stroke();
+    }
+  });
+
+  /* atoms */
+  sorted.forEach(p => {
+    const atom = comp.atoms[p.idx];
+    const db = EL[atom.s] || {};
+    const px = cx+p.sx*unit, py = cy+p.sy*unit;
+    const r = (atom.s.length>1 ? 30 : 25) * scale;
+    const rgb = hexRgb(db.color||'#888');
+
+    /* valency legs */
+    const legLen = r + 6 + atom.v * 3;
+    for (let v = 0; v < atom.v; v++) {
+      const angle = (v/atom.v)*Math.PI*2 - Math.PI/2;
+      const lx = px+Math.cos(angle)*legLen, ly = py+Math.sin(angle)*legLen;
+      ctx.beginPath();
+      ctx.moveTo(px+Math.cos(angle)*r, py+Math.sin(angle)*r);
+      ctx.lineTo(lx, ly);
+      ctx.strokeStyle = `rgba(${rgb.r},${rgb.g},${rgb.b},0.45)`;
+      ctx.lineWidth = 2; ctx.stroke();
+      ctx.beginPath(); ctx.arc(lx,ly,4,0,Math.PI*2);
+      ctx.fillStyle = db.color||'#888'; ctx.fill();
+    }
+
+    /* atom sphere */
+    ctx.beginPath(); ctx.arc(px,py,r,0,Math.PI*2);
+    ctx.fillStyle = db.color||'#888'; ctx.fill();
+    ctx.strokeStyle = 'rgba(255,255,255,0.2)'; ctx.lineWidth = 1.5; ctx.stroke();
+
+    /* highlight dot */
+    ctx.beginPath(); ctx.arc(px-r*0.28, py-r*0.28, r*0.18, 0, Math.PI*2);
+    ctx.fillStyle = 'rgba(255,255,255,0.25)'; ctx.fill();
+
+    /* label */
+    ctx.font = `600 ${Math.max(11, Math.round(13*scale))}px -apple-system, sans-serif`;
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillStyle = db.tc || '#fff';
+    ctx.fillText(atom.s, px, py);
+  });
+}
+
+(function loop() {
+  if (autoRot && !dragging) { rotY += 0.008; draw(); }
+  requestAnimationFrame(loop);
+})();
+
+wrap.addEventListener('mousedown', e => { dragging=true; autoRot=false; lastX=e.clientX; lastY=e.clientY; });
+window.addEventListener('mousemove', e => { if(!dragging)return; rotY+=(e.clientX-lastX)*0.012; rotX+=(e.clientY-lastY)*0.012; lastX=e.clientX; lastY=e.clientY; draw(); });
+window.addEventListener('mouseup', () => { dragging=false; });
+wrap.addEventListener('touchstart', e => { dragging=true; autoRot=false; lastX=e.touches[0].clientX; lastY=e.touches[0].clientY; }, {passive:true});
+wrap.addEventListener('touchmove', e => { if(!dragging)return; rotY+=(e.touches[0].clientX-lastX)*0.014; rotX+=(e.touches[0].clientY-lastY)*0.014; lastX=e.touches[0].clientX; lastY=e.touches[0].clientY; draw(); }, {passive:true});
+wrap.addEventListener('touchend', () => { dragging=false; });
+wrap.addEventListener('wheel', e => { e.preventDefault(); scale=Math.max(0.4,Math.min(2.5,scale-e.deltaY*0.001)); draw(); }, {passive:false});
+
+document.getElementById('btnReset').onclick = () => { rotX=0.3; rotY=0.5; scale=1.0; autoRot=true; };
+const btnAuto = document.getElementById('btnAuto');
+btnAuto.onclick = () => { autoRot=!autoRot; btnAuto.innerHTML = autoRot
+  ? '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M10 8l6 4-6 4V8z"/></svg> Авто-вращение: вкл'
+  : '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><rect x="9" y="8" width="2" height="8"/><rect x="13" y="8" width="2" height="8"/></svg> Авто-вращение: выкл'; };
+
+function selectC(comp) {
+  current = comp; rotX=0.3; rotY=0.5; scale=1.0; autoRot=true;
+  document.querySelectorAll('.compound-btn').forEach(b => {
+    const isActive = b.dataset.id === comp.id;
+    b.classList.toggle('active', isActive);
+    b.style.background = isActive ? (GC[comp.group]?.btn||'#555') : '';
+  });
+  updateInfo(); draw();
+}
+
+function buildToolbar() {
+  const tb = document.getElementById('toolbar'); tb.innerHTML = '';
+  const list = activeGroup === 'Все' ? COMPOUNDS : COMPOUNDS.filter(c => c.group === activeGroup);
+  list.forEach(c => {
+    const btn = document.createElement('button');
+    btn.className = 'compound-btn' + (c.id === current.id ? ' active' : '');
+    btn.textContent = c.f; btn.dataset.id = c.id; btn.title = c.name;
+    if (c.id === current.id) btn.style.background = GC[c.group]?.btn||'#555';
+    btn.onclick = () => selectC(c);
+    tb.appendChild(btn);
+  });
+  if (!list.find(c => c.id === current.id)) selectC(list[0] || COMPOUNDS[0]);
+}
+
+function buildFilters() {
+  const row = document.getElementById('filterRow');
+  const groups = ['Все', ...allGroups];
+  const applyStyles = () => {
+    row.querySelectorAll('.filter-btn').forEach((b, i) => {
+      const g = groups[i], active = g === activeGroup;
+      b.classList.toggle('on', active);
+      if (active) {
+        b.style.background = g === 'Все' ? '#374151' : (GC[g]?.btn||'#555');
+        b.style.color = '#fff';
+        b.style.borderColor = 'transparent';
+      } else {
+        b.style.background = '';
+        b.style.color = g === 'Все' ? '' : (GC[g]?.btn||'#555');
+        b.style.borderColor = g === 'Все' ? '' : (GC[g]?.btn||'#555') + '66';
+      }
+    });
+  };
+  groups.forEach(g => {
+    const btn = document.createElement('button');
+    btn.className = 'filter-btn'; btn.textContent = g;
+    btn.onclick = () => { activeGroup = g; applyStyles(); buildToolbar(); };
+    row.appendChild(btn);
+  });
+  applyStyles();
+}
+
+function updateInfo() {
+  const comp = current;
+  const gc = GC[comp.group] || {bg:'#f3f4f6', text:'#374151', btn:'#6b7280'};
+  const panel = document.getElementById('infoPanel');
+  const elSet = {};
+  comp.atoms.forEach(a => { if(!elSet[a.s]) elSet[a.s]=a.v; });
+  const roman = ['','I','II','III','IV','V','VI','VII','VIII'];
+  const cards = Object.entries(elSet).map(([sym,val]) => {
+    const db = EL[sym]||{};
+    return `<div class="el-card">
+      <div class="el-sym" style="color:${gc.btn}">${sym}</div>
+      <div class="el-detail">${db.name||sym}<br>M = ${(db.mass||0).toFixed(3)} г/моль<br>Валентность: <b>${roman[val]||val}</b></div>
+    </div>`;
+  }).join('');
+  panel.innerHTML = `
+    <div class="info-top">
+      <span class="info-formula">${comp.f}</span>
+      <span class="info-badge" style="background:${gc.bg};color:${gc.text}">${comp.group}</span>
+    </div>
+    <div class="info-name">${comp.name} &middot; M = ${comp.M.toFixed(3)} г/моль</div>
+    <div class="info-desc">${comp.desc}</div>
+    <div class="elements-grid">${cards}</div>`;
+}
+
+buildFilters();
+buildToolbar();
+updateInfo();
+new ResizeObserver(resize).observe(wrap);
+resize();
+</script>
+</body>
+</html>
