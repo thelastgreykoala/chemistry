@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Химия 8 класс — Неделя 4</title>
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #f5f4f0;
+    --surface: #ffffff;
+    --surface2: #f0efe9;
+    --border: rgba(0,0,0,0.10);
+    --border2: rgba(0,0,0,0.18);
+    --text: #1a1a18;
+    --text2: #6b6b67;
+    --text3: #999993;
+    --radius: 14px;
+    --radius-sm: 8px;
+    --shadow: 0 2px 12px rgba(0,0,0,0.07), 0 0 0 0.5px rgba(0,0,0,0.06);
+
+    /* ── Mapped color tokens used by the §12–17 task fragment ── */
+    --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    --font-mono: "SFMono-Regular", "Consolas", "Liberation Mono", monospace;
+    --border-radius-md: 8px;
+    --border-radius-lg: 14px;
+
+    --color-text-primary: var(--text);
+    --color-text-secondary: var(--text2);
+    --color-text-tertiary: var(--text3);
+    --color-text-info: #0C447C;
+    --color-text-success: #1A6B3A;
+    --color-text-danger: #A32D2D;
+
+    --color-background-primary: var(--surface);
+    --color-background-secondary: var(--surface2);
+    --color-background-info: #E6F1FB;
+    --color-background-success: #F0FDF4;
+    --color-background-danger: #FEF2F2;
+
+    --color-border-secondary: var(--border2);
+    --color-border-tertiary: var(--border);
+    --color-border-info: #B6DBF7;
+    --color-border-success: #86EFAC;
+    --color-border-danger: #F0ABAB;
+  }
+
+  body {
+    font-family: var(--font-sans);
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 24px 16px 48px;
+  }
+
+  .page { max-width: 560px; margin: 0 auto; }
+
+  .header { margin-bottom: 20px; }
+  .header h1 { font-size: 18px; font-weight: 600; letter-spacing: -0.3px; }
+  .header p  { font-size: 13px; color: var(--text2); margin-top: 3px; }
+
+  .sr-only {
+    position: absolute; width: 1px; height: 1px;
+    padding: 0; margin: -1px; overflow: hidden;
+    clip: rect(0,0,0,0); white-space: nowrap; border: 0;
+  }
+
+  /* ── Back link ── */
+  .back-link {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 12px; color: var(--text2);
+    text-decoration: none; margin-bottom: 16px;
+    padding: 5px 0;
+    transition: color 0.15s;
+  }
+  .back-link:hover { color: var(--text); }
+  .back-link svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <a href="index.html" class="back-link">
+    <svg viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></svg>
+    Главное меню
+  </a>
+
+  <div class="header">
+    <h1>Неделя 4 · §12–17</h1>
+    <p>Воздух, кислород, оксиды, водород, кислоты, соли · стр. 60–80</p>
+  </div>
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:var(--font-sans);}
+.tabs{display:flex;gap:5px;flex-wrap:wrap;padding:1rem 0 0.75rem;}
+.tab{font-size:12px;padding:6px 12px;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);background:transparent;color:var(--color-text-secondary);cursor:pointer;white-space:nowrap;}
+.tab.active{background:var(--color-background-info);color:var(--color-text-info);border-color:var(--color-border-info);}
+.sec{display:none;} .sec.on{display:block;}
+.sec-title{font-size:15px;font-weight:500;color:var(--color-text-primary);margin-bottom:4px;}
+.sec-sub{font-size:13px;color:var(--color-text-secondary);margin-bottom:14px;}
+.plabel{display:inline-block;font-size:11px;padding:2px 9px;border-radius:var(--border-radius-md);margin-right:6px;}
+.group-title{font-size:13px;font-weight:500;color:var(--color-text-primary);margin:14px 0 8px;display:flex;align-items:center;gap:6px;}
+.tasks{display:flex;flex-direction:column;gap:8px;margin-bottom:4px;}
+.tc{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:13px 15px;}
+.tnum{font-size:11px;color:var(--color-text-tertiary);letter-spacing:.05em;margin-bottom:3px;}
+.ttxt{font-size:14px;color:var(--color-text-primary);line-height:1.6;}
+.thint{font-size:12px;color:var(--color-text-secondary);margin-top:6px;padding-top:6px;border-top:0.5px solid var(--color-border-tertiary);}
+.tans{font-size:13px;color:var(--color-text-success);margin-top:8px;line-height:1.6;display:none;}
+.sbtn{font-size:12px;padding:4px 10px;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);background:transparent;color:var(--color-text-secondary);cursor:pointer;margin-top:8px;}
+.score-row{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:10px 14px;display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
+.sn{font-size:19px;font-weight:500;color:var(--color-text-primary);}
+.slbl{font-size:12px;color:var(--color-text-secondary);}
+.rbtn{font-size:12px;padding:4px 12px;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);background:transparent;color:var(--color-text-secondary);cursor:pointer;}
+.qc{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:13px 15px;margin-bottom:8px;}
+.qtxt{font-size:14px;color:var(--color-text-primary);line-height:1.6;margin-bottom:10px;}
+.opts{display:flex;flex-direction:column;gap:5px;}
+.opt{font-size:13px;padding:7px 11px;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);cursor:pointer;background:transparent;color:var(--color-text-primary);text-align:left;}
+.opt:hover:not(.done){background:var(--color-background-secondary);}
+.opt.ok{background:var(--color-background-success);color:var(--color-text-success);border-color:var(--color-border-success);}
+.opt.no{background:var(--color-background-danger);color:var(--color-text-danger);border-color:var(--color-border-danger);}
+.expl{font-size:12px;color:var(--color-text-secondary);margin-top:7px;padding-top:7px;border-top:0.5px solid var(--color-border-tertiary);display:none;line-height:1.5;}
+.formula{font-family:var(--font-mono);font-size:13px;}
+</style>
+
+<div class="tabs" id="tabs">
+  <button class="tab active" onclick="st('tasks',0)">Список задач</button>
+  <button class="tab" onclick="st('quiz12',1)">Тест: §12</button>
+  <button class="tab" onclick="st('quiz13',2)">Тест: §13</button>
+  <button class="tab" onclick="st('quiz14',3)">Тест: §14</button>
+  <button class="tab" onclick="st('quiz15',4)">Тест: §15</button>
+  <button class="tab" onclick="st('quiz16',5)">Тест: §16</button>
+  <button class="tab" onclick="st('quiz17',6)">Тест: §17</button>
+</div>
+
+<!-- ══ TASKS ══ -->
+<div id="tasks" class="sec on">
+  <p class="sec-title">Задачи недели 4</p>
+  <p class="sec-sub">§12–17 · Воздух, кислород, оксиды, водород, кислоты, соли · стр. 60–80</p>
+
+  <div class="group-title"><span class="plabel" style="background:#E6F1FB;color:#0C447C;">§12</span>Воздух и его состав</div>
+  <div class="tasks">
+    <div class="tc">
+      <p class="tnum">Задание 1</p>
+      <p class="ttxt">Назовите основные компоненты воздуха и их объёмные доли. Какой газ занимает наибольшую долю?</p>
+      <button class="sbtn" onclick="tog(this)">Ответ</button>
+      <p class="tans">Азот N₂ — 78%, кислород O₂ — 21%, углекислый газ CO₂ — ≈0,03%, другие газы (аргон и т.д.) — 0,97%. Наибольшая доля — у азота.</p>
+    </div>
+    <div class="tc">
+      <p class="tnum">Задание 2 — расчётная</p>
+      <p class="ttxt">Объёмная доля аргона в воздухе 0,9%. Какой объём воздуха необходим для получения 125 м³ аргона?</p>
+      <p class="thint">φ(газа) = V(газа) / V(смеси) · 100%. Отсюда V(смеси) = V(газа) / φ(газа) · 100%.</p>
+      <button class="sbtn" onclick="tog(this)">Ответ</button>
+      <p class="tans">V(воздуха) = 125 / 0,009 ≈ 13 889 м³.</p>
+    </div>
+    <div class="tc">
+      <p class="tnum">Задание 3 — расчётная</p>
+      <p class="ttxt">Смешали 16 л кислорода и 12 л углекислого газа. Найдите объёмную долю каждого газа в полученной смеси.</p>
+      <button class="sbtn" onclick="tog(this)">Ответ</button>
+      <p class="tans">V(смеси) = 16 + 12 = 28 л.<br>φ(O₂) = 16/28 · 100% ≈ 57,1%.<br>φ(CO₂) = 12/28 · 100% ≈ 42,9%.</p>
+    </div>
+    <div class="tc">
+      <p class="tnum">Задание 4 — творческое</p>
+      <p class="ttxt">Объясните своими словами, почему выражение «молекула воздуха» некорректно. Что такое объёмная доля компонента газовой смеси?</p>
+      <button class="sbtn" onclick="tog(this)">Ответ</button>
+      <p class="tans">Воздух — смесь нескольких веществ (азот, кислород, углекислый газ и др.), а не одно вещество, поэтому у него нет единой молекулы. Объёмная доля — это отношение объёма одного газа к общему объёму смеси, выраженное в процентах.</p>
+    </div>
+  </div>
+
+  <div class="group-title"><span class="plabel" style="background:#FEF3C7;color:#92400E;">§13</span>Кислород</div>
+  <div class="tasks">
+    <div class="tc">
+      <p class="tnum">Задание 5</p>
+      <p class="ttxt">Запишите уравнение получения кислорода разложением перманганата калия KMnO₄ при нагревании. Какой это тип реакции?</p>
+      <button class="sbtn" onclick="tog(this)">Ответ</button>
+      <p class="tans">2KMnO₄ →(t) K₂MnO₄ + MnO₂ + O₂↑ — реакция разложения (из одного вещества образуется несколько).</p>
+    </div>
+    <div class="tc">
+      <p class="tnum">Задание 6</p>
+      <p class="ttxt">Запишите уравнения реакций горения в кислороде: а) магния; б) железа (продукт Fe₃O₄); в) фосфора; г) серы; д) угля (углерода).</p>
+      <button class="sbtn" onclick="tog(this)">Ответ</button>
+      <p class="tans">а) 2Mg + O₂ = 2MgO<br>б) 3Fe + 2O₂ = Fe₃O₄<br>в) 4P + 5O₂ = 2P₂O₅<br>г) S + O₂ = SO₂↑<br>д) C + O₂ = CO₂↑</p>
+    </div>
+    <div class="tc">
+      <p class="tnum">Задание 7 — допишите реакции</p>
+      <p class="ttxt">Допишите схемы и расставьте коэффициенты:<br>а) SO₂ + ... → SO₃<br>б) ZnS + ... → ZnO + SO₂<br>в) NaNO₃ → NaNO₂ + ...<br>г) C₂H₂ + O₂ → ... + ...</p>
+      <p class="thint">а) подумайте, какой газ нужно добавить к SO₂, чтобы получить SO₃ (вспомните §13 — кислород реагирует с неметаллами).</p>
+      <button class="sbtn" onclick="tog(this)">Ответ</button>
+      <p class="tans">а) 2SO₂ + O₂ = 2SO₃<br>б) 2ZnS + 3O₂ = 2ZnO + 2SO₂<br>в) 2NaNO₃ = 2NaNO₂ + O₂↑<br>г) 2C₂H₂ + 5O₂ = 4CO₂ + 2H₂O</p>
+    </div>
+    <div class="tc">
+      <p class="tnum">Задание 8</p>
+      <p class="ttxt">Назовите два способа получения кислорода в лаборатории. Как распознают кислород?</p>
+      <button class="sbtn" onclick="tog(this)">Ответ</button>
+      <p class="tans">1) Разложение перманганата калия при нагревании: 2KMnO₄ = K₂MnO₄ + MnO₂ + O₂↑.<br>2) Разложение пероксида водорода с катализатором MnO₂: 2H₂O₂ = 2H₂O + O₂↑.<br>Распознают тлеющей лучинкой — она ярко вспыхивает в кислороде.</p>
+    </div>
+  </div>
+
+  <div class="group-title"><span class="plabel" style="background:#DCFCE7;color:#14532D;">§14</span>Оксиды</div>
+  <div class="tasks">
+    <div class="tc">
+      <p class="tnum">Задание 9</p>
+      <p class="ttxt">Из перечня выпишите формулы оксидов и дайте им названия: Na₂O, H₂S, K₂SO₄, PbO₂, ZnO, LiOH, SO₂, P₂O₅, O₂, Cl₂O₇, OsCl₃.</p>
+      <button class="sbtn" onclick="tog(this)">Ответ</button>
+      <p class="tans">Оксиды: Na₂O (оксид натрия), PbO₂ (оксид свинца(IV)), ZnO (оксид цинка), SO₂ (оксид серы(IV)), P₂O₅ (оксид фосфора(V)), Cl₂O₇ (оксид хлора(VII)).<br>Не оксиды: H₂S (кислота), K₂SO₄ (соль), LiOH (основание), O₂ (простое вещество), OsCl₃ (хлорид, не оксид).</p>
+    </div>
+    <div class="tc">
+      <p class="tnum">Задание 10 — расчётная</p>
+      <p class="ttxt">Рассчитайте массовые доли элементов в оксидах: а) SnO₂; б) Al₂O₃; в) CaO; г) P₂O₅. (Ar: Sn=119, Al=27, Ca=40, P=31, O=16)</p>
+      <button class="sbtn" onclick="tog(this)">Ответ</button>
+      <p class="tans">а) Mr(SnO₂)=151. ω(Sn)=119/151≈78,8%, ω(O)≈21,2%.<br>б) Mr(Al₂O₃)=102. ω(Al)=54/102≈52,9%, ω(O)≈47,1%.<br>в) Mr(CaO)=56. ω(Ca)=40/56≈71,4%, ω(O)≈28,6%.<br>г) Mr(P₂O₅)=142. ω(P)=62/142≈43,7%, ω(O)≈56,3%.</p>
+    </div>
+    <div class="tc">
+      <p class="tnum">Задание 11</p>
+      <p class="ttxt">Запишите уравнение реакции гашения извести (CaO + вода) и реакции получения оксида кальция из известняка CaCO₃.</p>
+      <button class="sbtn" onclick="tog(this)">Ответ</button>
+      <p class="tans">Гашение: CaO + H₂O = Ca(OH)₂.<br>Получение: CaCO₃ →(t) CaO + CO₂↑.</p>
+    </div>
+    <div class="tc">
+      <p class="tnum">Задание 12 — лабораторный опыт</p>
+      <p class="ttxt">При пропускании выдыхаемого воздуха через известковую воду Ca(OH)₂ раствор мутнеет. Запишите уравнение этой реакции. Что образуется?</p>
+      <p class="thint">Углекислый газ из выдыхаемого воздуха реагирует с гидроксидом кальция — это реакция обмена.</p>
+      <button class="sbtn" onclick="tog(this)">Ответ</button>
+      <p class="tans">CO₂ + Ca(OH)₂ = CaCO₃↓ + H₂O. Образуется нерастворимый осадок CaCO₃, который и мутит раствор — так распознают углекислый газ.</p>
+    </div>
+  </div>
+
+  <div class="group-title"><span class="plabel" style="background:#FBEAF0;color:#72243E;">§15</span>Водород</div>
+  <div class="tasks">
+    <div class="tc">
+      <p class="tnum">Задание 13</p>
+      <p class="ttxt">Запишите уравнение лабораторного получения водорода взаимодействием цинка с соляной кислотой. Как распознают и собирают водород?</p>
+      <button class="sbtn" onclick="tog(this)">Ответ</button>
+      <p class="tans">Zn + 2HCl = ZnCl₂ + H₂↑.<br>Собирают методом вытеснения воздуха (водород легче воздуха). Распознают по характерному хлопку при поджигании: чистый водород даёт глухой хлопок, с примесью воздуха — звонкий «лающий».</p>
+    </div>
+    <div class="tc">
+      <p class="tnum">Задание 14</p>
+      <p class="ttxt">Запишите уравнения реакций: а) горения водорода в кислороде; б) взаимодействия водорода с серой; в) восстановления меди из оксида меди(II) водородом.</p>
+      <button class="sbtn" onclick="tog(this)">Ответ</button>
+      <p class="tans">а) 2H₂ + O₂ = 2H₂O<br>б) H₂ + S →(t) H₂S↑<br>в) H₂ + CuO →(t) Cu + H₂O</p>
+    </div>
+    <div class="tc">
+      <p class="tnum">Задание 15 — цепочка превращений</p>
+      <p class="ttxt">Запишите уравнения реакций для цепочки превращений: H₂ → H₂S → SO₂ → SO₃.</p>
+      <button class="sbtn" onclick="tog(this)">Ответ</button>
+      <p class="tans">H₂ + S = H₂S<br>2H₂S + 3O₂ = 2SO₂ + 2H₂O<br>2SO₂ + O₂ = 2SO₃</p>
+    </div>
+    <div class="tc">
+      <p class="tnum">Задание 16 — цепочка превращений</p>
+      <p class="ttxt">Запишите уравнения реакций для цепочки превращений: Cu → CuS → CuO → Cu.</p>
+      <p class="thint">Подумайте, как из Cu получить CuS (взаимодействие с серой), затем как CuS превратить в CuO (обжиг — реакция с кислородом), и как восстановить медь из оксида.</p>
+      <button class="sbtn" onclick="tog(this)">Ответ</button>
+      <p class="tans">Cu + S = CuS<br>2CuS + 3O₂ = 2CuO + 2SO₂<br>CuO + H₂ →(t) Cu + H₂O</p>
+    </div>
+  </div>
+
+  <div class="group-title"><span class="plabel" style="background:#FAECE7;color:#712B13;">§16</span>Кислоты</div>
+  <div class="tasks">
+    <div class="tc">
+      <p class="tnum">Задание 17</p>
+      <p class="ttxt">Разделите кислоты на бескислородные и кислородсодержащие: HCl, H₂S, H₂SO₃, H₂SO₄, HNO₂, HNO₃, H₂CO₃, H₂SiO₃, H₃PO₄.</p>
+      <button class="sbtn" onclick="tog(this)">Ответ</button>
+      <p class="tans">Бескислородные: HCl, H₂S.<br>Кислородсодержащие: H₂SO₃, H₂SO₄, HNO₂, HNO₃, H₂CO₃, H₂SiO₃, H₃PO₄.</p>
+    </div>
+    <div class="tc">
+      <p class="tnum">Задание 18 — характеристика</p>
+      <p class="ttxt">Дайте характеристику фосфорной кислоты H₃PO₄ по плану: а) формула; б) наличие кислорода; в) растворимость в воде; г) валентность кислотного остатка.</p>
+      <button class="sbtn" onclick="tog(this)">Ответ</button>
+      <p class="tans">а) H₃PO₄.<br>б) кислородсодержащая.<br>в) растворима в воде.<br>г) кислотный остаток PO₄ — трёхвалентный (соединён с тремя атомами H).</p>
+    </div>
+    <div class="tc">
+      <p class="tnum">Задание 19 — расчётная</p>
+      <p class="ttxt">Сравните состав азотной HNO₃ и азотистой HNO₂ кислот. В какой из них массовая доля азота выше? Подтвердите расчётами. (Ar: H=1, N=14, O=16)</p>
+      <button class="sbtn" onclick="tog(this)">Ответ</button>
+      <p class="tans">Mr(HNO₃)=63. ω(N)=14/63≈22,2%.<br>Mr(HNO₂)=47. ω(N)=14/47≈29,8%.<br>Массовая доля азота выше в азотистой кислоте HNO₂.</p>
+    </div>
+    <div class="tc">
+      <p class="tnum">Задание 20 — индикаторы</p>
+      <p class="ttxt">Что такое индикаторы? Какие вещества используют как индикаторы для распознавания кислот? Почему кислоты нельзя пробовать на вкус, чтобы определить их класс?</p>
+      <button class="sbtn" onclick="tog(this)">Ответ</button>
+      <p class="tans">Индикаторы — вещества, изменяющие цвет в растворах кислот (например, лакмус, метилоранж). Кислоты нельзя пробовать на вкус, так как многие из них ядовиты или вызывают сильные химические ожоги — это запрещено правилами техники безопасности.</p>
+    </div>
+  </div>
+
+  <div class="group-title"><span class="plabel" style="background:#EEEDFE;color:#3C3489;">§17</span>Соли</div>
+  <div class="tasks">
+    <div class="tc">
+      <p class="tnum">Задание 21</p>
+      <p class="ttxt">Составьте формулы солей натрия, кальция и алюминия азотной, серной и фосфорной кислот.</p>
+      <p class="thint">Используйте алгоритм составления формул по валентности: запишите металл и кислотный остаток, найдите НОК их валентностей.</p>
+      <button class="sbtn" onclick="tog(this)">Ответ</button>
+      <p class="tans">Натрий (I): NaNO₃, Na₂SO₄, Na₃PO₄.<br>Кальций (II): Ca(NO₃)₂, CaSO₄, Ca₃(PO₄)₂.<br>Алюминий (III): Al(NO₃)₃, Al₂(SO₄)₃, AlPO₄.</p>
+    </div>
+    <div class="tc">
+      <p class="tnum">Задание 22</p>
+      <p class="ttxt">Из перечня выберите формулы оксидов, кислот и солей и назовите все вещества: H₂S, KCl, SO₃, FeO, N₂O₃, Cu₃(PO₄)₂, Cu₂O, P₂O₅, H₃PO₄.</p>
+      <button class="sbtn" onclick="tog(this)">Ответ</button>
+      <p class="tans">Оксиды: SO₃ (оксид серы(VI)), FeO (оксид железа(II)), N₂O₃ (оксид азота(III)), Cu₂O (оксид меди(I)), P₂O₅ (оксид фосфора(V)).<br>Кислоты: H₂S (сероводородная), H₃PO₄ (фосфорная).<br>Соли: KCl (хлорид калия), Cu₃(PO₄)₂ (фосфат меди(II)).</p>
+    </div>
+    <div class="tc">
+      <p class="tnum">Задание 23 — расчётная</p>
+      <p class="ttxt">Рассчитайте массовую долю кальция в хлориде CaCl₂, нитрате Ca(NO₃)₂ и фосфате Ca₃(PO₄)₂. Расположите соли в порядке возрастания массовой доли металла. (Ar: Ca=40, Cl=35,5, N=14, O=16, P=31)</p>
+      <button class="sbtn" onclick="tog(this)">Ответ</button>
+      <p class="tans">Mr(CaCl₂)=111. ω(Ca)=40/111≈36%.<br>Mr(Ca(NO₃)₂)=164. ω(Ca)=40/164≈24,4%.<br>Mr(Ca₃(PO₄)₂)=310. ω(Ca)=120/310≈38,7%.<br>По возрастанию: Ca(NO₃)₂ (24,4%) < CaCl₂ (36%) < Ca₃(PO₄)₂ (38,7%).</p>
+    </div>
+    <div class="tc">
+      <p class="tnum">Задание 24 — творческое</p>
+      <p class="ttxt">Назовите три важнейшие соли из учебника и их роль в природе: NaCl, CaCO₃, Ca₃(PO₄)₂. Где встречается каждая из них?</p>
+      <button class="sbtn" onclick="tog(this)">Ответ</button>
+      <p class="tans">NaCl (хлорид натрия) — необходим организму, физиологический раствор, пищевая соль.<br>CaCO₃ (карбонат кальция) — известняк, мел, мрамор, входит в состав ракушек, кораллов, яичной скорлупы.<br>Ca₃(PO₄)₂ (фосфат кальция) — главный материал костей и зубов, минералы фосфориты и апатиты.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ══ QUIZ §12 ══ -->
+<div id="quiz12" class="sec">
+  <p class="sec-title">Тест: §12 · Воздух и его состав</p>
+  <div class="score-row"><span class="slbl">Правильных:</span><span class="sn" id="sc12">0 / 5</span><button class="rbtn" onclick="rq('q12','sc12')">Сбросить</button></div>
+  <div id="q12">
+    <div class="qc" data-c="2">
+      <p class="qtxt">1. Объёмная доля азота в воздухе составляет примерно:</p>
+      <div class="opts">
+        <button class="opt" onclick="ans(this)">21%</button>
+        <button class="opt" onclick="ans(this)">97%</button>
+        <button class="opt" onclick="ans(this)">78%</button>
+        <button class="opt" onclick="ans(this)">0,03%</button>
+      </div>
+      <p class="expl">Азот — основной компонент воздуха, его доля составляет 78%, кислорода — 21%.</p>
+    </div>
+    <div class="qc" data-c="1">
+      <p class="qtxt">2. Объёмная доля компонента газовой смеси — это:</p>
+      <div class="opts">
+        <button class="opt" onclick="ans(this)">масса газа, делённая на массу смеси</button>
+        <button class="opt" onclick="ans(this)">отношение объёма газа к общему объёму смеси</button>
+        <button class="opt" onclick="ans(this)">число молекул газа в смеси</button>
+        <button class="opt" onclick="ans(this)">плотность газа относительно воздуха</button>
+      </div>
+      <p class="expl">φ(газа) = V(газа) / V(смеси) · 100%. Это отношение объёма данного газа к общему объёму смеси.</p>
+    </div>
+    <div class="qc" data-c="0">
+      <p class="qtxt">3. Смешали 16 л кислорода и 12 л углекислого газа. Доля кислорода в смеси равна:</p>
+      <div class="opts">
+        <button class="opt" onclick="ans(this)">≈57,1%</button>
+        <button class="opt" onclick="ans(this)">50%</button>
+        <button class="opt" onclick="ans(this)">≈42,9%</button>
+        <button class="opt" onclick="ans(this)">16%</button>
+      </div>
+      <p class="expl">V(смеси)=16+12=28 л. φ(O₂)=16/28·100%≈57,1%.</p>
+    </div>
+    <div class="qc" data-c="3">
+      <p class="qtxt">4. Опыт Лавуазье с ртутью в реторте позволил обнаружить:</p>
+      <div class="opts">
+        <button class="opt" onclick="ans(this)">только азот</button>
+        <button class="opt" onclick="ans(this)">только углекислый газ</button>
+        <button class="opt" onclick="ans(this)">только водяной пар</button>
+        <button class="opt" onclick="ans(this)">азот и кислород как компоненты воздуха</button>
+      </div>
+      <p class="expl">Опыт Лавуазье позволил обнаружить два важнейших компонента воздуха — азот и кислород, и оценить их объёмное содержание.</p>
+    </div>
+    <div class="qc" data-c="1">
+      <p class="qtxt">5. Почему выражение «молекула воздуха» некорректно?</p>
+      <div class="opts">
+        <button class="opt" onclick="ans(this)">у воздуха нет молекул вообще</button>
+        <button class="opt" onclick="ans(this)">воздух — это смесь разных веществ, а не одно вещество</button>
+        <button class="opt" onclick="ans(this)">воздух — простое вещество</button>
+        <button class="opt" onclick="ans(this)">воздух существует только в виде атомов</button>
+      </div>
+      <p class="expl">Воздух — многокомпонентная смесь газов (азот, кислород, углекислый газ и др.), поэтому у него не может быть единой молекулы, как у чистого вещества.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ══ QUIZ §13 ══ -->
+<div id="quiz13" class="sec">
+  <p class="sec-title">Тест: §13 · Кислород</p>
+  <div class="score-row"><span class="slbl">Правильных:</span><span class="sn" id="sc13">0 / 5</span><button class="rbtn" onclick="rq('q13','sc13')">Сбросить</button></div>
+  <div id="q13">
+    <div class="qc" data-c="0">
+      <p class="qtxt">1. Аллотропные модификации кислорода — это:</p>
+      <div class="opts">
+        <button class="opt" onclick="ans(this)">кислород O₂ и озон O₃</button>
+        <button class="opt" onclick="ans(this)">жидкий и твёрдый кислород</button>
+        <button class="opt" onclick="ans(this)">кислород воздуха и кислород воды</button>
+        <button class="opt" onclick="ans(this)">атомарный и молекулярный азот</button>
+      </div>
+      <p class="expl">Аллотропия кислорода — образование двух простых веществ, различающихся числом атомов в молекуле: O₂ (кислород) и O₃ (озон).</p>
+    </div>
+    <div class="qc" data-c="2">
+      <p class="qtxt">2. Лабораторный способ получения кислорода — разложение:</p>
+      <div class="opts">
+        <button class="opt" onclick="ans(this)">воды при электролизе</button>
+        <button class="opt" onclick="ans(this)">воздуха при низкой температуре</button>
+        <button class="opt" onclick="ans(this)">перманганата калия при нагревании</button>
+        <button class="opt" onclick="ans(this)">хлорида натрия</button>
+      </div>
+      <p class="expl">2KMnO₄ →(t) K₂MnO₄ + MnO₂ + O₂↑ — наиболее удобный лабораторный способ получения кислорода.</p>
+    </div>
+    <div class="qc" data-c="1">
+      <p class="qtxt">3. Кислород распознают с помощью:</p>
+      <div class="opts">
+        <button class="opt" onclick="ans(this)">лакмусовой бумаги</button>
+        <button class="opt" onclick="ans(this)">тлеющей лучинки (ярко вспыхивает)</button>
+        <button class="opt" onclick="ans(this)">известковой воды</button>
+        <button class="opt" onclick="ans(this)">хлопка при поджигании</button>
+      </div>
+      <p class="expl">Тлеющая лучинка ярко вспыхивает в кислороде — это характерный способ его распознавания.</p>
+    </div>
+    <div class="qc" data-c="3">
+      <p class="qtxt">4. Продукт горения железа в кислороде:</p>
+      <div class="opts">
+        <button class="opt" onclick="ans(this)">FeO</button>
+        <button class="opt" onclick="ans(this)">Fe₂O₃</button>
+        <button class="opt" onclick="ans(this)">Fe(OH)₃</button>
+        <button class="opt" onclick="ans(this)">Fe₃O₄</button>
+      </div>
+      <p class="expl">3Fe + 2O₂ = Fe₃O₄ — железная окалина, продукт горения раскалённого железа в кислороде.</p>
+    </div>
+    <div class="qc" data-c="1">
+      <p class="qtxt">5. Процесс фотосинтеза описывается схемой:</p>
+      <div class="opts">
+        <button class="opt" onclick="ans(this)">C₆H₁₂O₆ + 6O₂ → 6CO₂ + 6H₂O</button>
+        <button class="opt" onclick="ans(this)">6CO₂ + 6H₂O →(свет) C₆H₁₂O₆ + 6O₂</button>
+        <button class="opt" onclick="ans(this)">2H₂O → 2H₂ + O₂</button>
+        <button class="opt" onclick="ans(this)">CH₄ + 2O₂ → CO₂ + 2H₂O</button>
+      </div>
+      <p class="expl">Фотосинтез — процесс образования глюкозы и кислорода из углекислого газа и воды на свету: 6CO₂ + 6H₂O →(свет) C₆H₁₂O₆ + 6O₂↑.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ══ QUIZ §14 ══ -->
+<div id="quiz14" class="sec">
+  <p class="sec-title">Тест: §14 · Оксиды</p>
+  <div class="score-row"><span class="slbl">Правильных:</span><span class="sn" id="sc14">0 / 5</span><button class="rbtn" onclick="rq('q14','sc14')">Сбросить</button></div>
+  <div id="q14">
+    <div class="qc" data-c="1">
+      <p class="qtxt">1. Оксиды — это сложные вещества, состоящие из:</p>
+      <div class="opts">
+        <button class="opt" onclick="ans(this)">металла и кислотного остатка</button>
+        <button class="opt" onclick="ans(this)">двух элементов, один из которых — кислород</button>
+        <button class="opt" onclick="ans(this)">водорода и кислотного остатка</button>
+        <button class="opt" onclick="ans(this)">только неметаллов</button>
+      </div>
+      <p class="expl">Оксиды — сложные вещества, состоящие из двух химических элементов, один из которых — кислород.</p>
+    </div>
+    <div class="qc" data-c="2">
+      <p class="qtxt">2. Название CuO:</p>
+      <div class="opts">
+        <button class="opt" onclick="ans(this)">оксид меди(I)</button>
+        <button class="opt" onclick="ans(this)">купрум-оксид</button>
+        <button class="opt" onclick="ans(this)">оксид меди(II)</button>
+        <button class="opt" onclick="ans(this)">диоксид меди</button>
+      </div>
+      <p class="expl">В CuO валентность меди — II (кислород всегда II, индексов нет — значит валентности равны). Название: оксид меди(II).</p>
+    </div>
+    <div class="qc" data-c="0">
+      <p class="qtxt">3. Гашёная известь — это:</p>
+      <div class="opts">
+        <button class="opt" onclick="ans(this)">Ca(OH)₂</button>
+        <button class="opt" onclick="ans(this)">CaO</button>
+        <button class="opt" onclick="ans(this)">CaCO₃</button>
+        <button class="opt" onclick="ans(this)">CaCl₂</button>
+      </div>
+      <p class="expl">CaO (негашёная известь) + H₂O = Ca(OH)₂ (гашёная известь) — продукт реакции гашения.</p>
+    </div>
+    <div class="qc" data-c="3">
+      <p class="qtxt">4. Углекислый газ распознают с помощью:</p>
+      <div class="opts">
+        <button class="opt" onclick="ans(this)">тлеющей лучинки</button>
+        <button class="opt" onclick="ans(this)">лакмуса</button>
+        <button class="opt" onclick="ans(this)">хлопка при поджигании</button>
+        <button class="opt" onclick="ans(this)">известковой воды (мутнеет)</button>
+      </div>
+      <p class="expl">CO₂ + Ca(OH)₂ = CaCO₃↓ + H₂O. Известковая вода мутнеет от выпадения осадка CaCO₃ — характерный признак для распознавания углекислого газа.</p>
+    </div>
+    <div class="qc" data-c="1">
+      <p class="qtxt">5. Оксиды образуют все химические элементы Периодической системы, кроме:</p>
+      <div class="opts">
+        <button class="opt" onclick="ans(this)">щелочных металлов</button>
+        <button class="opt" onclick="ans(this)">фтора и благородных газов</button>
+        <button class="opt" onclick="ans(this)">галогенов</button>
+        <button class="opt" onclick="ans(this)">переходных металлов</button>
+      </div>
+      <p class="expl">Оксиды образуют практически все элементы, кроме фтора (он сам сильнее притягивает электроны, чем кислород) и благородных газов (они химически инертны).</p>
+    </div>
+  </div>
+</div>
+
+<!-- ══ QUIZ §15 ══ -->
+<div id="quiz15" class="sec">
+  <p class="sec-title">Тест: §15 · Водород</p>
+  <div class="score-row"><span class="slbl">Правильных:</span><span class="sn" id="sc15">0 / 5</span><button class="rbtn" onclick="rq('q15','sc15')">Сбросить</button></div>
+  <div id="q15">
+    <div class="qc" data-c="2">
+      <p class="qtxt">1. Водород в лаборатории получают взаимодействием:</p>
+      <div class="opts">
+        <button class="opt" onclick="ans(this)">воды с углём</button>
+        <button class="opt" onclick="ans(this)">кислорода с серой</button>
+        <button class="opt" onclick="ans(this)">цинка с соляной кислотой</button>
+        <button class="opt" onclick="ans(this)">перманганата калия при нагревании</button>
+      </div>
+      <p class="expl">Zn + 2HCl = ZnCl₂ + H₂↑ — типичный лабораторный способ получения водорода.</p>
+    </div>
+    <div class="qc" data-c="0">
+      <p class="qtxt">2. Чистый водород при поджигании даёт хлопок:</p>
+      <div class="opts">
+        <button class="opt" onclick="ans(this)">глухой</button>
+        <button class="opt" onclick="ans(this)">звонкий «лающий»</button>
+        <button class="opt" onclick="ans(this)">очень громкий взрыв</button>
+        <button class="opt" onclick="ans(this)">никакого звука</button>
+      </div>
+      <p class="expl">Если водород чистый — хлопок глухой. Если загрязнён воздухом — раздаётся звонкий «лающий» хлопок-взрыв.</p>
+    </div>
+    <div class="qc" data-c="3">
+      <p class="qtxt">3. Почему водородом сейчас не заполняют дирижабли?</p>
+      <div class="opts">
+        <button class="opt" onclick="ans(this)">он слишком тяжёлый</button>
+        <button class="opt" onclick="ans(this)">он ядовит</button>
+        <button class="opt" onclick="ans(this)">он плохо растворим в воде</button>
+        <button class="opt" onclick="ans(this)">он крайне огнеопасен</button>
+      </div>
+      <p class="expl">Несмотря на лёгкость, водород крайне огнеопасен, поэтому сейчас используют более безопасный, хотя и более дорогой гелий.</p>
+    </div>
+    <div class="qc" data-c="1">
+      <p class="qtxt">4. Реакция H₂ + CuO →(t) Cu + H₂O показывает, что водород способен:</p>
+      <div class="opts">
+        <button class="opt" onclick="ans(this)">окислять металлы</button>
+        <button class="opt" onclick="ans(this)">восстанавливать металлы из их оксидов</button>
+        <button class="opt" onclick="ans(this)">разлагать оксиды без изменений</button>
+        <button class="opt" onclick="ans(this)">образовывать соли</button>
+      </div>
+      <p class="expl">Водород способен восстанавливать металлы из их оксидов — забирает кислород, оставляя чистый металл.</p>
+    </div>
+    <div class="qc" data-c="2">
+      <p class="qtxt">5. «Гремучий газ» — это:</p>
+      <div class="opts">
+        <button class="opt" onclick="ans(this)">чистый водород</button>
+        <button class="opt" onclick="ans(this)">чистый кислород</button>
+        <button class="opt" onclick="ans(this)">смесь водорода с кислородом или воздухом</button>
+        <button class="opt" onclick="ans(this)">смесь азота с кислородом</button>
+      </div>
+      <p class="expl">Смесь водорода с кислородом (2:1) или воздухом (2:5) при взрыве обладает огромной разрушительной силой — отсюда название «гремучий газ».</p>
+    </div>
+  </div>
+</div>
+
+<!-- ══ QUIZ §16 ══ -->
+<div id="quiz16" class="sec">
+  <p class="sec-title">Тест: §16 · Кислоты</p>
+  <div class="score-row"><span class="slbl">Правильных:</span><span class="sn" id="sc16">0 / 5</span><button class="rbtn" onclick="rq('q16','sc16')">Сбросить</button></div>
+  <div id="q16">
+    <div class="qc" data-c="1">
+      <p class="qtxt">1. Кислоты — это сложные вещества, состоящие из:</p>
+      <div class="opts">
+        <button class="opt" onclick="ans(this)">металла и кислорода</button>
+        <button class="opt" onclick="ans(this)">атомов водорода и кислотного остатка</button>
+        <button class="opt" onclick="ans(this)">только неметаллов</button>
+        <button class="opt" onclick="ans(this)">металла и кислотного остатка</button>
+      </div>
+      <p class="expl">Кислоты — сложные вещества, состоящие из атомов водорода и кислотного остатка.</p>
+    </div>
+    <div class="qc" data-c="0">
+      <p class="qtxt">2. Бескислородные кислоты — это:</p>
+      <div class="opts">
+        <button class="opt" onclick="ans(this)">HCl и H₂S</button>
+        <button class="opt" onclick="ans(this)">H₂SO₄ и HNO₃</button>
+        <button class="opt" onclick="ans(this)">H₂CO₃ и H₃PO₄</button>
+        <button class="opt" onclick="ans(this)">H₂SO₃ и H₂SiO₃</button>
+      </div>
+      <p class="expl">HCl и H₂S не содержат атомов кислорода в кислотном остатке, поэтому называются бескислородными.</p>
+    </div>
+    <div class="qc" data-c="2">
+      <p class="qtxt">3. Индикаторы — это вещества, которые:</p>
+      <div class="opts">
+        <button class="opt" onclick="ans(this)">ускоряют химические реакции</button>
+        <button class="opt" onclick="ans(this)">растворяют металлы</button>
+        <button class="opt" onclick="ans(this)">изменяют цвет в растворах кислот или щелочей</button>
+        <button class="opt" onclick="ans(this)">нейтрализуют кислоты</button>
+      </div>
+      <p class="expl">Индикаторы (лакмус, метилоранж) изменяют цвет в растворах кислот, что позволяет их распознать без пробы на вкус.</p>
+    </div>
+    <div class="qc" data-c="3">
+      <p class="qtxt">4. При разбавлении концентрированной серной кислоты нужно:</p>
+      <div class="opts">
+        <button class="opt" onclick="ans(this)">лить воду в кислоту быстро</button>
+        <button class="opt" onclick="ans(this)">смешивать в любом порядке</button>
+        <button class="opt" onclick="ans(this)">нагревать смесь заранее</button>
+        <button class="opt" onclick="ans(this)">лить кислоту в воду тонкой струйкой при перемешивании</button>
+      </div>
+      <p class="expl">Серную кислоту тонкой струйкой вливают в воду при постоянном перемешивании — иначе выделяющаяся теплота может вскипятить воду и разбрызгать кислоту.</p>
+    </div>
+    <div class="qc" data-c="1">
+      <p class="qtxt">5. Соляная кислота HCl в организме человека выполняет роль:</p>
+      <div class="opts">
+        <button class="opt" onclick="ans(this)">переносчика кислорода в крови</button>
+        <button class="opt" onclick="ans(this)">участника пищеварения и защиты от микробов</button>
+        <button class="opt" onclick="ans(this)">строительного материала костей</button>
+        <button class="opt" onclick="ans(this)">регулятора температуры тела</button>
+      </div>
+      <p class="expl">Соляная кислота желудочного сока активизирует ферменты пищеварения и убивает болезнетворные микробы, попадающие в желудок с пищей.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ══ QUIZ §17 ══ -->
+<div id="quiz17" class="sec">
+  <p class="sec-title">Тест: §17 · Соли</p>
+  <div class="score-row"><span class="slbl">Правильных:</span><span class="sn" id="sc17">0 / 5</span><button class="rbtn" onclick="rq('q17','sc17')">Сбросить</button></div>
+  <div id="q17">
+    <div class="qc" data-c="2">
+      <p class="qtxt">1. Соли — это сложные вещества, состоящие из:</p>
+      <div class="opts">
+        <button class="opt" onclick="ans(this)">водорода и кислотного остатка</button>
+        <button class="opt" onclick="ans(this)">металла и кислорода</button>
+        <button class="opt" onclick="ans(this)">атомов металла и кислотного остатка</button>
+        <button class="opt" onclick="ans(this)">только неметаллов</button>
+      </div>
+      <p class="expl">Соли — сложные вещества, состоящие из атомов металла и кислотного остатка (образуются при замещении водорода в кислоте на металл).</p>
+    </div>
+    <div class="qc" data-c="0">
+      <p class="qtxt">2. Формула фосфата кальция:</p>
+      <div class="opts">
+        <button class="opt" onclick="ans(this)">Ca₃(PO₄)₂</button>
+        <button class="opt" onclick="ans(this)">CaPO₄</button>
+        <button class="opt" onclick="ans(this)">Ca₂(PO₄)₃</button>
+        <button class="opt" onclick="ans(this)">Ca(PO₄)₂</button>
+      </div>
+      <p class="expl">V(Ca)=II, V(PO₄)=III. НОК(2,3)=6. Индекс Ca=6÷2=3, индекс PO₄=6÷3=2. Формула: Ca₃(PO₄)₂.</p>
+    </div>
+    <div class="qc" data-c="1">
+      <p class="qtxt">3. Карбонат кальция CaCO₃ — главное вещество, входящее в состав:</p>
+      <div class="opts">
+        <button class="opt" onclick="ans(this)">костей и зубов</button>
+        <button class="opt" onclick="ans(this)">известняка, мрамора, ракушек</button>
+        <button class="opt" onclick="ans(this)">плазмы крови</button>
+        <button class="opt" onclick="ans(this)">желудочного сока</button>
+      </div>
+      <p class="expl">CaCO₃ — основа известняка, мела, мрамора, входит в состав ракушек, кораллов, яичной скорлупы.</p>
+    </div>
+    <div class="qc" data-c="3">
+      <p class="qtxt">4. Главный материал костей и зубов человека — это:</p>
+      <div class="opts">
+        <button class="opt" onclick="ans(this)">NaCl</button>
+        <button class="opt" onclick="ans(this)">CaCO₃</button>
+        <button class="opt" onclick="ans(this)">CaCl₂</button>
+        <button class="opt" onclick="ans(this)">Ca₃(PO₄)₂</button>
+      </div>
+      <p class="expl">Фосфат кальция Ca₃(PO₄)₂ — главный материал костей и зубов, входит в состав минералов фосфоритов и апатитов.</p>
+    </div>
+    <div class="qc" data-c="0">
+      <p class="qtxt">5. Физиологический раствор в медицине — это:</p>
+      <div class="opts">
+        <button class="opt" onclick="ans(this)">0,9%-ный раствор NaCl</button>
+        <button class="opt" onclick="ans(this)">чистая дистиллированная вода</button>
+        <button class="opt" onclick="ans(this)">9%-ный раствор сахара</button>
+        <button class="opt" onclick="ans(this)">раствор серной кислоты</button>
+      </div>
+      <p class="expl">Физиологический раствор — 0,9%-ный раствор хлорида натрия в дистиллированной воде, что соответствует концентрации соли в плазме крови человека.</p>
+    </div>
+  </div>
+</div>
+
+<script>
+function st(id,i){
+  document.querySelectorAll('.sec').forEach(s=>s.classList.remove('on'));
+  document.getElementById(id).classList.add('on');
+  document.querySelectorAll('.tab').forEach((b,j)=>b.classList.toggle('active',j===i));
+}
+function tog(btn){
+  const a=btn.nextElementSibling;
+  if(!a.style.display||a.style.display==='none'){a.style.display='block';btn.textContent='Скрыть';}
+  else{a.style.display='none';btn.textContent='Ответ';}
+}
+const scores={q12:0,q13:0,q14:0,q15:0,q16:0,q17:0};
+function ans(btn){
+  const card=btn.closest('.qc');
+  if(card.dataset.done)return;
+  card.dataset.done='1';
+  const opts=card.querySelectorAll('.opt');
+  const c=parseInt(card.dataset.c);
+  const chosen=Array.from(opts).indexOf(btn);
+  opts[c].classList.add('ok');
+  if(chosen!==c)btn.classList.add('no');
+  card.querySelector('.expl').style.display='block';
+  if(chosen===c){
+    const bid=card.closest('[id]').id;
+    scores[bid]++;
+    const scMap={q12:'sc12',q13:'sc13',q14:'sc14',q15:'sc15',q16:'sc16',q17:'sc17'};
+    document.getElementById(scMap[bid]).textContent=scores[bid]+' / 5';
+  }
+}
+function rq(qid,scId){
+  scores[qid]=0;
+  document.getElementById(scId).textContent='0 / 5';
+  document.getElementById(qid).querySelectorAll('.qc').forEach(c=>{
+    delete c.dataset.done;
+    c.querySelectorAll('.opt').forEach(o=>o.classList.remove('ok','no'));
+    c.querySelector('.expl').style.display='none';
+  });
+}
+</script>
+
+</div>
+</body>
+</html>
