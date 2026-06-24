@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Химия 8 класс — Неделя 7</title>
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #f5f4f0;
+    --surface: #ffffff;
+    --surface2: #f0efe9;
+    --border: rgba(0,0,0,0.10);
+    --border2: rgba(0,0,0,0.18);
+    --text: #1a1a18;
+    --text2: #6b6b67;
+    --text3: #999993;
+    --radius: 14px;
+    --radius-sm: 8px;
+    --shadow: 0 2px 12px rgba(0,0,0,0.07), 0 0 0 0.5px rgba(0,0,0,0.06);
+  }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 24px 16px 48px;
+  }
+
+  .page { max-width: 560px; margin: 0 auto; }
+
+  .header { margin-bottom: 20px; }
+  .header h1 { font-size: 18px; font-weight: 600; letter-spacing: -0.3px; }
+  .header p  { font-size: 13px; color: var(--text2); margin-top: 3px; }
+
+  .tabbar {
+    display: flex; gap: 4px; background: var(--surface2);
+    border-radius: var(--radius-sm); padding: 4px;
+    margin-bottom: 20px; overflow-x: auto;
+  }
+  .tab-btn {
+    flex: 1; min-width: 100px; font-size: 12px; font-weight: 500;
+    padding: 7px 10px; border: none; border-radius: 6px;
+    background: transparent; color: var(--text2); cursor: pointer;
+    transition: all 0.15s; white-space: nowrap;
+  }
+  .tab-btn.active {
+    background: var(--surface); color: var(--text);
+    box-shadow: 0 1px 4px rgba(0,0,0,0.10);
+  }
+
+  .section { display: none; }
+  .section.show { display: block; }
+
+  .para-heading {
+    display: flex; align-items: center; gap: 8px;
+    margin: 20px 0 10px;
+  }
+  .para-badge {
+    font-size: 11px; font-weight: 700; padding: 3px 10px;
+    border-radius: 100px; flex-shrink: 0;
+  }
+  .para-title { font-size: 13px; font-weight: 600; color: var(--text); }
+
+  .task-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 8px; }
+
+  .task-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px 16px;
+    box-shadow: var(--shadow);
+    border-left: 3px solid transparent;
+  }
+
+  .task-num {
+    font-size: 10px; font-weight: 700; letter-spacing: 0.07em;
+    text-transform: uppercase; margin-bottom: 6px;
+  }
+  .task-text { font-size: 14px; line-height: 1.65; color: var(--text); }
+
+  .formula {
+    font-family: "SFMono-Regular", "Consolas", "Liberation Mono", monospace;
+    font-size: 13px; background: var(--surface2);
+    padding: 1px 5px; border-radius: 4px;
+    color: var(--text);
+  }
+
+  .task-hint {
+    font-size: 12px; color: var(--text2); line-height: 1.5;
+    margin-top: 8px; padding: 8px 10px;
+    background: var(--surface2); border-radius: 6px;
+    display: flex; gap: 6px;
+  }
+  .task-hint::before { content: "💡"; flex-shrink: 0; }
+
+  .show-ans-btn {
+    display: inline-flex; align-items: center; gap: 5px;
+    margin-top: 10px; font-size: 12px; font-weight: 500;
+    padding: 5px 12px; border: 1px solid var(--border2);
+    border-radius: 100px; background: transparent; color: var(--text2);
+    cursor: pointer; transition: background 0.15s, color 0.15s;
+  }
+  .show-ans-btn:hover { background: var(--surface2); color: var(--text); }
+
+  .task-answer {
+    display: none; margin-top: 10px;
+    font-size: 13px; line-height: 1.6;
+    padding: 10px 12px;
+    background: #F0FDF4; border-radius: 8px;
+    border: 1px solid #86EFAC; color: #1A6B3A;
+  }
+
+  .quiz-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 14px; flex-wrap: wrap; gap: 8px;
+  }
+  .quiz-title { font-size: 15px; font-weight: 600; }
+  .score-box {
+    display: flex; align-items: center; gap: 10px;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius-sm); padding: 8px 14px;
+    box-shadow: var(--shadow);
+  }
+  .score-lbl { font-size: 12px; color: var(--text2); }
+  .score-n { font-size: 18px; font-weight: 600; color: var(--text); }
+  .reset-btn {
+    font-size: 12px; padding: 5px 12px;
+    border: 1px solid var(--border2); border-radius: 100px;
+    background: transparent; color: var(--text2); cursor: pointer;
+    transition: background 0.15s;
+  }
+  .reset-btn:hover { background: var(--surface2); }
+
+  .q-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 16px;
+    margin-bottom: 10px; box-shadow: var(--shadow);
+  }
+  .q-num { font-size: 10px; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; color: var(--text3); margin-bottom: 6px; }
+  .q-text { font-size: 14px; line-height: 1.65; color: var(--text); margin-bottom: 12px; }
+
+  .opts { display: flex; flex-direction: column; gap: 6px; }
+  .opt {
+    font-size: 13px; padding: 9px 13px;
+    border: 1px solid var(--border2); border-radius: var(--radius-sm);
+    cursor: pointer; background: transparent; color: var(--text);
+    text-align: left; transition: background 0.12s, border-color 0.12s;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .opt::before {
+    content: ""; display: inline-block; width: 16px; height: 16px;
+    border: 1.5px solid var(--border2); border-radius: 50%; flex-shrink: 0;
+    transition: background 0.12s, border-color 0.12s;
+  }
+  .opt:hover:not(.done-opt) { background: var(--surface2); }
+  .opt.correct { background: #F0FDF4; color: #1A6B3A; border-color: #86EFAC; }
+  .opt.correct::before { background: #1A6B3A; border-color: #1A6B3A; }
+  .opt.wrong   { background: #FEF2F2; color: #A32D2D; border-color: #F0ABAB; }
+  .opt.wrong::before { background: #A32D2D; border-color: #A32D2D; }
+
+  .q-explain {
+    display: none; margin-top: 10px;
+    font-size: 12px; color: var(--text2); line-height: 1.6;
+    padding: 8px 10px; background: var(--surface2);
+    border-radius: 6px;
+  }
+
+  .section-intro {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 13px; color: var(--text2);
+    margin-bottom: 14px; padding: 10px 14px;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+  }
+
+  svg.icon { width: 14px; height: 14px; vertical-align: -2px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+
+  /* ── Back link ── */
+  .back-link {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 12px; color: var(--text2);
+    text-decoration: none; margin-bottom: 16px;
+    padding: 5px 0;
+    transition: color 0.15s;
+  }
+  .back-link:hover { color: var(--text); }
+  .back-link svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <a href="index.html" class="back-link">
+    <svg viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></svg>
+    Главное меню
+  </a>
+
+  <div class="header">
+    <h1>🧂 Химия 8 класс — Неделя 7</h1>
+    <p>§26–27 · Соли и генетическая связь между классами неорганических соединений · стр. 111–119</p>
+  </div>
+
+  <div class="tabbar" id="tabbar">
+    <button class="tab-btn active" onclick="showTab('tasks',0)">📋 Задания</button>
+    <button class="tab-btn" onclick="showTab('quiz26',1)">Тест: §26</button>
+    <button class="tab-btn" onclick="showTab('quiz27',2)">Тест: §27</button>
+  </div>
+
+  <!-- ══ TASKS ══ -->
+  <div id="tasks" class="section show">
+    <div class="section-intro">
+      <svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
+      Нажмите «Ответ», чтобы проверить себя. Сначала попробуйте решить сами!
+    </div>
+
+    <!-- §26 — фиолетовый -->
+    <div class="para-heading">
+      <span class="para-badge" style="background:#EEEDFE;color:#3C3489;">§26</span>
+      <span class="para-title">Соли, их классификация и свойства</span>
+    </div>
+    <div class="task-list">
+
+      <div class="task-card" style="border-left-color:#7F77DD;">
+        <p class="task-num" style="color:#3C3489;">Задание 1 — классификация</p>
+        <p class="task-text">Распределите соли на три группы — средние, кислые и основные: NaCl, NaHCO₃, CaCO₃, Ca(H₂PO₄)₂, (CuOH)₂CO₃, K₂SiO₃, ZnOHCl, Ba(NO₃)₂.</p>
+        <div class="task-hint">Средние — полное замещение водорода на металл. Кислые — содержат водород (H). Основные — содержат гидроксогруппу (OH).</div>
+        <button class="show-ans-btn" onclick="toggleAns(this)">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          Ответ
+        </button>
+        <p class="task-answer">Средние: NaCl, CaCO₃, K₂SiO₃, Ba(NO₃)₂.<br>Кислые: NaHCO₃, Ca(H₂PO₄)₂.<br>Основные: (CuOH)₂CO₃, ZnOHCl.</p>
+      </div>
+
+      <div class="task-card" style="border-left-color:#7F77DD;">
+        <p class="task-num" style="color:#3C3489;">Задание 2 — названия</p>
+        <p class="task-text">Дайте названия солям: KNO₂, Al(NO₃)₃, FeCl₃, K₂SO₃, CuSO₄, FeS, Ca₃(PO₄)₂, Na₂SiO₃.</p>
+        <div class="task-hint">Название = название кислотного остатка + название металла в родительном падеже (+валентность, если переменная).</div>
+        <button class="show-ans-btn" onclick="toggleAns(this)">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          Ответ
+        </button>
+        <p class="task-answer">KNO₂ — нитрит калия; Al(NO₃)₃ — нитрат алюминия; FeCl₃ — хлорид железа(III); K₂SO₃ — сульфит калия; CuSO₄ — сульфат меди(II); FeS — сульфид железа(II); Ca₃(PO₄)₂ — фосфат кальция; Na₂SiO₃ — силикат натрия.</p>
+      </div>
+
+      <div class="task-card" style="border-left-color:#7F77DD;">
+        <p class="task-num" style="color:#3C3489;">Задание 3 — растворимость</p>
+        <p class="task-text">Из перечня выберите формулы солей и определите их растворимость в воде: NiCl₂, LiOH, POCl₃, SiH₄, Pb(NO₃)₂, Fe₂(SO₄)₃, SCl₄, CaSO₄, Ba₃(PO₄)₂, CuSO₄, Sn(NO₃)₂.</p>
+        <div class="task-hint">Соли = металл + кислотный остаток. Памятка: все нитраты растворимы; фосфаты нерастворимы; CaSO₄ малорастворим.</div>
+        <button class="show-ans-btn" onclick="toggleAns(this)">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          Ответ
+        </button>
+        <p class="task-answer">Соли: NiCl₂ (раств.), Pb(NO₃)₂ (раств.), Fe₂(SO₄)₃ (раств.), CaSO₄ (малораств.), Ba₃(PO₄)₂ (нераств.), CuSO₄ (раств.), Sn(NO₃)₂ (раств.).<br>Не соли: LiOH (основание), POCl₃, SiH₄, SCl₄.</p>
+      </div>
+
+      <div class="task-card" style="border-left-color:#7F77DD;">
+        <p class="task-num" style="color:#3C3489;">Задание 4 — взаимодействие с металлами</p>
+        <p class="task-text">Запишите уравнения реакций солей с металлами: а) сульфата меди(II) CuSO₄ с железом Fe; б) нитрата серебра AgNO₃ с медью Cu.</p>
+        <div class="task-hint">Металл вытесняет другой металл из соли, если он стоит ЛЕВЕЕ в ряду активности.</div>
+        <button class="show-ans-btn" onclick="toggleAns(this)">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          Ответ
+        </button>
+        <p class="task-answer">а) Fe + CuSO₄ = FeSO₄ + Cu (железо левее меди)<br>б) Cu + 2AgNO₃ = Cu(NO₃)₂ + 2Ag (медь левее серебра)</p>
+      </div>
+
+      <div class="task-card" style="border-left-color:#7F77DD;">
+        <p class="task-num" style="color:#3C3489;">Задание 5 — взаимодействие с солями</p>
+        <p class="task-text">Запишите уравнения реакций между растворами солей (признак — выпадение осадка): а) хлорида кальция CaCl₂ и карбоната натрия Na₂CO₃; б) хлорида бария BaCl₂ и сульфата натрия Na₂SO₄.</p>
+        <button class="show-ans-btn" onclick="toggleAns(this)">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          Ответ
+        </button>
+        <p class="task-answer">а) CaCl₂ + Na₂CO₃ = CaCO₃↓ + 2NaCl<br>б) BaCl₂ + Na₂SO₄ = BaSO₄↓ + 2NaCl</p>
+      </div>
+
+      <div class="task-card" style="border-left-color:#7F77DD;">
+        <p class="task-num" style="color:#3C3489;">Задание 6 — пять способов получить соль</p>
+        <p class="task-text">Запишите уравнения пяти разных реакций, с помощью которых можно получить сульфат цинка ZnSO₄.</p>
+        <div class="task-hint">Вспомните 10 способов получения солей: кислота+металл, кислота+оксид, кислота+основание, основный оксид+кислотный оксид, металл+неметалл и т.д.</div>
+        <button class="show-ans-btn" onclick="toggleAns(this)">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          Ответ
+        </button>
+        <p class="task-answer">1) Zn + H₂SO₄ = ZnSO₄ + H₂↑ (металл + кислота)<br>2) ZnO + H₂SO₄ = ZnSO₄ + H₂O (оксид + кислота)<br>3) Zn(OH)₂ + H₂SO₄ = ZnSO₄ + 2H₂O (основание + кислота)<br>4) ZnO + SO₃ = ZnSO₄ (основный + кислотный оксид)<br>5) ZnCl₂ + Ag₂SO₄ = ZnSO₄ + 2AgCl↓ (соль + соль)</p>
+      </div>
+
+      <div class="task-card" style="border-left-color:#7F77DD;">
+        <p class="task-num" style="color:#3C3489;">Задание 7 — расчётная</p>
+        <p class="task-text">К 62,4 г 5%-ного раствора хлорида бария BaCl₂ добавили избыток раствора сульфата натрия Na₂SO₄. Рассчитайте массу выпавшего осадка.</p>
+        <div class="task-hint">BaCl₂ + Na₂SO₄ = BaSO₄↓ + 2NaCl. Найдите m(BaCl₂), n(BaCl₂), по уравнению n(BaSO₄), затем m(BaSO₄).</div>
+        <button class="show-ans-btn" onclick="toggleAns(this)">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          Ответ
+        </button>
+        <p class="task-answer">m(BaCl₂)=62,4·0,05=3,12 г. M(BaCl₂)=208. n(BaCl₂)=3,12/208=0,015 моль. n(BaSO₄)=0,015 моль. M(BaSO₄)=233. m(BaSO₄)=0,015·233≈3,5 г.</p>
+      </div>
+
+      <div class="task-card" style="border-left-color:#7F77DD;">
+        <p class="task-num" style="color:#3C3489;">Задание 8 — расчётная</p>
+        <p class="task-text">Достаточно ли 50 мл 10%-ной соляной кислоты (плотность 1,05 г/мл) для полного растворения кусочка мела (карбонат кальция) массой 5 г?</p>
+        <div class="task-hint">CaCO₃ + 2HCl = CaCl₂ + H₂O + CO₂↑. Найдите n(CaCO₃) и n(HCl), сравните с учётом коэффициентов (на 1 моль CaCO₃ нужно 2 моль HCl).</div>
+        <button class="show-ans-btn" onclick="toggleAns(this)">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          Ответ
+        </button>
+        <p class="task-answer">n(CaCO₃)=5/100=0,05 моль → нужно 0,1 моль HCl.<br>m(р-ра HCl)=50·1,05=52,5 г. m(HCl)=52,5·0,1=5,25 г. n(HCl)=5,25/36,5≈0,144 моль.<br>0,144 &gt; 0,1 — кислоты достаточно (даже с избытком).</p>
+      </div>
+
+    </div>
+
+    <!-- §27 — зелёный -->
+    <div class="para-heading">
+      <span class="para-badge" style="background:#E1F5EE;color:#085041;">§27</span>
+      <span class="para-title">Генетическая связь между классами</span>
+    </div>
+    <div class="task-list">
+
+      <div class="task-card" style="border-left-color:#1D9E75;">
+        <p class="task-num" style="color:#085041;">Задание 9 — классификация простых веществ</p>
+        <p class="task-text">Распределите простые вещества на три класса (металлы, неметаллы, благородные газы): Na, Cl₂, He, Fe, S, Ne, Al, P, Ca, Ar.</p>
+        <button class="show-ans-btn" onclick="toggleAns(this)">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          Ответ
+        </button>
+        <p class="task-answer">Металлы: Na, Fe, Al, Ca.<br>Неметаллы: Cl₂, S, P.<br>Благородные газы: He, Ne, Ar.</p>
+      </div>
+
+      <div class="task-card" style="border-left-color:#1D9E75;">
+        <p class="task-num" style="color:#085041;">Задание 10 — генетический ряд металла</p>
+        <p class="task-text">Запишите уравнения реакций для генетического ряда металла (которому соответствует щёлочь): Li → Li₂O → LiOH → Li₂SO₄.</p>
+        <div class="task-hint">Генетический ряд металла: металл → основный оксид → основание → соль.</div>
+        <button class="show-ans-btn" onclick="toggleAns(this)">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          Ответ
+        </button>
+        <p class="task-answer">4Li + O₂ = 2Li₂O<br>Li₂O + H₂O = 2LiOH<br>2LiOH + H₂SO₄ = Li₂SO₄ + 2H₂O</p>
+      </div>
+
+      <div class="task-card" style="border-left-color:#1D9E75;">
+        <p class="task-num" style="color:#085041;">Задание 11 — генетический ряд неметалла</p>
+        <p class="task-text">Запишите уравнения реакций для генетического ряда неметалла: P → P₂O₅ → H₃PO₄ → Ag₃PO₄.</p>
+        <div class="task-hint">Генетический ряд неметалла: неметалл → кислотный оксид → кислота → соль.</div>
+        <button class="show-ans-btn" onclick="toggleAns(this)">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          Ответ
+        </button>
+        <p class="task-answer">4P + 5O₂ = 2P₂O₅<br>P₂O₅ + 3H₂O = 2H₃PO₄<br>H₃PO₄ + 3AgNO₃ = Ag₃PO₄↓ + 3HNO₃</p>
+      </div>
+
+      <div class="task-card" style="border-left-color:#1D9E75;">
+        <p class="task-num" style="color:#085041;">Задание 12 — цепочка с серой</p>
+        <p class="task-text">Запишите уравнения реакций для цепочки превращений: S → X → H₂SO₃ → Na₂SO₃ → X. Определите вещество X.</p>
+        <div class="task-hint">X — это оксид серы(IV), SO₂. Он повторяется дважды в цепочке.</div>
+        <button class="show-ans-btn" onclick="toggleAns(this)">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          Ответ
+        </button>
+        <p class="task-answer">X = SO₂.<br>S + O₂ = SO₂↑<br>SO₂ + H₂O = H₂SO₃<br>H₂SO₃ + 2NaOH = Na₂SO₃ + 2H₂O<br>Na₂SO₃ + 2HCl = 2NaCl + H₂O + SO₂↑</p>
+      </div>
+
+      <div class="task-card" style="border-left-color:#1D9E75;">
+        <p class="task-num" style="color:#085041;">Задание 13 — цепочка меди</p>
+        <p class="task-text">Запишите уравнения реакций для генетического ряда меди (которому соответствует нерастворимое основание): Cu → CuO → CuSO₄ → Cu(OH)₂ → CuO → Cu.</p>
+        <button class="show-ans-btn" onclick="toggleAns(this)">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          Ответ
+        </button>
+        <p class="task-answer">2Cu + O₂ = 2CuO<br>CuO + H₂SO₄ = CuSO₄ + H₂O<br>CuSO₄ + 2NaOH = Cu(OH)₂↓ + Na₂SO₄<br>Cu(OH)₂ →(t) CuO + H₂O<br>CuO + H₂ →(t) Cu + H₂O</p>
+      </div>
+
+      <div class="task-card" style="border-left-color:#1D9E75;">
+        <p class="task-num" style="color:#085041;">Задание 14 — определи X₁, X₂, X₃</p>
+        <p class="task-text">В цепочке превращений Ca → X₁ → Ca(OH)₂ → X₂ → CaO → X₃ → AgCl определите вещества X₁, X₂, X₃ и запишите уравнения реакций.</p>
+        <div class="task-hint">X₁ — оксид кальция, X₂ — карбонат кальция, X₃ — хлорид кальция. Подберите реакции под каждый переход.</div>
+        <button class="show-ans-btn" onclick="toggleAns(this)">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          Ответ
+        </button>
+        <p class="task-answer">X₁=CaO, X₂=CaCO₃, X₃=CaCl₂.<br>2Ca + O₂ = 2CaO<br>CaO + H₂O = Ca(OH)₂<br>Ca(OH)₂ + CO₂ = CaCO₃↓ + H₂O<br>CaCO₃ →(t) CaO + CO₂↑<br>CaO + 2HCl = CaCl₂ + H₂O<br>CaCl₂ + 2AgNO₃ = 2AgCl↓ + Ca(NO₃)₂</p>
+      </div>
+
+      <div class="task-card" style="border-left-color:#1D9E75;">
+        <p class="task-num" style="color:#085041;">Задание 15 — реакции с кислотой</p>
+        <p class="task-text">Какие из перечисленных веществ взаимодействуют с соляной кислотой? Запишите уравнения возможных реакций: магний Mg, оксид меди(II) CuO, гидроксид меди(II) Cu(OH)₂, медь Cu, нитрат магния Mg(NO₃)₂, гидроксид железа(III) Fe(OH)₃, нитрат серебра AgNO₃, сульфид железа(II) FeS.</p>
+        <button class="show-ans-btn" onclick="toggleAns(this)">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          Ответ
+        </button>
+        <p class="task-answer">Реагируют: Mg, CuO, Cu(OH)₂, Fe(OH)₃, AgNO₃, FeS (не реагируют: Cu, Mg(NO₃)₂).<br>Mg + 2HCl = MgCl₂ + H₂↑<br>CuO + 2HCl = CuCl₂ + H₂O<br>Cu(OH)₂ + 2HCl = CuCl₂ + 2H₂O<br>Fe(OH)₃ + 3HCl = FeCl₃ + 3H₂O<br>AgNO₃ + HCl = AgCl↓ + HNO₃<br>FeS + 2HCl = FeCl₂ + H₂S↑</p>
+      </div>
+
+      <div class="task-card" style="border-left-color:#1D9E75;">
+        <p class="task-num" style="color:#085041;">Задание 16 — реакции с щёлочью</p>
+        <p class="task-text">Какие из перечисленных веществ взаимодействуют с гидроксидом натрия NaOH? Запишите уравнения возможных реакций, назовите продукты: оксид углерода(IV) CO₂, гидроксид кальция Ca(OH)₂, оксид меди(II) CuO, нитрат меди(II) Cu(NO₃)₂, хлорид аммония NH₄Cl, кремниевая кислота H₂SiO₃, сульфат калия K₂SO₄.</p>
+        <button class="show-ans-btn" onclick="toggleAns(this)">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          Ответ
+        </button>
+        <p class="task-answer">Реагируют: CO₂, Cu(NO₃)₂, NH₄Cl, H₂SiO₃.<br>CO₂ + 2NaOH = Na₂CO₃ + H₂O (карбонат натрия)<br>Cu(NO₃)₂ + 2NaOH = Cu(OH)₂↓ + 2NaNO₃ (гидроксид меди + нитрат натрия)<br>NH₄Cl + NaOH = NaCl + NH₃↑ + H₂O (хлорид натрия + аммиак)<br>H₂SiO₃ + 2NaOH = Na₂SiO₃ + 2H₂O (силикат натрия)</p>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══ QUIZ §26 ══ -->
+  <div id="quiz26" class="section">
+    <div class="quiz-header">
+      <span class="quiz-title">Тест: §26 · Соли</span>
+    </div>
+    <div class="score-box" style="margin-bottom:16px;">
+      <span class="score-lbl">Правильных ответов:</span>
+      <span class="score-n" id="sc26">0 / 5</span>
+      <button class="reset-btn" onclick="resetQuiz('q26','sc26')">
+        <svg class="icon" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+        Сбросить
+      </button>
+    </div>
+    <div class="quiz-block" id="q26">
+
+      <div class="q-card" data-correct="1">
+        <p class="q-num">Вопрос 1</p>
+        <p class="q-text">Средняя (нормальная) соль — это продукт:</p>
+        <div class="opts">
+          <button class="opt" onclick="answer(this)">неполного замещения водорода в кислоте</button>
+          <button class="opt" onclick="answer(this)">полного замещения атомов водорода в кислоте на металл</button>
+          <button class="opt" onclick="answer(this)">замещения гидроксогрупп в основании</button>
+          <button class="opt" onclick="answer(this)">соединения двух оксидов</button>
+        </div>
+        <p class="q-explain">Средние соли — продукты полного замещения атомов водорода в кислоте на металл (например, NaCl, CaCO₃).</p>
+      </div>
+
+      <div class="q-card" data-correct="2">
+        <p class="q-num">Вопрос 2</p>
+        <p class="q-text">NaHCO₃ — это соль:</p>
+        <div class="opts">
+          <button class="opt" onclick="answer(this)">средняя</button>
+          <button class="opt" onclick="answer(this)">основная</button>
+          <button class="opt" onclick="answer(this)">кислая</button>
+          <button class="opt" onclick="answer(this)">двойная</button>
+        </div>
+        <p class="q-explain">NaHCO₃ содержит незамещённый атом водорода (H), поэтому это кислая соль (продукт неполного замещения водорода).</p>
+      </div>
+
+      <div class="q-card" data-correct="0">
+        <p class="q-num">Вопрос 3</p>
+        <p class="q-text">Какая соль нерастворима в воде?</p>
+        <div class="opts">
+          <button class="opt" onclick="answer(this)">BaSO₄</button>
+          <button class="opt" onclick="answer(this)">NaCl</button>
+          <button class="opt" onclick="answer(this)">KNO₃</button>
+          <button class="opt" onclick="answer(this)">CuSO₄</button>
+        </div>
+        <p class="q-explain">BaSO₄ (сульфат бария) нерастворим. Все соли натрия и калия, а также все нитраты растворимы.</p>
+      </div>
+
+      <div class="q-card" data-correct="3">
+        <p class="q-num">Вопрос 4</p>
+        <p class="q-text">Реакция Fe + CuSO₄ = FeSO₄ + Cu возможна, потому что:</p>
+        <div class="opts">
+          <button class="opt" onclick="answer(this)">железо тяжелее меди</button>
+          <button class="opt" onclick="answer(this)">медь активнее железа</button>
+          <button class="opt" onclick="answer(this)">образуется газ</button>
+          <button class="opt" onclick="answer(this)">железо стоит левее меди в ряду активности</button>
+        </div>
+        <p class="q-explain">Железо вытесняет медь из раствора соли, так как стоит левее меди (активнее) в ряду активности металлов.</p>
+      </div>
+
+      <div class="q-card" data-correct="1">
+        <p class="q-num">Вопрос 5</p>
+        <p class="q-text">Признак реакции между растворами двух солей:</p>
+        <div class="opts">
+          <button class="opt" onclick="answer(this)">изменение температуры</button>
+          <button class="opt" onclick="answer(this)">выпадение осадка</button>
+          <button class="opt" onclick="answer(this)">появление запаха</button>
+          <button class="opt" onclick="answer(this)">изменение цвета пламени</button>
+        </div>
+        <p class="q-explain">Реакция между растворами двух солей идёт, если образуется осадок. Например: CaCl₂ + Na₂CO₃ = CaCO₃↓ + 2NaCl.</p>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══ QUIZ §27 ══ -->
+  <div id="quiz27" class="section">
+    <div class="quiz-header">
+      <span class="quiz-title">Тест: §27 · Генетическая связь</span>
+    </div>
+    <div class="score-box" style="margin-bottom:16px;">
+      <span class="score-lbl">Правильных ответов:</span>
+      <span class="score-n" id="sc27">0 / 5</span>
+      <button class="reset-btn" onclick="resetQuiz('q27','sc27')">
+        <svg class="icon" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+        Сбросить
+      </button>
+    </div>
+    <div class="quiz-block" id="q27">
+
+      <div class="q-card" data-correct="2">
+        <p class="q-num">Вопрос 1</p>
+        <p class="q-text">Генетическая связь — это связь между:</p>
+        <div class="opts">
+          <button class="opt" onclick="answer(this)">атомами в молекуле</button>
+          <button class="opt" onclick="answer(this)">одинаковыми веществами</button>
+          <button class="opt" onclick="answer(this)">веществами разных классов, связанными взаимопревращениями</button>
+          <button class="opt" onclick="answer(this)">изотопами элемента</button>
+        </div>
+        <p class="q-explain">Генетической называется связь между веществами различных классов, связанных между собой взаимопревращениями.</p>
+      </div>
+
+      <div class="q-card" data-correct="0">
+        <p class="q-num">Вопрос 2</p>
+        <p class="q-text">Правильный порядок генетического ряда металла:</p>
+        <div class="opts">
+          <button class="opt" onclick="answer(this)">металл → основный оксид → основание → соль</button>
+          <button class="opt" onclick="answer(this)">металл → кислотный оксид → кислота → соль</button>
+          <button class="opt" onclick="answer(this)">соль → основание → оксид → металл</button>
+          <button class="opt" onclick="answer(this)">металл → соль → оксид → основание</button>
+        </div>
+        <p class="q-explain">Генетический ряд металла: металл → основный оксид → основание → соль. Пример: Li → Li₂O → LiOH → Li₂SO₄.</p>
+      </div>
+
+      <div class="q-card" data-correct="3">
+        <p class="q-num">Вопрос 3</p>
+        <p class="q-text">Правильный порядок генетического ряда неметалла:</p>
+        <div class="opts">
+          <button class="opt" onclick="answer(this)">неметалл → основный оксид → основание → соль</button>
+          <button class="opt" onclick="answer(this)">неметалл → металл → оксид → соль</button>
+          <button class="opt" onclick="answer(this)">неметалл → соль → кислота → оксид</button>
+          <button class="opt" onclick="answer(this)">неметалл → кислотный оксид → кислота → соль</button>
+        </div>
+        <p class="q-explain">Генетический ряд неметалла: неметалл → кислотный оксид → кислота → соль. Пример: P → P₂O₅ → H₃PO₄ → Ag₃PO₄.</p>
+      </div>
+
+      <div class="q-card" data-correct="1">
+        <p class="q-num">Вопрос 4</p>
+        <p class="q-text">В цепочке S → SO₂ → H₂SO₃ → Na₂SO₃ вторая реакция (SO₂ → H₂SO₃) — это взаимодействие:</p>
+        <div class="opts">
+          <button class="opt" onclick="answer(this)">оксида с кислотой</button>
+          <button class="opt" onclick="answer(this)">кислотного оксида с водой</button>
+          <button class="opt" onclick="answer(this)">оксида с основанием</button>
+          <button class="opt" onclick="answer(this)">кислоты с солью</button>
+        </div>
+        <p class="q-explain">SO₂ + H₂O = H₂SO₃ — взаимодействие кислотного оксида с водой с образованием кислоты.</p>
+      </div>
+
+      <div class="q-card" data-correct="2">
+        <p class="q-num">Вопрос 5</p>
+        <p class="q-text">Какие простые вещества способны к аллотропии?</p>
+        <div class="opts">
+          <button class="opt" onclick="answer(this)">все металлы</button>
+          <button class="opt" onclick="answer(this)">благородные газы</button>
+          <button class="opt" onclick="answer(this)">многие неметаллы (кроме H, N и галогенов)</button>
+          <button class="opt" onclick="answer(this)">только водород</button>
+        </div>
+        <p class="q-explain">Многие неметаллы способны к аллотропии — образуют несколько простых веществ (например, кислород O₂ и озон O₃, разные формы углерода). Исключение — H, N и галогены.</p>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+<script>
+function showTab(id, idx) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('show'));
+  document.getElementById(id).classList.add('show');
+  document.querySelectorAll('.tab-btn').forEach((b, i) => b.classList.toggle('active', i === idx));
+}
+
+function toggleAns(btn) {
+  const ans = btn.nextElementSibling;
+  const shown = ans.style.display === 'block';
+  ans.style.display = shown ? 'none' : 'block';
+  btn.innerHTML = shown
+    ? '<svg class="icon" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg> Ответ'
+    : '<svg class="icon" viewBox="0 0 24 24"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg> Скрыть';
+}
+
+const scores = { q26: 0, q27: 0 };
+
+function answer(btn) {
+  const card = btn.closest('.q-card');
+  if (card.classList.contains('done')) return;
+  card.classList.add('done');
+  const opts = card.querySelectorAll('.opt');
+  const correct = parseInt(card.dataset.correct);
+  const chosen = Array.from(opts).indexOf(btn);
+  opts[correct].classList.add('correct');
+  if (chosen !== correct) btn.classList.add('wrong');
+  opts.forEach(o => o.classList.add('done-opt'));
+  card.querySelector('.q-explain').style.display = 'block';
+  if (chosen === correct) {
+    const qid = card.closest('.quiz-block').id;
+    scores[qid]++;
+    const scMap = { q26:'sc26', q27:'sc27' };
+    document.getElementById(scMap[qid]).textContent = scores[qid] + ' / 5';
+  }
+}
+
+function resetQuiz(qid, scId) {
+  scores[qid] = 0;
+  document.getElementById(scId).textContent = '0 / 5';
+  document.getElementById(qid).querySelectorAll('.q-card').forEach(card => {
+    card.classList.remove('done');
+    card.querySelectorAll('.opt').forEach(o => { o.classList.remove('correct', 'wrong', 'done-opt'); });
+    card.querySelector('.q-explain').style.display = 'none';
+  });
+}
+</script>
+</body>
+</html>
