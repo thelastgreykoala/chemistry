@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Химия 8 класс — Неделя 8</title>
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #f5f4f0;
+    --surface: #ffffff;
+    --surface2: #f0efe9;
+    --border: rgba(0,0,0,0.10);
+    --border2: rgba(0,0,0,0.18);
+    --text: #1a1a18;
+    --text2: #6b6b67;
+    --text3: #999993;
+    --radius: 14px;
+    --radius-sm: 8px;
+    --shadow: 0 2px 12px rgba(0,0,0,0.07), 0 0 0 0.5px rgba(0,0,0,0.06);
+  }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 24px 16px 48px;
+  }
+
+  .page { max-width: 560px; margin: 0 auto; }
+
+  .header { margin-bottom: 20px; }
+  .header h1 { font-size: 18px; font-weight: 600; letter-spacing: -0.3px; }
+  .header p  { font-size: 13px; color: var(--text2); margin-top: 3px; }
+
+  .tabbar {
+    display: flex; gap: 4px; background: var(--surface2);
+    border-radius: var(--radius-sm); padding: 4px;
+    margin-bottom: 20px; overflow-x: auto;
+  }
+  .tab-btn {
+    flex: 1; min-width: 90px; font-size: 12px; font-weight: 500;
+    padding: 7px 10px; border: none; border-radius: 6px;
+    background: transparent; color: var(--text2); cursor: pointer;
+    transition: all 0.15s; white-space: nowrap;
+  }
+  .tab-btn.active {
+    background: var(--surface); color: var(--text);
+    box-shadow: 0 1px 4px rgba(0,0,0,0.10);
+  }
+
+  .section { display: none; }
+  .section.show { display: block; }
+
+  .para-heading {
+    display: flex; align-items: center; gap: 8px;
+    margin: 20px 0 10px;
+  }
+  .para-badge {
+    font-size: 11px; font-weight: 700; padding: 3px 10px;
+    border-radius: 100px; flex-shrink: 0;
+  }
+  .para-title { font-size: 13px; font-weight: 600; color: var(--text); }
+
+  .task-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 8px; }
+
+  .task-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px 16px;
+    box-shadow: var(--shadow);
+    border-left: 3px solid transparent;
+  }
+
+  .task-num {
+    font-size: 10px; font-weight: 700; letter-spacing: 0.07em;
+    text-transform: uppercase; margin-bottom: 6px;
+  }
+  .task-text { font-size: 14px; line-height: 1.65; color: var(--text); }
+
+  .formula {
+    font-family: "SFMono-Regular", "Consolas", "Liberation Mono", monospace;
+    font-size: 13px; background: var(--surface2);
+    padding: 1px 5px; border-radius: 4px;
+    color: var(--text);
+  }
+
+  .task-hint {
+    font-size: 12px; color: var(--text2); line-height: 1.5;
+    margin-top: 8px; padding: 8px 10px;
+    background: var(--surface2); border-radius: 6px;
+    display: flex; gap: 6px;
+  }
+  .task-hint::before { content: "💡"; flex-shrink: 0; }
+
+  .show-ans-btn {
+    display: inline-flex; align-items: center; gap: 5px;
+    margin-top: 10px; font-size: 12px; font-weight: 500;
+    padding: 5px 12px; border: 1px solid var(--border2);
+    border-radius: 100px; background: transparent; color: var(--text2);
+    cursor: pointer; transition: background 0.15s, color 0.15s;
+  }
+  .show-ans-btn:hover { background: var(--surface2); color: var(--text); }
+
+  .task-answer {
+    display: none; margin-top: 10px;
+    font-size: 13px; line-height: 1.6;
+    padding: 10px 12px;
+    background: #F0FDF4; border-radius: 8px;
+    border: 1px solid #86EFAC; color: #1A6B3A;
+  }
+
+  .quiz-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 14px; flex-wrap: wrap; gap: 8px;
+  }
+  .quiz-title { font-size: 15px; font-weight: 600; }
+  .score-box {
+    display: flex; align-items: center; gap: 10px;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius-sm); padding: 8px 14px;
+    box-shadow: var(--shadow);
+  }
+  .score-lbl { font-size: 12px; color: var(--text2); }
+  .score-n { font-size: 18px; font-weight: 600; color: var(--text); }
+  .reset-btn {
+    font-size: 12px; padding: 5px 12px;
+    border: 1px solid var(--border2); border-radius: 100px;
+    background: transparent; color: var(--text2); cursor: pointer;
+    transition: background 0.15s;
+  }
+  .reset-btn:hover { background: var(--surface2); }
+
+  .q-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 16px;
+    margin-bottom: 10px; box-shadow: var(--shadow);
+  }
+  .q-num { font-size: 10px; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; color: var(--text3); margin-bottom: 6px; }
+  .q-text { font-size: 14px; line-height: 1.65; color: var(--text); margin-bottom: 12px; }
+
+  .opts { display: flex; flex-direction: column; gap: 6px; }
+  .opt {
+    font-size: 13px; padding: 9px 13px;
+    border: 1px solid var(--border2); border-radius: var(--radius-sm);
+    cursor: pointer; background: transparent; color: var(--text);
+    text-align: left; transition: background 0.12s, border-color 0.12s;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .opt::before {
+    content: ""; display: inline-block; width: 16px; height: 16px;
+    border: 1.5px solid var(--border2); border-radius: 50%; flex-shrink: 0;
+    transition: background 0.12s, border-color 0.12s;
+  }
+  .opt:hover:not(.done-opt) { background: var(--surface2); }
+  .opt.correct { background: #F0FDF4; color: #1A6B3A; border-color: #86EFAC; }
+  .opt.correct::before { background: #1A6B3A; border-color: #1A6B3A; }
+  .opt.wrong   { background: #FEF2F2; color: #A32D2D; border-color: #F0ABAB; }
+  .opt.wrong::before { background: #A32D2D; border-color: #A32D2D; }
+
+  .q-explain {
+    display: none; margin-top: 10px;
+    font-size: 12px; color: var(--text2); line-height: 1.6;
+    padding: 8px 10px; background: var(--surface2);
+    border-radius: 6px;
+  }
+
+  .section-intro {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 13px; color: var(--text2);
+    margin-bottom: 14px; padding: 10px 14px;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+  }
+
+  svg.icon { width: 14px; height: 14px; vertical-align: -2px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+
+  /* ── Back link ── */
+  .back-link {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 12px; color: var(--text2);
+    text-decoration: none; margin-bottom: 16px;
+    padding: 5px 0;
+    transition: color 0.15s;
+  }
+  .back-link:hover { color: var(--text); }
+  .back-link svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <a href="index.html" class="back-link">
+    <svg viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></svg>
+    Главное меню
+  </a>
+
+  <div class="header">
+    <h1>⚛️ Химия 8 класс — Неделя 8</h1>
+    <p>§28–31 · Семейства элементов, периодический закон, строение атома и электронных оболочек · стр. 122–148</p>
+  </div>
+
+  <div class="tabbar" id="tabbar">
+    <button class="tab-btn active" onclick="showTab('tasks',0)">📋 Задания</button>
+    <button class="tab-btn" onclick="showTab('quiz28',1)">Тест: §28</button>
+    <button class="tab-btn" onclick="showTab('quiz29',2)">Тест: §29</button>
+    <button class="tab-btn" onclick="showTab('quiz3031',3)">Тест: §30–31</button>
+  </div>
+
+  <!-- ══ TASKS ══ -->
+  <div id="tasks" class="section show">
+    <div class="section-intro">
+      <svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
+      Нажмите «Ответ», чтобы проверить себя. Сначала попробуйте решить сами!
+    </div>
+
+    <!-- §28 — синий -->
+    <div class="para-heading">
+      <span class="para-badge" style="background:#DBEAFE;color:#1E40AF;">§28</span>
+      <span class="para-title">Семейства элементов. Амфотерность</span>
+    </div>
+    <div class="task-list">
+
+      <div class="task-card" style="border-left-color:#3B82F6;">
+        <p class="task-num" style="color:#1E40AF;">Задание 1 — щелочные металлы</p>
+        <p class="task-text">Назовите семь щелочных металлов (группа IA) и запишите их в порядке возрастания относительной атомной массы. Какое свойство объединяет их в одну семью?</p>
+        <div class="task-hint">Щелочные металлы — это металлы I группы главной подгруппы. Объединяющий признак — число электронов на внешнем уровне.</div>
+        <button class="show-ans-btn" onclick="toggleAns(this)">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          Ответ
+        </button>
+        <p class="task-answer">Li (6,9), Na (23), K (39), Rb (85,5), Cs (133), Fr (223).<br>Все имеют 1 электрон на внешнем уровне → легко отдают его, проявляя валентность I и образуя щёлочи. Fr — радиоактивен.</p>
+      </div>
+
+      <div class="task-card" style="border-left-color:#3B82F6;">
+        <p class="task-num" style="color:#1E40AF;">Задание 2 — галогены</p>
+        <p class="task-text">Запишите галогены (группа VIIA) в порядке возрастания относительной атомной массы. Что общего в их свойствах? Чем они отличаются от щелочных металлов?</p>
+        <div class="task-hint">Галогены — неметаллы. На внешнем уровне у каждого из них по 7 электронов.</div>
+        <button class="show-ans-btn" onclick="toggleAns(this)">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          Ответ
+        </button>
+        <p class="task-answer">F (19), Cl (35,5), Br (80), I (127), At (210).<br>Все галогены — активные неметаллы, имеют 7 электронов на внешнем уровне, легко принимают 1 электрон, образуют двухатомные молекулы (F₂, Cl₂, Br₂, I₂).<br>Отличие от щелочных металлов: металлы отдают электроны, галогены принимают.</p>
+      </div>
+
+      <div class="task-card" style="border-left-color:#3B82F6;">
+        <p class="task-num" style="color:#1E40AF;">Задание 3 — амфотерные оксиды и гидроксиды</p>
+        <p class="task-text">Что такое амфотерность? Запишите уравнения реакций, доказывающих амфотерность гидроксида алюминия Al(OH)₃: а) с соляной кислотой HCl; б) с гидроксидом натрия NaOH.</p>
+        <div class="task-hint">Амфотерные вещества реагируют и с кислотами (как основания), и со щёлочами (как кислоты).</div>
+        <button class="show-ans-btn" onclick="toggleAns(this)">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          Ответ
+        </button>
+        <p class="task-answer">Амфотерность — способность вещества реагировать и с кислотами, и со щёлочами.<br>а) Al(OH)₃ + 3HCl = AlCl₃ + 3H₂O (проявляет основные свойства)<br>б) Al(OH)₃ + NaOH = NaAlO₂ + 2H₂O (проявляет кислотные свойства)</p>
+      </div>
+
+      <div class="task-card" style="border-left-color:#3B82F6;">
+        <p class="task-num" style="color:#1E40AF;">Задание 4 — амфотерность оксида</p>
+        <p class="task-text">Запишите уравнения реакций оксида цинка ZnO: а) с соляной кислотой; б) с гидроксидом натрия (сплавление). Сделайте вывод о характере ZnO.</p>
+        <button class="show-ans-btn" onclick="toggleAns(this)">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          Ответ
+        </button>
+        <p class="task-answer">а) ZnO + 2HCl = ZnCl₂ + H₂O (основный характер)<br>б) ZnO + 2NaOH →(t) Na₂ZnO₂ + H₂O (кислотный характер)<br>Вывод: ZnO — амфотерный оксид, реагирует и с кислотами, и со щёлочами.</p>
+      </div>
+
+      <div class="task-card" style="border-left-color:#3B82F6;">
+        <p class="task-num" style="color:#1E40AF;">Задание 5 — сравнение семейств</p>
+        <p class="task-text">Укажите, к какому семейству относится каждый элемент: Na, Cl, Ca, F, K, Br, Mg, I. Назовите закономерность в изменении активности внутри каждого семейства с ростом атомной массы.</p>
+        <div class="task-hint">Щелочные металлы — группа IA, щелочноземельные — IIA, галогены — VIIA.</div>
+        <button class="show-ans-btn" onclick="toggleAns(this)">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          Ответ
+        </button>
+        <p class="task-answer">Щелочные металлы: Na, K (I группа).<br>Щелочноземельные металлы: Ca, Mg (II группа).<br>Галогены: Cl, F, Br, I (VII группа).<br>У металлов: активность растёт с увеличением атомной массы (K активнее Na).<br>У галогенов: активность убывает (F — самый активный, I — наименее).</p>
+      </div>
+
+    </div>
+
+    <!-- §29 — зелёный -->
+    <div class="para-heading">
+      <span class="para-badge" style="background:#D1FAE5;color:#065F46;">§29</span>
+      <span class="para-title">Открытие периодического закона</span>
+    </div>
+    <div class="task-list">
+
+      <div class="task-card" style="border-left-color:#10B981;">
+        <p class="task-num" style="color:#065F46;">Задание 6 — формулировка закона</p>
+        <p class="task-text">Запишите современную формулировку периодического закона. Чем современная формулировка отличается от первоначальной формулировки Менделеева?</p>
+        <div class="task-hint">Менделеев формулировал закон через атомную массу, современная формулировка — через заряд ядра.</div>
+        <button class="show-ans-btn" onclick="toggleAns(this)">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          Ответ
+        </button>
+        <p class="task-answer">Современная формулировка: «Свойства химических элементов и образованных ими простых веществ, а также свойства их соединений находятся в периодической зависимости от зарядов ядер их атомов».<br>Отличие: Менделеев использовал «относительную атомную массу», а в современной формулировке — «заряд ядра» (открытый Мозли в 1913 году).</p>
+      </div>
+
+      <div class="task-card" style="border-left-color:#10B981;">
+        <p class="task-num" style="color:#065F46;">Задание 7 — «карточки Менделеева»</p>
+        <p class="task-text">Объясните, почему в таблице Менделеева аргон Ar (Ar = 39,9) стоит перед калием K (Ar = 39,1), хотя атомная масса аргона больше.</p>
+        <div class="task-hint">Вспомните: таблица расположена по зарядам ядер (порядковым номерам), а не по массе. Свойства важнее массы.</div>
+        <button class="show-ans-btn" onclick="toggleAns(this)">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          Ответ
+        </button>
+        <p class="task-answer">Аргон стоит перед калием, потому что его порядковый номер (заряд ядра) = 18, а у калия = 19. Хотя атомная масса Ar (39,9) чуть больше, чем у K (39,1), свойства аргона (благородный газ) соответствуют VIII группе, а калия (щелочной металл) — I группе. Менделеев ставил свойства выше порядка масс, что впоследствии подтвердилось открытием заряда ядра.</p>
+      </div>
+
+      <div class="task-card" style="border-left-color:#10B981;">
+        <p class="task-num" style="color:#065F46;">Задание 8 — периодичность свойств</p>
+        <p class="task-text">Как изменяются следующие свойства в периоде (слева направо) с ростом порядкового номера: а) металлические свойства; б) неметаллические свойства; в) валентность в высших оксидах?</p>
+        <div class="task-hint">В периоде число электронов на внешнем уровне увеличивается от 1 до 8.</div>
+        <button class="show-ans-btn" onclick="toggleAns(this)">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          Ответ
+        </button>
+        <p class="task-answer">а) Металлические свойства убывают (Na → Mg → Al → Si → P → S → Cl — от типичного металла к типичному неметаллу).<br>б) Неметаллические свойства возрастают.<br>в) Валентность в высших оксидах возрастает от I до VII: Na₂O, MgO, Al₂O₃, SiO₂, P₂O₅, SO₃, Cl₂O₇.</p>
+      </div>
+
+      <div class="task-card" style="border-left-color:#10B981;">
+        <p class="task-num" style="color:#065F46;">Задание 9 — предсказание Менделеева</p>
+        <p class="task-text">Менделеев оставил «пустые клетки» в своей таблице и предсказал свойства неоткрытых элементов. Назовите один из таких элементов, который впоследствии был открыт, и укажите его современное название.</p>
+        <button class="show-ans-btn" onclick="toggleAns(this)">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          Ответ
+        </button>
+        <p class="task-answer">Менделеев предсказал «экасилиций» (eka-silicon) — его свойства совпали с открытым в 1886 году германием (Ge, №32). Также предсказал «экаалюминий» (→ галлий Ga, открыт 1875) и «экабор» (→ скандий Sc, 1879). Это стало блестящим подтверждением периодического закона.</p>
+      </div>
+
+    </div>
+
+    <!-- §30 — красный -->
+    <div class="para-heading">
+      <span class="para-badge" style="background:#FEE2E2;color:#991B1B;">§30</span>
+      <span class="para-title">Строение атома</span>
+    </div>
+    <div class="task-list">
+
+      <div class="task-card" style="border-left-color:#EF4444;">
+        <p class="task-num" style="color:#991B1B;">Задание 10 — состав атомного ядра</p>
+        <p class="task-text">Определите состав атомных ядер (число протонов и нейтронов) для элементов: <span class="formula">¹²₆C</span>, <span class="formula">²³₁₁Na</span>, <span class="formula">⁴⁰₂₀Ca</span>, <span class="formula">¹H</span>. Как обозначается массовое число?</p>
+        <div class="task-hint">Число протонов = порядковый номер (нижний). Число нейтронов = массовое число − число протонов (верхний − нижний).</div>
+        <button class="show-ans-btn" onclick="toggleAns(this)">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          Ответ
+        </button>
+        <p class="task-answer">¹²₆C: 6 протонов, 6 нейтронов (12−6=6).<br>²³₁₁Na: 11 протонов, 12 нейтронов (23−11=12).<br>⁴⁰₂₀Ca: 20 протонов, 20 нейтронов (40−20=20).<br>¹H: 1 протон, 0 нейтронов.<br>Массовое число A = число протонов Z + число нейтронов N.</p>
+      </div>
+
+      <div class="task-card" style="border-left-color:#EF4444;">
+        <p class="task-num" style="color:#991B1B;">Задание 11 — характеристики частиц</p>
+        <p class="task-text">Заполните таблицу: укажите массу и заряд трёх элементарных частиц атома — протона, нейтрона и электрона. Какая частица определяет химический элемент?</p>
+        <div class="task-hint">Масса протона и нейтрона ≈ 1 а.е.м., масса электрона пренебрежимо мала. Заряды: протон +1, нейтрон 0, электрон −1.</div>
+        <button class="show-ans-btn" onclick="toggleAns(this)">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          Ответ
+        </button>
+        <p class="task-answer">Протон: масса ≈ 1 а.е.м., заряд +1.<br>Нейтрон: масса ≈ 1 а.е.м., заряд 0.<br>Электрон: масса ≈ 1/1836 а.е.м. (≈ 0), заряд −1.<br>Элемент определяется числом протонов (зарядом ядра). Именно оно — порядковый номер в таблице Менделеева.</p>
+      </div>
+
+      <div class="task-card" style="border-left-color:#EF4444;">
+        <p class="task-num" style="color:#991B1B;">Задание 12 — изотопы</p>
+        <p class="task-text">Что такое изотопы? Запишите символы двух изотопов хлора: ³⁵Cl и ³⁷Cl. Чем они отличаются и что у них общего? Как вычислена средняя атомная масса хлора 35,5?</p>
+        <div class="task-hint">Изотопы — атомы одного элемента с разным числом нейтронов. В природе хлор состоит из двух изотопов примерно в равном соотношении.</div>
+        <button class="show-ans-btn" onclick="toggleAns(this)">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          Ответ
+        </button>
+        <p class="task-answer">Изотопы — разновидности атомов одного элемента, имеющие одинаковый заряд ядра (число протонов), но разное массовое число (разное число нейтронов).<br>³⁵₁₇Cl: 17 протонов, 18 нейтронов.<br>³⁷₁₇Cl: 17 протонов, 20 нейтронов.<br>Общее: одинаковый заряд ядра (+17), одинаковые химические свойства.<br>Ср. масса Cl ≈ 35,5, так как природный хлор на ~75% состоит из ³⁵Cl и на ~25% из ³⁷Cl: (35·0,75 + 37·0,25 ≈ 35,5).</p>
+      </div>
+
+      <div class="task-card" style="border-left-color:#EF4444;">
+        <p class="task-num" style="color:#991B1B;">Задание 13 — нейтральный атом и ион</p>
+        <p class="task-text">Атом натрия Na (№11) теряет 1 электрон. Запишите, что при этом происходит с зарядом частицы. Как называется образовавшаяся частица? Запишите её обозначение.</p>
+        <div class="task-hint">Если атом теряет электрон, суммарный заряд становится положительным. Заряженные частицы называются ионами.</div>
+        <button class="show-ans-btn" onclick="toggleAns(this)">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          Ответ
+        </button>
+        <p class="task-answer">Атом Na содержит 11 протонов (+11) и 11 электронов (−11) → суммарный заряд = 0 (нейтральный).<br>После потери 1 электрона: 11 протонов (+11) и 10 электронов (−10) → заряд = +1.<br>Образуется катион Na⁺ (положительно заряженный ион натрия).</p>
+      </div>
+
+    </div>
+
+    <!-- §31 — фиолетовый -->
+    <div class="para-heading">
+      <span class="para-badge" style="background:#EDE9FE;color:#4C1D95;">§31</span>
+      <span class="para-title">Строение электронных оболочек атомов</span>
+    </div>
+    <div class="task-list">
+
+      <div class="task-card" style="border-left-color:#8B5CF6;">
+        <p class="task-num" style="color:#4C1D95;">Задание 14 — электронные оболочки</p>
+        <p class="task-text">Составьте схему строения электронной оболочки атомов: <span class="formula">H</span>, <span class="formula">He</span>, <span class="formula">Li</span>, <span class="formula">C</span>, <span class="formula">O</span>, <span class="formula">Ne</span>. Укажите количество электронов на каждом уровне.</p>
+        <div class="task-hint">Уровни заполняются по порядку. 1-й уровень вмещает не более 2 электронов, 2-й — не более 8.</div>
+        <button class="show-ans-btn" onclick="toggleAns(this)">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          Ответ
+        </button>
+        <p class="task-answer">H (№1): 1 — всего 1 эл.<br>He (№2): 2 — всего 2 эл. (1-й уровень завершён).<br>Li (№3): 2, 1 — 2 уровня.<br>C (№6): 2, 4 — 2 уровня.<br>O (№8): 2, 6 — 2 уровня.<br>Ne (№10): 2, 8 — 2-й уровень завершён (благородный газ).</p>
+      </div>
+
+      <div class="task-card" style="border-left-color:#8B5CF6;">
+        <p class="task-num" style="color:#4C1D95;">Задание 15 — III период</p>
+        <p class="task-text">Составьте схемы строения электронных оболочек атомов третьего периода: Na (№11), Mg (№12), Al (№13), Si (№14), P (№15), S (№16), Cl (№17), Ar (№18). Сколько электронов на внешнем уровне у каждого?</p>
+        <div class="task-hint">3-й уровень у элементов III периода заполняется от 1 до 8 электронов. Число эл. на внешнем уровне = номер группы.</div>
+        <button class="show-ans-btn" onclick="toggleAns(this)">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          Ответ
+        </button>
+        <p class="task-answer">Na: 2, 8, 1 (1 эл. на вн. уровне)<br>Mg: 2, 8, 2 (2 эл.)<br>Al: 2, 8, 3 (3 эл.)<br>Si: 2, 8, 4 (4 эл.)<br>P: 2, 8, 5 (5 эл.)<br>S: 2, 8, 6 (6 эл.)<br>Cl: 2, 8, 7 (7 эл.)<br>Ar: 2, 8, 8 (8 эл. — завершён, благородный газ)</p>
+      </div>
+
+      <div class="task-card" style="border-left-color:#8B5CF6;">
+        <p class="task-num" style="color:#4C1D95;">Задание 16 — связь оболочки и свойств</p>
+        <p class="task-text">Объясните, почему фтор F и хлор Cl обладают сходными химическими свойствами, хотя находятся в разных периодах таблицы.</p>
+        <div class="task-hint">Вспомните число электронов на внешнем уровне у F (2, 7) и Cl (2, 8, 7).</div>
+        <button class="show-ans-btn" onclick="toggleAns(this)">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          Ответ
+        </button>
+        <p class="task-answer">F: 2, 7 — на внешнем уровне 7 электронов.<br>Cl: 2, 8, 7 — на внешнем уровне тоже 7 электронов.<br>Химические свойства определяются числом электронов на внешнем уровне. Оба атома «хотят» принять ещё 1 электрон, чтобы завершить уровень до 8 → оба являются сильными окислителями-неметаллами. Одинаковое число внешних электронов → сходные свойства → один столбец (VII группа) в таблице.</p>
+      </div>
+
+      <div class="task-card" style="border-left-color:#8B5CF6;">
+        <p class="task-num" style="color:#4C1D95;">Задание 17 — электронные оболочки Ca и K</p>
+        <p class="task-text">Составьте схемы электронных оболочек атомов Ca (№20) и K (№19). Почему на четвёртом уровне у этих атомов только 2 и 1 электрон, а не больше, хотя третий уровень способен вместить до 18 электронов?</p>
+        <div class="task-hint">В 8 классе принимаем упрощённую модель: 3-й уровень до Ca заполняется максимум до 8 электронов, остальное — на 4-й уровень.</div>
+        <button class="show-ans-btn" onclick="toggleAns(this)">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          Ответ
+        </button>
+        <p class="task-answer">K (№19): 2, 8, 8, 1 → 4 уровня, на внешнем 1 электрон.<br>Ca (№20): 2, 8, 8, 2 → 4 уровня, на внешнем 2 электрона.<br>Причина: для атомов K и Ca 4-й уровень оказывается энергетически выгоднее, чем продолжение заполнения 3-го. (Полное объяснение — в старших классах через подуровни 3d; в 8 классе используем схему 2−8−8−…)</p>
+      </div>
+
+      <div class="task-card" style="border-left-color:#8B5CF6;">
+        <p class="task-num" style="color:#4C1D95;">Задание 18 — электронные оболочки и валентность</p>
+        <p class="task-text">Определите валентность в высших оксидах для элементов: N (№7), S (№16), Cl (№17), P (№15). Чему равно число электронов на внешнем уровне у каждого? Какой закономерности вы ожидаете?</p>
+        <button class="show-ans-btn" onclick="toggleAns(this)">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          Ответ
+        </button>
+        <p class="task-answer">N (2, 5): 5 эл. на вн. уровне → валентность в высшем оксиде V (N₂O₅).<br>S (2, 8, 6): 6 эл. → валентность VI (SO₃).<br>Cl (2, 8, 7): 7 эл. → валентность VII (Cl₂O₇).<br>P (2, 8, 5): 5 эл. → валентность V (P₂O₅).<br>Закономерность: для неметаллов валентность в высшем оксиде = число электронов на внешнем уровне = номер группы.</p>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══ QUIZ §28 ══ -->
+  <div id="quiz28" class="section">
+    <div class="quiz-header">
+      <span class="quiz-title">Тест: §28 · Семейства элементов</span>
+    </div>
+    <div class="score-box" style="margin-bottom:16px;">
+      <span class="score-lbl">Правильных ответов:</span>
+      <span class="score-n" id="sc28">0 / 5</span>
+      <button class="reset-btn" onclick="resetQuiz('q28','sc28')">
+        <svg class="icon" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+        Сбросить
+      </button>
+    </div>
+    <div class="quiz-block" id="q28">
+
+      <div class="q-card" data-correct="1">
+        <p class="q-num">Вопрос 1</p>
+        <p class="q-text">Щелочные металлы — это элементы:</p>
+        <div class="opts">
+          <button class="opt" onclick="answer(this)">II группы главной подгруппы</button>
+          <button class="opt" onclick="answer(this)">I группы главной подгруппы</button>
+          <button class="opt" onclick="answer(this)">VII группы главной подгруппы</button>
+          <button class="opt" onclick="answer(this)">VIII группы главной подгруппы</button>
+        </div>
+        <p class="q-explain">Щелочные металлы (Li, Na, K, Rb, Cs, Fr) — элементы IA группы. На внешнем уровне у каждого 1 электрон.</p>
+      </div>
+
+      <div class="q-card" data-correct="0">
+        <p class="q-num">Вопрос 2</p>
+        <p class="q-text">Амфотерный гидроксид Al(OH)₃ реагирует:</p>
+        <div class="opts">
+          <button class="opt" onclick="answer(this)">и с HCl, и с NaOH</button>
+          <button class="opt" onclick="answer(this)">только с кислотами</button>
+          <button class="opt" onclick="answer(this)">только со щёлочами</button>
+          <button class="opt" onclick="answer(this)">не реагирует ни с чем</button>
+        </div>
+        <p class="q-explain">Амфотерный гидроксид реагирует и с кислотами (Al(OH)₃ + 3HCl = AlCl₃ + 3H₂O), и со щёлочами (Al(OH)₃ + NaOH = NaAlO₂ + 2H₂O).</p>
+      </div>
+
+      <div class="q-card" data-correct="3">
+        <p class="q-num">Вопрос 3</p>
+        <p class="q-text">Активность галогенов в ряду F → Cl → Br → I:</p>
+        <div class="opts">
+          <button class="opt" onclick="answer(this)">возрастает</button>
+          <button class="opt" onclick="answer(this)">не изменяется</button>
+          <button class="opt" onclick="answer(this)">сначала растёт, потом убывает</button>
+          <button class="opt" onclick="answer(this)">убывает</button>
+        </div>
+        <p class="q-explain">В ряду F → Cl → Br → I активность (способность принимать электроны) убывает. Фтор — самый активный неметалл из всех.</p>
+      </div>
+
+      <div class="q-card" data-correct="2">
+        <p class="q-num">Вопрос 4</p>
+        <p class="q-text">Что означает термин «амфотерность»?</p>
+        <div class="opts">
+          <button class="opt" onclick="answer(this)">способность гореть в кислороде</button>
+          <button class="opt" onclick="answer(this)">способность растворяться в воде</button>
+          <button class="opt" onclick="answer(this)">способность реагировать и с кислотами, и со щёлочами</button>
+          <button class="opt" onclick="answer(this)">способность образовывать соли с разными металлами</button>
+        </div>
+        <p class="q-explain">Амфотерность — это свойство вещества проявлять как кислотный, так и основный характер в зависимости от условий. Примеры: Al(OH)₃, Zn(OH)₂, ZnO, Al₂O₃.</p>
+      </div>
+
+      <div class="q-card" data-correct="1">
+        <p class="q-num">Вопрос 5</p>
+        <p class="q-text">Активность щелочных металлов в ряду Li → Na → K → Rb → Cs:</p>
+        <div class="opts">
+          <button class="opt" onclick="answer(this)">убывает</button>
+          <button class="opt" onclick="answer(this)">возрастает</button>
+          <button class="opt" onclick="answer(this)">не изменяется</button>
+          <button class="opt" onclick="answer(this)">сначала убывает, потом растёт</button>
+        </div>
+        <p class="q-explain">Активность щелочных металлов возрастает от Li к Cs. Чем больше атом, тем дальше внешний электрон от ядра и тем легче его отдать.</p>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══ QUIZ §29 ══ -->
+  <div id="quiz29" class="section">
+    <div class="quiz-header">
+      <span class="quiz-title">Тест: §29 · Периодический закон</span>
+    </div>
+    <div class="score-box" style="margin-bottom:16px;">
+      <span class="score-lbl">Правильных ответов:</span>
+      <span class="score-n" id="sc29">0 / 5</span>
+      <button class="reset-btn" onclick="resetQuiz('q29','sc29')">
+        <svg class="icon" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+        Сбросить
+      </button>
+    </div>
+    <div class="quiz-block" id="q29">
+
+      <div class="q-card" data-correct="2">
+        <p class="q-num">Вопрос 1</p>
+        <p class="q-text">По современной формулировке, свойства элементов находятся в периодической зависимости от:</p>
+        <div class="opts">
+          <button class="opt" onclick="answer(this)">атомной массы</button>
+          <button class="opt" onclick="answer(this)">числа нейтронов</button>
+          <button class="opt" onclick="answer(this)">заряда ядра атома</button>
+          <button class="opt" onclick="answer(this)">числа уровней</button>
+        </div>
+        <p class="q-explain">Современная формулировка периодического закона (Мозли, 1913): свойства элементов — периодическая функция зарядов ядер их атомов (= порядковых номеров).</p>
+      </div>
+
+      <div class="q-card" data-correct="0">
+        <p class="q-num">Вопрос 2</p>
+        <p class="q-text">Менделеев предсказал существование неоткрытых элементов, оставив в таблице «пустые клетки». Один из них — «экасилиций» — оказался элементом:</p>
+        <div class="opts">
+          <button class="opt" onclick="answer(this)">германий (Ge)</button>
+          <button class="opt" onclick="answer(this)">кремний (Si)</button>
+          <button class="opt" onclick="answer(this)">олово (Sn)</button>
+          <button class="opt" onclick="answer(this)">свинец (Pb)</button>
+        </div>
+        <p class="q-explain">«Экасилиций» Менделеева соответствует германию (Ge, №32), открытому К. Винклером в 1886 году. Свойства полностью совпали с предсказаниями.</p>
+      </div>
+
+      <div class="q-card" data-correct="3">
+        <p class="q-num">Вопрос 3</p>
+        <p class="q-text">В периоде слева направо металлические свойства элементов:</p>
+        <div class="opts">
+          <button class="opt" onclick="answer(this)">возрастают</button>
+          <button class="opt" onclick="answer(this)">не изменяются</button>
+          <button class="opt" onclick="answer(this)">сначала убывают, потом возрастают</button>
+          <button class="opt" onclick="answer(this)">убывают</button>
+        </div>
+        <p class="q-explain">В периоде слева направо металлические свойства убывают, а неметаллические возрастают. Пример: Na (типичный металл) → Cl (типичный неметалл).</p>
+      </div>
+
+      <div class="q-card" data-correct="1">
+        <p class="q-num">Вопрос 4</p>
+        <p class="q-text">Почему в периодической таблице аргон (Ar = 39,9) стоит перед калием (K = 39,1)?</p>
+        <div class="opts">
+          <button class="opt" onclick="answer(this)">аргон открыли раньше калия</button>
+          <button class="opt" onclick="answer(this)">заряд ядра Ar (18) меньше, чем у K (19)</button>
+          <button class="opt" onclick="answer(this)">аргон легче воздуха</button>
+          <button class="opt" onclick="answer(this)">атомная масса Ar меньше</button>
+        </div>
+        <p class="q-explain">Таблица строится по порядковому номеру (заряду ядра), а не по массе. Z(Ar)=18 < Z(K)=19, поэтому Ar стоит перед K, несмотря на большую атомную массу.</p>
+      </div>
+
+      <div class="q-card" data-correct="0">
+        <p class="q-num">Вопрос 5</p>
+        <p class="q-text">Валентность в высших оксидах в одном периоде (слева направо) изменяется следующим образом:</p>
+        <div class="opts">
+          <button class="opt" onclick="answer(this)">от I до VII (возрастает)</button>
+          <button class="opt" onclick="answer(this)">от VII до I (убывает)</button>
+          <button class="opt" onclick="answer(this)">остаётся постоянной</button>
+          <button class="opt" onclick="answer(this)">случайно изменяется</button>
+        </div>
+        <p class="q-explain">Валентность в высших оксидах возрастает от I до VII слева направо: Na₂O (I) → MgO (II) → Al₂O₃ (III) → SiO₂ (IV) → P₂O₅ (V) → SO₃ (VI) → Cl₂O₇ (VII).</p>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══ QUIZ §30–31 ══ -->
+  <div id="quiz3031" class="section">
+    <div class="quiz-header">
+      <span class="quiz-title">Тест: §30–31 · Строение атома</span>
+    </div>
+    <div class="score-box" style="margin-bottom:16px;">
+      <span class="score-lbl">Правильных ответов:</span>
+      <span class="score-n" id="sc3031">0 / 6</span>
+      <button class="reset-btn" onclick="resetQuiz('q3031','sc3031')">
+        <svg class="icon" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+        Сбросить
+      </button>
+    </div>
+    <div class="quiz-block" id="q3031">
+
+      <div class="q-card" data-correct="0">
+        <p class="q-num">Вопрос 1</p>
+        <p class="q-text">Атом хлора ³⁵₁₇Cl содержит в ядре:</p>
+        <div class="opts">
+          <button class="opt" onclick="answer(this)">17 протонов и 18 нейтронов</button>
+          <button class="opt" onclick="answer(this)">35 протонов и 17 нейтронов</button>
+          <button class="opt" onclick="answer(this)">17 протонов и 35 нейтронов</button>
+          <button class="opt" onclick="answer(this)">18 протонов и 17 нейтронов</button>
+        </div>
+        <p class="q-explain">Нижний индекс (17) = число протонов = заряд ядра. Верхний индекс (35) = массовое число = протоны + нейтроны. Нейтроны = 35 − 17 = 18.</p>
+      </div>
+
+      <div class="q-card" data-correct="2">
+        <p class="q-num">Вопрос 2</p>
+        <p class="q-text">Что определяет принадлежность атома к данному химическому элементу?</p>
+        <div class="opts">
+          <button class="opt" onclick="answer(this)">число нейтронов в ядре</button>
+          <button class="opt" onclick="answer(this)">число электронов на внешнем уровне</button>
+          <button class="opt" onclick="answer(this)">заряд ядра (число протонов)</button>
+          <button class="opt" onclick="answer(this)">массовое число</button>
+        </div>
+        <p class="q-explain">Химический элемент определяется исключительно зарядом ядра (числом протонов). Изотопы имеют разное число нейтронов, но это один и тот же элемент.</p>
+      </div>
+
+      <div class="q-card" data-correct="1">
+        <p class="q-num">Вопрос 3</p>
+        <p class="q-text">Изотопы — это атомы одного элемента, имеющие:</p>
+        <div class="opts">
+          <button class="opt" onclick="answer(this)">одинаковое число нейтронов, разное число протонов</button>
+          <button class="opt" onclick="answer(this)">одинаковое число протонов, разное число нейтронов</button>
+          <button class="opt" onclick="answer(this)">одинаковую массу, разный заряд ядра</button>
+          <button class="opt" onclick="answer(this)">одинаковое число электронов на внешнем уровне</button>
+        </div>
+        <p class="q-explain">Изотопы — разновидности атомов с одинаковым Z (числом протонов), но разным числом нейтронов. Пример: ³⁵Cl и ³⁷Cl — оба хлор, но содержат 18 и 20 нейтронов.</p>
+      </div>
+
+      <div class="q-card" data-correct="3">
+        <p class="q-num">Вопрос 4</p>
+        <p class="q-text">Схема электронной оболочки атома серы S (№16):</p>
+        <div class="opts">
+          <button class="opt" onclick="answer(this)">2, 4</button>
+          <button class="opt" onclick="answer(this)">2, 8, 2</button>
+          <button class="opt" onclick="answer(this)">2, 6</button>
+          <button class="opt" onclick="answer(this)">2, 8, 6</button>
+        </div>
+        <p class="q-explain">S — элемент III периода, №16. Уровни: 1-й вмещает 2, 2-й — 8, 3-й — оставшиеся 16−2−8=6 электронов → схема 2, 8, 6.</p>
+      </div>
+
+      <div class="q-card" data-correct="0">
+        <p class="q-num">Вопрос 5</p>
+        <p class="q-text">Максимальное число электронов на первом энергетическом уровне:</p>
+        <div class="opts">
+          <button class="opt" onclick="answer(this)">2</button>
+          <button class="opt" onclick="answer(this)">8</button>
+          <button class="opt" onclick="answer(this)">18</button>
+          <button class="opt" onclick="answer(this)">32</button>
+        </div>
+        <p class="q-explain">Первый уровень вмещает не более 2 электронов. Поэтому период 1 содержит только H и He. Второй уровень — до 8 электронов.</p>
+      </div>
+
+      <div class="q-card" data-correct="2">
+        <p class="q-num">Вопрос 6</p>
+        <p class="q-text">Схема электронной оболочки атома калия K (№19):</p>
+        <div class="opts">
+          <button class="opt" onclick="answer(this)">2, 8, 9</button>
+          <button class="opt" onclick="answer(this)">2, 8, 8</button>
+          <button class="opt" onclick="answer(this)">2, 8, 8, 1</button>
+          <button class="opt" onclick="answer(this)">2, 17</button>
+        </div>
+        <p class="q-explain">K (№19) — элемент IV периода, I группы. После заполнения 3-го уровня до 8 электронов, 19-й электрон переходит на 4-й уровень → 2, 8, 8, 1. Именно этот один электрон на внешнем уровне делает калий щелочным металлом.</p>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+<script>
+function showTab(id, idx) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('show'));
+  document.getElementById(id).classList.add('show');
+  document.querySelectorAll('.tab-btn').forEach((b, i) => b.classList.toggle('active', i === idx));
+}
+
+function toggleAns(btn) {
+  const ans = btn.nextElementSibling;
+  const shown = ans.style.display === 'block';
+  ans.style.display = shown ? 'none' : 'block';
+  btn.innerHTML = shown
+    ? '<svg class="icon" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg> Ответ'
+    : '<svg class="icon" viewBox="0 0 24 24"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg> Скрыть';
+}
+
+const scores = { q28: 0, q29: 0, q3031: 0 };
+const totals = { q28: 5, q29: 5, q3031: 6 };
+const scMap  = { q28: 'sc28', q29: 'sc29', q3031: 'sc3031' };
+
+function answer(btn) {
+  const card = btn.closest('.q-card');
+  if (card.classList.contains('done')) return;
+  card.classList.add('done');
+  const opts = card.querySelectorAll('.opt');
+  const correct = parseInt(card.dataset.correct);
+  const chosen = Array.from(opts).indexOf(btn);
+  opts[correct].classList.add('correct');
+  if (chosen !== correct) btn.classList.add('wrong');
+  opts.forEach(o => o.classList.add('done-opt'));
+  card.querySelector('.q-explain').style.display = 'block';
+  if (chosen === correct) {
+    const qid = card.closest('.quiz-block').id;
+    scores[qid]++;
+    document.getElementById(scMap[qid]).textContent =
+      scores[qid] + ' / ' + totals[qid];
+  }
+}
+
+function resetQuiz(qid, scId) {
+  scores[qid] = 0;
+  document.getElementById(scId).textContent = '0 / ' + totals[qid];
+  document.getElementById(qid).querySelectorAll('.q-card').forEach(card => {
+    card.classList.remove('done');
+    card.querySelectorAll('.opt').forEach(o => { o.classList.remove('correct', 'wrong', 'done-opt'); });
+    card.querySelector('.q-explain').style.display = 'none';
+  });
+}
+</script>
+</body>
+</html>
